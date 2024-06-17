@@ -10,8 +10,8 @@
 #include "audio_buffer.h"
 
 struct sine_element_config {
-	double freq;
-	double amplitude;
+    double freq;
+    double amplitude;
 };
 
 struct audio_element_config;

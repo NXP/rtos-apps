@@ -9,11 +9,11 @@
 
 #include "audio_buffer.h"
 
-#define SAI_RX_MAX_INSTANCE		6
-#define SAI_RX_MAX_ID			8
-#define SAI_RX_INSTANCE_MAX_LINE	8
-#define SAI_RX_INSTANCE_MAX_CHANNELS	8
-#define SAI_RX_MAX_FIFO_SIZE		128
+#define SAI_RX_MAX_INSTANCE        6
+#define SAI_RX_MAX_ID            8
+#define SAI_RX_INSTANCE_MAX_LINE    8
+#define SAI_RX_INSTANCE_MAX_CHANNELS    8
+#define SAI_RX_MAX_FIFO_SIZE        128
 
 /* Fixed mapping between sai instances/lines/channels and output buffers
  * e.g
@@ -26,19 +26,19 @@
  * sai2, line0, ch0 -> output 6
  */
 struct sai_source_element_config {
-	unsigned int sai_n;			/* number of sai instances */
+    unsigned int sai_n;    /* number of sai instances */
 
-	struct sai_rx_config {
-		unsigned int id;		/* sai instance */
+    struct sai_rx_config {
+        unsigned int id;    /* sai instance */
 
-		unsigned int line_n;		/* number of physical lines for the sai instance */
+        unsigned int line_n;    /* number of physical lines for the sai instance */
 
-		struct sai_rx_line_config {
-			unsigned int id;	/* line id for the sai instance */
+        struct sai_rx_line_config {
+            unsigned int id;    /* line id for the sai instance */
 
-			unsigned channel_n;	/* number of audio channels for the physical line */
-		} line [SAI_RX_INSTANCE_MAX_LINE];
-	} sai [SAI_RX_MAX_INSTANCE];
+            unsigned channel_n;    /* number of audio channels for the physical line */
+        } line [SAI_RX_INSTANCE_MAX_LINE];
+    } sai [SAI_RX_MAX_INSTANCE];
 };
 
 struct audio_element_config;

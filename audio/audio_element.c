@@ -4,248 +4,248 @@
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
-#include "audio_app.h"
-#include "audio_element.h"
-#include "audio_pipeline.h"
+#include "rtos_apps/log.h"
+#include "rtos_apps/audio/audio_app.h"
+#include "rtos_apps/audio/audio_element.h"
+#include "rtos_apps/audio/audio_pipeline.h"
 #include "hrpn_ctrl.h"
-#include "hlog.h"
 
 const char *element_name[AUDIO_ELEMENT_MAX] = {
-	[AUDIO_ELEMENT_DTMF_SOURCE] = "DTMF_SOURCE",
-	[AUDIO_ELEMENT_ROUTING] = "ROUTING",
-	[AUDIO_ELEMENT_SAI_SINK] = "SAI_SINK",
-	[AUDIO_ELEMENT_SAI_SOURCE] = "SAI_SOURCE",
-	[AUDIO_ELEMENT_SINE_SOURCE] = "SINE_SOURCE",
-	[AUDIO_ELEMENT_PLL] = "PLL",
+    [AUDIO_ELEMENT_DTMF_SOURCE] = "DTMF_SOURCE",
+    [AUDIO_ELEMENT_ROUTING] = "ROUTING",
+    [AUDIO_ELEMENT_SAI_SINK] = "SAI_SINK",
+    [AUDIO_ELEMENT_SAI_SOURCE] = "SAI_SOURCE",
+    [AUDIO_ELEMENT_SINE_SOURCE] = "SINE_SOURCE",
+    [AUDIO_ELEMENT_PLL] = "PLL",
 #if (CONFIG_GENAVB_ENABLE == 1)
-	[AUDIO_ELEMENT_AVTP_SOURCE] = "AVTP_SOURCE",
-	[AUDIO_ELEMENT_AVTP_SINK] = "AVTP_SINK",
+    [AUDIO_ELEMENT_AVTP_SOURCE] = "AVTP_SOURCE",
+    [AUDIO_ELEMENT_AVTP_SINK] = "AVTP_SINK",
 #endif
 };
 
 static void audio_element_response(void *ctrl_handle, uint32_t status)
 {
-	struct hrpn_resp_audio_element resp;
+    struct hrpn_resp_audio_element resp;
 
-	if (ctrl_handle) {
-		resp.type = HRPN_RESP_TYPE_AUDIO_ELEMENT;
-		resp.status = status;
-		audio_app_ctrl_send(ctrl_handle, &resp, sizeof(resp));
-	}
+    if (ctrl_handle) {
+        resp.type = HRPN_RESP_TYPE_AUDIO_ELEMENT;
+        resp.status = status;
+        audio_app_ctrl_send(ctrl_handle, &resp, sizeof(resp));
+    }
 }
 
 int audio_element_ctrl(struct audio_element *element, struct hrpn_cmd_audio_element *cmd, unsigned int len, void *ctrl_handle)
 {
-	int rc = 0;
+    int rc = 0;
 
-	switch (cmd->u.common.type) {
-	case HRPN_CMD_TYPE_AUDIO_ELEMENT_DUMP:
-		if (len != sizeof(struct hrpn_cmd_audio_element_dump))
-			goto err;
+    switch (cmd->u.common.type) {
+    case HRPN_CMD_TYPE_AUDIO_ELEMENT_DUMP:
+        if (len != sizeof(struct hrpn_cmd_audio_element_dump))
+            goto err;
 
-		if (!element)
-			goto err;
+        if (!element)
+            goto err;
 
-		audio_element_dump(element);
+        audio_element_dump(element);
 
-		audio_element_response(ctrl_handle, HRPN_RESP_STATUS_SUCCESS);
+        audio_element_response(ctrl_handle, HRPN_RESP_STATUS_SUCCESS);
 
-		break;
+        break;
 
-	case HRPN_CMD_TYPE_AUDIO_ELEMENT_ROUTING_CONNECT:
-	case HRPN_CMD_TYPE_AUDIO_ELEMENT_ROUTING_DISCONNECT:
-		rc = routing_element_ctrl(element, &cmd->u.routing, len, ctrl_handle);
-		break;
+    case HRPN_CMD_TYPE_AUDIO_ELEMENT_ROUTING_CONNECT:
+    case HRPN_CMD_TYPE_AUDIO_ELEMENT_ROUTING_DISCONNECT:
+        rc = routing_element_ctrl(element, &cmd->u.routing, len, ctrl_handle);
+        break;
 
-	case HRPN_CMD_TYPE_AUDIO_ELEMENT_PLL_ENABLE:
-	case HRPN_CMD_TYPE_AUDIO_ELEMENT_PLL_DISABLE:
-	case HRPN_CMD_TYPE_AUDIO_ELEMENT_PLL_ID:
-		rc = pll_element_ctrl(element, &cmd->u.pll, len, ctrl_handle);
-		break;
+    case HRPN_CMD_TYPE_AUDIO_ELEMENT_PLL_ENABLE:
+    case HRPN_CMD_TYPE_AUDIO_ELEMENT_PLL_DISABLE:
+    case HRPN_CMD_TYPE_AUDIO_ELEMENT_PLL_ID:
+        rc = pll_element_ctrl(element, &cmd->u.pll, len, ctrl_handle);
+        break;
 
 #if (CONFIG_GENAVB_ENABLE == 1)
-	case HRPN_CMD_TYPE_AUDIO_ELEMENT_AVTP_SOURCE_CONNECT:
-	case HRPN_CMD_TYPE_AUDIO_ELEMENT_AVTP_SOURCE_DISCONNECT:
-		rc = avtp_source_element_ctrl(element, &cmd->u.avtp, len, ctrl_handle);
-		break;
-	case HRPN_CMD_TYPE_AUDIO_ELEMENT_AVTP_SINK_CONNECT:
-	case HRPN_CMD_TYPE_AUDIO_ELEMENT_AVTP_SINK_DISCONNECT:
-		rc = avtp_sink_element_ctrl(element, &cmd->u.avtp, len, ctrl_handle);
-		break;
+    case HRPN_CMD_TYPE_AUDIO_ELEMENT_AVTP_SOURCE_CONNECT:
+    case HRPN_CMD_TYPE_AUDIO_ELEMENT_AVTP_SOURCE_DISCONNECT:
+        rc = avtp_source_element_ctrl(element, &cmd->u.avtp, len, ctrl_handle);
+        break;
+    case HRPN_CMD_TYPE_AUDIO_ELEMENT_AVTP_SINK_CONNECT:
+    case HRPN_CMD_TYPE_AUDIO_ELEMENT_AVTP_SINK_DISCONNECT:
+        rc = avtp_sink_element_ctrl(element, &cmd->u.avtp, len, ctrl_handle);
+        break;
 #endif
 
-	default:
-		goto err;
-		break;
-	}
+    default:
+        goto err;
+        break;
+    }
 
-	return rc;
+    return rc;
 
 err:
-	audio_element_response(ctrl_handle, HRPN_RESP_STATUS_ERROR);
+    audio_element_response(ctrl_handle, HRPN_RESP_STATUS_ERROR);
 
-	return -1;
+    return -1;
 }
 
 void audio_element_exit(struct audio_element *element)
 {
-	element->exit(element);
+    element->exit(element);
 }
 
 void audio_element_dump(struct audio_element *element)
 {
-	if (element->dump)
-		element->dump(element);
+    if (element->dump)
+        element->dump(element);
 }
 
 void audio_element_stats(struct audio_element *element)
 {
-	if (element->stats)
-		element->stats(element);
+    if (element->stats)
+        element->stats(element);
 }
 
 int audio_element_check_config(struct audio_element_config *config)
 {
-	int rc;
+    int rc;
 
-	switch (config->type) {
-	case AUDIO_ELEMENT_DTMF_SOURCE:
-		rc = dtmf_element_check_config(config);
-		break;
+    switch (config->type) {
+    case AUDIO_ELEMENT_DTMF_SOURCE:
+        rc = dtmf_element_check_config(config);
+        break;
 
-	case AUDIO_ELEMENT_PLL:
-		rc = pll_element_check_config(config);
-		break;
+    case AUDIO_ELEMENT_PLL:
+        rc = pll_element_check_config(config);
+        break;
 
-	case AUDIO_ELEMENT_ROUTING:
-		rc = routing_element_check_config(config);
-		break;
+    case AUDIO_ELEMENT_ROUTING:
+        rc = routing_element_check_config(config);
+        break;
 
-	case AUDIO_ELEMENT_SAI_SINK:
-		rc = sai_sink_element_check_config(config);
-		break;
+    case AUDIO_ELEMENT_SAI_SINK:
+        rc = sai_sink_element_check_config(config);
+        break;
 
-	case AUDIO_ELEMENT_SAI_SOURCE:
-		rc = sai_source_element_check_config(config);
-		break;
+    case AUDIO_ELEMENT_SAI_SOURCE:
+        rc = sai_source_element_check_config(config);
+        break;
 
-	case AUDIO_ELEMENT_SINE_SOURCE:
-		rc = sine_element_check_config(config);
-		break;
+    case AUDIO_ELEMENT_SINE_SOURCE:
+        rc = sine_element_check_config(config);
+        break;
 
 #if (CONFIG_GENAVB_ENABLE == 1)
-	case AUDIO_ELEMENT_AVTP_SOURCE:
-		rc = avtp_source_element_check_config(config);
-		break;
-	case AUDIO_ELEMENT_AVTP_SINK:
-		rc = avtp_sink_element_check_config(config);
-		break;
+    case AUDIO_ELEMENT_AVTP_SOURCE:
+        rc = avtp_source_element_check_config(config);
+        break;
+    case AUDIO_ELEMENT_AVTP_SINK:
+        rc = avtp_sink_element_check_config(config);
+        break;
 #endif
 
-	default:
-		rc = -1;
-		break;
-	}
+    default:
+        rc = -1;
+        break;
+    }
 
-	return rc;
+    return rc;
 }
 
 unsigned int audio_element_data_size(struct audio_element_config *config)
 {
-	unsigned int size;
+    unsigned int size;
 
-	switch (config->type) {
-	case AUDIO_ELEMENT_DTMF_SOURCE:
-		size = dtmf_element_size(config);
-		break;
+    switch (config->type) {
+    case AUDIO_ELEMENT_DTMF_SOURCE:
+        size = dtmf_element_size(config);
+        break;
 
-	case AUDIO_ELEMENT_PLL:
-		size = pll_element_size(config);
-		break;
+    case AUDIO_ELEMENT_PLL:
+        size = pll_element_size(config);
+        break;
 
-	case AUDIO_ELEMENT_ROUTING:
-		size = routing_element_size(config);
-		break;
+    case AUDIO_ELEMENT_ROUTING:
+        size = routing_element_size(config);
+        break;
 
-	case AUDIO_ELEMENT_SAI_SINK:
-		size = sai_sink_element_size(config);
-		break;
+    case AUDIO_ELEMENT_SAI_SINK:
+        size = sai_sink_element_size(config);
+        break;
 
-	case AUDIO_ELEMENT_SAI_SOURCE:
-		size = sai_source_element_size(config);
-		break;
+    case AUDIO_ELEMENT_SAI_SOURCE:
+        size = sai_source_element_size(config);
+        break;
 
-	case AUDIO_ELEMENT_SINE_SOURCE:
-		size = sine_element_size(config);
-		break;
+    case AUDIO_ELEMENT_SINE_SOURCE:
+        size = sine_element_size(config);
+        break;
 
 #if (CONFIG_GENAVB_ENABLE == 1)
-	case AUDIO_ELEMENT_AVTP_SOURCE:
-		size = avtp_source_element_size(config);
-		break;
-	case AUDIO_ELEMENT_AVTP_SINK:
-		size = avtp_source_element_size(config);
-		break;
+    case AUDIO_ELEMENT_AVTP_SOURCE:
+        size = avtp_source_element_size(config);
+        break;
+    case AUDIO_ELEMENT_AVTP_SINK:
+        size = avtp_source_element_size(config);
+        break;
 #endif
 
-	default:
-		size = 0;
-		break;
-	}
+    default:
+        size = 0;
+        break;
+    }
 
-	return size;
+    return size;
 }
 
 int audio_element_init(struct audio_element *element, struct audio_element_config *config, struct audio_buffer *buffer)
 {
-	int rc;
+    int rc;
 
-	log_info("enter, type %d\n", config->type);
+    log_info("enter, type %d\n", config->type);
 
-	element->type = config->type;
-	element->sample_rate = config->sample_rate;
-	element->period = config->period;
+    element->type = config->type;
+    element->sample_rate = config->sample_rate;
+    element->period = config->period;
 
-	switch (config->type) {
-	case AUDIO_ELEMENT_DTMF_SOURCE:
-		rc = dtmf_element_init(element, config, buffer);
-		break;
+    switch (config->type) {
+    case AUDIO_ELEMENT_DTMF_SOURCE:
+        rc = dtmf_element_init(element, config, buffer);
+        break;
 
-	case AUDIO_ELEMENT_PLL:
-		rc = pll_element_init(element, config, buffer);
-		break;
+    case AUDIO_ELEMENT_PLL:
+        rc = pll_element_init(element, config, buffer);
+        break;
 
-	case AUDIO_ELEMENT_ROUTING:
-		rc = routing_element_init(element, config, buffer);
-		break;
+    case AUDIO_ELEMENT_ROUTING:
+        rc = routing_element_init(element, config, buffer);
+        break;
 
-	case AUDIO_ELEMENT_SAI_SINK:
-		rc = sai_sink_element_init(element, config, buffer);
-		break;
+    case AUDIO_ELEMENT_SAI_SINK:
+        rc = sai_sink_element_init(element, config, buffer);
+        break;
 
-	case AUDIO_ELEMENT_SAI_SOURCE:
-		rc = sai_source_element_init(element, config, buffer);
-		break;
+    case AUDIO_ELEMENT_SAI_SOURCE:
+        rc = sai_source_element_init(element, config, buffer);
+        break;
 
-	case AUDIO_ELEMENT_SINE_SOURCE:
-		rc = sine_element_init(element, config, buffer);
-		break;
+    case AUDIO_ELEMENT_SINE_SOURCE:
+        rc = sine_element_init(element, config, buffer);
+        break;
 
 #if (CONFIG_GENAVB_ENABLE == 1)
-	case AUDIO_ELEMENT_AVTP_SOURCE:
-		rc = avtp_source_element_init(element, config, buffer);
-		break;
-	case AUDIO_ELEMENT_AVTP_SINK:
-		rc = avtp_sink_element_init(element, config, buffer);
-		break;
+    case AUDIO_ELEMENT_AVTP_SOURCE:
+        rc = avtp_source_element_init(element, config, buffer);
+        break;
+    case AUDIO_ELEMENT_AVTP_SINK:
+        rc = avtp_sink_element_init(element, config, buffer);
+        break;
 #endif
 
-	default:
-		rc = -1;
-		break;
-	}
+    default:
+        rc = -1;
+        break;
+    }
 
-	log_info("done\n");
+    log_info("done\n");
 
-	return rc;
+    return rc;
 }

@@ -9,7 +9,7 @@
 
 #include "audio_buffer.h"
 
-#include "hrpn_ctrl_audio_pipeline.h"
+#include "audio_pipeline_ctrl.h"
 
 struct routing_element_config {
 };

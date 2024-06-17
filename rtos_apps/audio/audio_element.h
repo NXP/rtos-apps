@@ -18,68 +18,68 @@
 #include "audio_element_sai_source.h"
 #include "audio_element_sine.h"
 
-#include "hrpn_ctrl_audio_pipeline.h"
+#include "audio_pipeline_ctrl.h"
 
-#define AUDIO_ELEMENT_MAX_INPUTS	64
-#define AUDIO_ELEMENT_MAX_OUTPUTS	64
+#define AUDIO_ELEMENT_MAX_INPUTS    64
+#define AUDIO_ELEMENT_MAX_OUTPUTS    64
 
 enum {
-	AUDIO_ELEMENT_DTMF_SOURCE = 0,
-	AUDIO_ELEMENT_ROUTING,
-	AUDIO_ELEMENT_SAI_SINK,
-	AUDIO_ELEMENT_SAI_SOURCE,
-	AUDIO_ELEMENT_SINE_SOURCE,
-	AUDIO_ELEMENT_PLL,
+    AUDIO_ELEMENT_DTMF_SOURCE = 0,
+    AUDIO_ELEMENT_ROUTING,
+    AUDIO_ELEMENT_SAI_SINK,
+    AUDIO_ELEMENT_SAI_SOURCE,
+    AUDIO_ELEMENT_SINE_SOURCE,
+    AUDIO_ELEMENT_PLL,
 #if (CONFIG_GENAVB_ENABLE == 1)
-	AUDIO_ELEMENT_AVTP_SOURCE, /* AVB audio stream listener */
-	AUDIO_ELEMENT_AVTP_SINK,   /* AVB audio stream talker */
+    AUDIO_ELEMENT_AVTP_SOURCE, /* AVB audio stream listener */
+    AUDIO_ELEMENT_AVTP_SINK,   /* AVB audio stream talker */
 #endif
-	AUDIO_ELEMENT_MAX,
+    AUDIO_ELEMENT_MAX,
 };
 
 extern const char *element_name[AUDIO_ELEMENT_MAX];
 
 /* Configuration */
 struct audio_element_config {
-	unsigned int type;
+    unsigned int type;
 
-	unsigned int inputs;
-	unsigned int input[AUDIO_ELEMENT_MAX_INPUTS]; /* indexes to buffer structures */
+    unsigned int inputs;
+    unsigned int input[AUDIO_ELEMENT_MAX_INPUTS]; /* indexes to buffer structures */
 
-	unsigned int outputs;
-	unsigned int output[AUDIO_ELEMENT_MAX_OUTPUTS]; /* indexes to buffer structures */
+    unsigned int outputs;
+    unsigned int output[AUDIO_ELEMENT_MAX_OUTPUTS]; /* indexes to buffer structures */
 
-	unsigned int period;
-	unsigned int sample_rate;
+    unsigned int period;
+    unsigned int sample_rate;
 
-	union {
-		struct dtmf_element_config dtmf;
-		struct pll_element_config pll;
-		struct routing_element_config routing;
-		struct sai_sink_element_config sai_sink;
-		struct sai_source_element_config sai_source;
-		struct sine_element_config sine;
+    union {
+        struct dtmf_element_config dtmf;
+        struct pll_element_config pll;
+        struct routing_element_config routing;
+        struct sai_sink_element_config sai_sink;
+        struct sai_source_element_config sai_source;
+        struct sine_element_config sine;
 #if (CONFIG_GENAVB_ENABLE == 1)
-		struct avtp_source_element_config avtp_source;
-		struct avtp_sink_element_config avtp_sink;
+        struct avtp_source_element_config avtp_source;
+        struct avtp_sink_element_config avtp_sink;
 #endif
-	} u;
+    } u;
 };
 
 /* Run Time */
 struct audio_element {
-	void *data;
+    void *data;
 
-	unsigned int type;
-	unsigned int sample_rate;
-	unsigned int period;
-	unsigned int element_id;
+    unsigned int type;
+    unsigned int sample_rate;
+    unsigned int period;
+    unsigned int element_id;
 
-	int (*run)(struct audio_element *element);
-	void(*reset)(struct audio_element *element);
-	void(*exit)(struct audio_element *element);
-	void(*dump)(struct audio_element *element);
-	void(*stats)(struct audio_element *element);
+    int (*run)(struct audio_element *element);
+    void(*reset)(struct audio_element *element);
+    void(*exit)(struct audio_element *element);
+    void(*dump)(struct audio_element *element);
+    void(*stats)(struct audio_element *element);
 };
 
 int audio_element_ctrl(struct audio_element *element, struct hrpn_cmd_audio_element *cmd, unsigned int len, void *ctrl_handle);
@@ -92,12 +92,12 @@ int audio_element_init(struct audio_element *element, struct audio_element_confi
 
 static inline int audio_element_run(struct audio_element *element)
 {
-	return element->run(element);
+    return element->run(element);
 }
 
 static inline void audio_element_reset(struct audio_element *element)
 {
-	element->reset(element);
+    element->reset(element);
 }
 
 #endif /* _AUDIO_ELEMENT_H_ */

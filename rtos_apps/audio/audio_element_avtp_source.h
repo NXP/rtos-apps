@@ -7,23 +7,23 @@
 #ifndef _AUDIO_ELEMENT_AVTP_SOURCE_H_
 #define _AUDIO_ELEMENT_AVTP_SOURCE_H_
 
-#include "audio_buffer.h"
 #include "genavb/control_clock_domain.h"
-#include "hrpn_ctrl_audio_pipeline.h"
+#include "audio_buffer.h"
+#include "audio_pipeline_ctrl.h"
 
-#define AVTP_RX_STREAM_N		2
-#define AVTP_RX_CHANNEL_N		2
+#define AVTP_RX_STREAM_N    2
+#define AVTP_RX_CHANNEL_N    2
 
-#define AUDIO_ELEMENT_AVTP_SOURCE_MAX	1
+#define AUDIO_ELEMENT_AVTP_SOURCE_MAX    1
 
 struct avtp_source_element_config {
-	unsigned int stream_n;			/* number of streams */
+    unsigned int stream_n;    /* number of streams */
 
-	struct avtp_source_stream_config {
-		unsigned int flags;
-	} stream [AVTP_RX_STREAM_N];
+    struct avtp_source_stream_config {
+        unsigned int flags;
+    } stream [AVTP_RX_STREAM_N];
 
-	genavb_clock_domain_t clock_domain;
+    genavb_clock_domain_t clock_domain;
 };
 
 struct audio_element_config;

@@ -9,12 +9,12 @@
 
 #include "audio_buffer.h"
 
-#include "hrpn_ctrl_audio_pipeline.h"
+#include "audio_pipeline_ctrl.h"
 
 struct pll_element_config {
-	unsigned int src_sai_id;
-	unsigned int dst_sai_id;
-	unsigned int pll_id;
+    unsigned int src_sai_id;
+    unsigned int dst_sai_id;
+    unsigned int pll_id;
 };
 
 struct audio_element_config;

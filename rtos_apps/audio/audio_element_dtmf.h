@@ -10,13 +10,13 @@
 #include "audio_buffer.h"
 
 struct dtmf_element_config {
-	unsigned int us;
-	unsigned int pause_us;
-	unsigned int sequence_pause_us;
+    unsigned int us;
+    unsigned int pause_us;
+    unsigned int sequence_pause_us;
 
-	double amplitude;
+    double amplitude;
 
-	char *sequence;
+    char *sequence;
 };
 
 struct audio_element_config;

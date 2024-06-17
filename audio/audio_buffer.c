@@ -4,9 +4,9 @@
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
-#include "audio_buffer.h"
-#include "audio_element.h"
-#include "hlog.h"
+#include "rtos_apps/log.h"
+#include "rtos_apps/audio/audio_buffer.h"
+#include "rtos_apps/audio/audio_element.h"
 
 /*
  * Audio buffer structure (circular) with single writter/reader.
@@ -30,109 +30,109 @@
 */
 void audio_buf_dump(struct audio_buffer *buf)
 {
-	log_info("buf(%p): base %p, size %x/%x, read %x, write %x, flags %d, shared_id %d\n",
-		  buf, buf->base, buf->size, buf->size_mask, buf->read, buf->write,
-		  buf->flags, buf->shared_id);
+    log_info("buf(%p): base %p, size %x/%x, read %x, write %x, flags %d, shared_id %d\n",
+          buf, buf->base, buf->size, buf->size_mask, buf->read, buf->write,
+          buf->flags, buf->shared_id);
 }
 
 void audio_buf_routing_dump(struct audio_buffer *buf)
 {
-	log_info("buf(%p): %12s(%2d:%2d) -> %12s(%2d:%2d)\n",
-			buf, element_name[buf->input_type], buf->input_element_id, buf->input_id,
-			element_name[buf->output_type], buf->output_element_id, buf->output_id);
+    log_info("buf(%p): %12s(%2d:%2d) -> %12s(%2d:%2d)\n",
+            buf, element_name[buf->input_type], buf->input_element_id, buf->input_id,
+            element_name[buf->output_type], buf->output_element_id, buf->output_id);
 }
 
 void audio_buf_init(struct audio_buffer *buf, audio_sample_t *base, unsigned int size,
-		unsigned int silence, unsigned int flags, unsigned int shared_id)
+        unsigned int silence, unsigned int flags, unsigned int shared_id)
 {
-	buf->base = base;
-	buf->size = size;
-	buf->read = 0;
-	buf->write = 0;
-	buf->silence = silence;
-	buf->flags = flags;
-	buf->shared_id = shared_id;
-	buf->input_type = 0;
-	buf->input_id = 0;
-	buf->input_element_id = 0;
-	buf->output_type = 0;
-	buf->output_id = 0;
-	buf->output_element_id = 0;
+    buf->base = base;
+    buf->size = size;
+    buf->read = 0;
+    buf->write = 0;
+    buf->silence = silence;
+    buf->flags = flags;
+    buf->shared_id = shared_id;
+    buf->input_type = 0;
+    buf->input_id = 0;
+    buf->input_element_id = 0;
+    buf->output_type = 0;
+    buf->output_id = 0;
+    buf->output_element_id = 0;
 
-	buf->size_mask = 0;
-	while ((size >>= 1))
-		buf->size_mask++;
+    buf->size_mask = 0;
+    while ((size >>= 1))
+        buf->size_mask++;
 
-	buf->size_mask = (1U << buf->size_mask) - 1;
+    buf->size_mask = (1U << buf->size_mask) - 1;
 
-	audio_buf_write_silence(buf, buf->silence);
+    audio_buf_write_silence(buf, buf->silence);
 }
 
 unsigned int audio_buf_avail(struct audio_buffer *buf)
 {
-	unsigned int read = buf->read;
-	unsigned int write = buf->write;
+    unsigned int read = buf->read;
+    unsigned int write = buf->write;
 
-	if (write < read)
-		return (write + buf->size) - read;
-	else
-		return write - read;
+    if (write < read)
+        return (write + buf->size) - read;
+    else
+        return write - read;
 }
 
 unsigned int audio_buf_free(struct audio_buffer *buf)
 {
-	return buf->size - audio_buf_avail(buf) - 1;
+    return buf->size - audio_buf_avail(buf) - 1;
 }
 
 bool audio_buf_full(struct audio_buffer *buf)
 {
-	return (buf->read == buf->write - 1);
+    return (buf->read == buf->write - 1);
 }
 
 bool audio_buf_empty(struct audio_buffer *buf)
 {
-	return (buf->read == buf->write);
+    return (buf->read == buf->write);
 }
 
 void audio_buf_write(struct audio_buffer *buf, audio_sample_t *samples, unsigned int len)
 {
-	int i;
+    int i;
 
-	for (i = 0; i < len; i++) {
-		buf->base[buf->write] = samples[i];
-		buf->write = (buf->write + 1) & buf->size_mask;
-	}
+    for (i = 0; i < len; i++) {
+        buf->base[buf->write] = samples[i];
+        buf->write = (buf->write + 1) & buf->size_mask;
+    }
 }
 
 void audio_buf_write_head(struct audio_buffer *buf, audio_sample_t *samples, unsigned int len)
 {
-	unsigned int read;
-	int i;
+    unsigned int read;
+    int i;
 
-	read = buf->read = (buf->read - len) & buf->size_mask;
-	for (i = 0; i < len; i++) {
-		buf->base[read] = samples[i];
-		read  = (read + 1) & buf->size_mask;
-	}
+    read = buf->read = (buf->read - len) & buf->size_mask;
+    for (i = 0; i < len; i++) {
+        buf->base[read] = samples[i];
+        read  = (read + 1) & buf->size_mask;
+    }
 }
 
 void audio_buf_write_silence(struct audio_buffer *buf, unsigned int len)
 {
-	audio_sample_t silence = AUDIO_SAMPLE_SILENCE;
-	int i;
+    audio_sample_t silence = AUDIO_SAMPLE_SILENCE;
+    int i;
 
-	for (i = 0; i < len; i++)
-		__audio_buf_write(buf, i, &silence, 1);
+    for (i = 0; i < len; i++)
+        __audio_buf_write(buf, i, &silence, 1);
 
-	audio_buf_write_update(buf, len);
+    audio_buf_write_update(buf, len);
 }
 
 void audio_buf_read(struct audio_buffer *buf, audio_sample_t *samples, unsigned int len)
 {
-	int i;
+    int i;
 
-	for (i = 0; i < len; i++) {
-		samples[i] = buf->base[buf->read];
-		buf->read = (buf->read + 1) & buf->size_mask;
-	}
+    for (i = 0; i < len; i++) {
+        samples[i] = buf->base[buf->read];
+        buf->read = (buf->read + 1) & buf->size_mask;
+    }
 }
