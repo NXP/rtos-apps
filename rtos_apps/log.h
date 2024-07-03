@@ -6,7 +6,7 @@
 #ifndef _RTOS_APPS_LOG_H_
 #define _RTOS_APPS_LOG_H_
 
-#include <stdio.h> //FIXME add an abstraction for stdio.h
+#include "rtos_abstraction_layer.h"
 
 /** Log levels definition */
 typedef enum {
@@ -33,7 +33,7 @@ extern rtos_apps_log_level_t rtos_apps_log_level_config;
 #define log(LEVEL, format, ...) \
     do { \
         if (rtos_apps_log_level_config >= LOG_ ## LEVEL) \
-            printf("%-4.4s: %-22.22s: " format "\r", #LEVEL, __func__, ##__VA_ARGS__); \
+            rtos_printf("%-4.4s: %-22.22s: " format "\r", #LEVEL, __func__, ##__VA_ARGS__); \
     } while (0)
 
 #define log_crit(...)     log(CRIT, __VA_ARGS__)
@@ -45,7 +45,7 @@ extern rtos_apps_log_level_t rtos_apps_log_level_config;
 #define log_raw(LEVEL, ...) \
     do { \
         if (rtos_apps_log_level_config >= LOG_ ## LEVEL) \
-            printf(__VA_ARGS__); \
+            rtos_printf(__VA_ARGS__); \
     } while (0)
 
 #define log_raw_info(...) log_raw(INFO, __VA_ARGS__)
