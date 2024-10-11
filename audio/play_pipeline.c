@@ -4,6 +4,7 @@
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
+#include <inttypes.h>
 #include <string.h>
 
 #include "rtos_abstraction_layer.h"
@@ -71,7 +72,7 @@ void play_pipeline_stats(void *handle)
 {
     struct pipeline_ctx *ctx = handle;
 
-    log_info("pipeline%d  run: %llu, err: %llu\n", ctx->id, ctx->stats.run, ctx->stats.err);
+    log_info("pipeline%d  run: %" PRIu64 ", err: %" PRIu64 "\n", ctx->id, ctx->stats.run, ctx->stats.err);
 
     audio_pipeline_stats(ctx->pipeline);
 }
