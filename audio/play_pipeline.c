@@ -388,6 +388,8 @@ static void avb_close(struct pipeline_ctx *ctx)
     genavb_control_close(ctx->avb.controlled_h);
     genavb_control_close(ctx->avb.ctrl_h);
 
+    genavb_clock_domain_close();
+
     if (gavb_stack_exit()) {
         log_err("gavb_stack_exit() failed\n");
     }
