@@ -4,8 +4,9 @@
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
-#include "os/semaphore.h"
-#include "os/stdlib.h"
+#include <string.h>
+
+#include "rtos_abstraction_layer.h"
 
 #include "app_board.h"
 
@@ -50,7 +51,7 @@ struct avtp_avb_ctx {
 #endif /* #if (CONFIG_GENAVB_ENABLE == 1) */
 
 struct pipeline_ctx {
-    os_sem_t *async_sem;
+    rtos_sem_t *async_sem;
     struct audio_pipeline *pipeline;
 
     struct {
@@ -97,7 +98,7 @@ int play_pipeline_run(void *handle, struct event *e)
 
     case EVENT_TYPE_RESET_ASYNC:
         audio_pipeline_reset(ctx->pipeline);
-        os_sem_give(ctx->async_sem, 0);
+        rtos_sem_give(ctx->async_sem);
         break;
 
     default:
@@ -448,7 +449,7 @@ void *play_pipeline_init(void *parameters)
     struct audio_pipeline_config *pipeline_cfg;
     struct pipeline_ctx *ctx;
 
-    ctx = os_malloc(sizeof(struct pipeline_ctx) + sizeof(struct audio_pipeline_config));
+    ctx = rtos_malloc(sizeof(struct pipeline_ctx) + sizeof(struct audio_pipeline_config));
     rtos_assert(ctx, "Audio pipeline failed with memory allocation error");
     memset(ctx, 0, sizeof(struct pipeline_ctx));
 
@@ -474,7 +475,7 @@ void *play_pipeline_init(void *parameters)
     return ctx;
 
 err_init:
-    os_free(ctx);
+    rtos_free(ctx);
     return NULL;
 }
 
@@ -484,7 +485,7 @@ void play_pipeline_exit(void *handle)
 
     audio_pipeline_exit(ctx->pipeline);
 
-    os_free(ctx);
+    rtos_free(ctx);
 
     log_info("\nEnd.\n");
 }
