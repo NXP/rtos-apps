@@ -1,5 +1,5 @@
 /*
- * Copyright 2022-2024 NXP
+ * Copyright 2022-2025 NXP
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -50,7 +50,8 @@ static struct audio_pipeline *audio_pipeline_table_find(unsigned int id)
     return pipeline_table[id];
 }
 
-static struct audio_element *audio_pipeline_element_find(struct audio_pipeline *pipeline, unsigned int type, unsigned int id)
+static struct audio_element *audio_pipeline_element_find(struct audio_pipeline *pipeline, unsigned int type,
+                                                         unsigned int id)
 {
     struct audio_pipeline_stage *stage;
     struct audio_element *element;
@@ -82,10 +83,10 @@ static struct audio_buffer *audio_pipeline_shared_buffer_find(unsigned shared_id
     int i, j;
 
     for (i = 0; i < MAX_PIPELINES; i++) {
-        pipeline  = audio_pipeline_table_find(i);
+        pipeline = audio_pipeline_table_find(i);
         if (pipeline == NULL)
             break;
-        for ( j = 0; j < pipeline->buffers; j++) {
+        for (j = 0; j < pipeline->buffers; j++) {
             buffer = &pipeline->buffer[j];
             if ((buffer->flags & AUDIO_BUFFER_FLAG_SHARED) && (buffer->shared_id == shared_id))
                 return buffer;
@@ -144,7 +145,8 @@ int audio_pipeline_ctrl(struct hrpn_cmd_audio_pipeline *cmd, unsigned int len, v
 
     default:
         if (pipeline && (len >= sizeof(struct hrpn_cmd_audio_element_common)))
-            element = audio_pipeline_element_find(pipeline, cmd->u.element.u.common.element.type, cmd->u.element.u.common.element.id);
+            element = audio_pipeline_element_find(pipeline, cmd->u.element.u.common.element.type,
+                                                  cmd->u.element.u.common.element.id);
 
         rc = audio_element_ctrl(element, &cmd->u.element, len, ctrl_handle);
 
@@ -159,7 +161,8 @@ err:
     return -1;
 }
 
-static unsigned int audio_pipeline_count_input(struct audio_pipeline_config *config, unsigned int stage, unsigned int input)
+static unsigned int audio_pipeline_count_input(struct audio_pipeline_config *config, unsigned int stage,
+                                               unsigned int input)
 {
     struct audio_pipeline_stage_config *stage_config;
     struct audio_element_config *element_config;
@@ -182,7 +185,8 @@ static unsigned int audio_pipeline_count_input(struct audio_pipeline_config *con
     return count;
 }
 
-static unsigned int audio_pipeline_count_output(struct audio_pipeline_config *config, unsigned int stage, unsigned int output)
+static unsigned int audio_pipeline_count_output(struct audio_pipeline_config *config, unsigned int stage,
+                                                unsigned int output)
 {
     struct audio_pipeline_stage_config *stage_config;
     struct audio_element_config *element_config;
@@ -257,14 +261,16 @@ static int audio_pipeline_config_check(struct audio_pipeline_config *config)
 
             for (k = 0; k < element_config->inputs; k++) {
                 if (element_config->input[k] >= config->buffers) {
-                    log_err("stage(%u), element(%u): input(%u) references invalid buffer(%u)\n", i, j, k, element_config->input[k]);
+                    log_err("stage(%u), element(%u): input(%u) references invalid buffer(%u)\n", i, j, k,
+                            element_config->input[k]);
                     goto err;
                 }
             }
 
             for (k = 0; k < element_config->outputs; k++) {
                 if (element_config->output[k] >= config->buffers) {
-                    log_err("stage(%u), element(%u): output(%u) references invalid buffer(%u)\n", i, j, k, element_config->output[k]);
+                    log_err("stage(%u), element(%u): output(%u) references invalid buffer(%u)\n", i, j, k,
+                            element_config->output[k]);
                     goto err;
                 }
             }
@@ -293,11 +299,10 @@ static int audio_pipeline_config_check(struct audio_pipeline_config *config)
             goto err;
         }
 
-        if (config->buffer[i].flags & AUDIO_BUFFER_FLAG_SHARED_USER
-                || config->buffer[i].flags & AUDIO_BUFFER_FLAG_SHARED) {
-              if (!input && !output)
-                  log_warn("shared_buffer(%u, %u) not referenced by any input/output\n",
-                          i, config->buffer[i].shared_id);
+        if (config->buffer[i].flags & AUDIO_BUFFER_FLAG_SHARED_USER ||
+            config->buffer[i].flags & AUDIO_BUFFER_FLAG_SHARED) {
+            if (!input && !output)
+                log_warn("shared_buffer(%u, %u) not referenced by any input/output\n", i, config->buffer[i].shared_id);
         } else {
             /* Check all buffers are referenced by one input and one output */
             if (!input)
@@ -319,7 +324,8 @@ static int audio_pipeline_config_check(struct audio_pipeline_config *config)
                 output = audio_pipeline_count_output(config, i, element_config->input[k]);
 
                 if (output) {
-                    log_err("stage(%u), element(%u): pipeline loop, input(%u) connected to same/later stage output\n", i, j, k);
+                    log_err("stage(%u), element(%u): pipeline loop, input(%u) connected to same/later stage output\n",
+                            i, j, k);
                     goto err;
                 }
             }
@@ -341,13 +347,15 @@ static int audio_pipeline_config_check(struct audio_pipeline_config *config)
     /* Check maximum number of AVTP elements */
     count = audio_pipeline_count_element(config, AUDIO_ELEMENT_AVTP_SOURCE);
     if (count > AUDIO_ELEMENT_AVTP_SOURCE_MAX) {
-        log_err("rtos-apps/audio/audio_ELEMENT_AVTP_SOURCE count: %u, while max supported %u\n", count, AUDIO_ELEMENT_AVTP_SOURCE_MAX);
+        log_err("rtos-apps/audio/audio_ELEMENT_AVTP_SOURCE count: %u, while max supported %u\n", count,
+                AUDIO_ELEMENT_AVTP_SOURCE_MAX);
         goto err;
     }
 
     count = audio_pipeline_count_element(config, AUDIO_ELEMENT_AVTP_SINK);
     if (count > AUDIO_ELEMENT_AVTP_SINK_MAX) {
-        log_err("rtos-apps/audio/audio_ELEMENT_AVTP_SINK count: %u, while max supported %u\n", count, AUDIO_ELEMENT_AVTP_SINK_MAX);
+        log_err("rtos-apps/audio/audio_ELEMENT_AVTP_SINK count: %u, while max supported %u\n", count,
+                AUDIO_ELEMENT_AVTP_SINK_MAX);
         goto err;
     }
 #endif
@@ -397,7 +405,8 @@ static int audio_pipeline_early_config_check(struct audio_pipeline_config *confi
         stage_config = &config->stage[i];
 
         if (stage_config->elements > AUDIO_PIPELINE_MAX_ELEMENTS) {
-            log_err("stage(%u): too many elements %u, max %u\n\r", i, stage_config->elements, AUDIO_PIPELINE_MAX_ELEMENTS);
+            log_err("stage(%u): too many elements %u, max %u\n\r", i, stage_config->elements,
+                    AUDIO_PIPELINE_MAX_ELEMENTS);
             goto err;
         }
 
@@ -405,12 +414,14 @@ static int audio_pipeline_early_config_check(struct audio_pipeline_config *confi
             element_config = &stage_config->element[j];
 
             if (element_config->inputs > AUDIO_ELEMENT_MAX_INPUTS) {
-                log_err("stage(%u), element(%u): too many inputs %u, max %u\n\r", i, j, element_config->inputs, AUDIO_ELEMENT_MAX_INPUTS);
+                log_err("stage(%u), element(%u): too many inputs %u, max %u\n\r", i, j, element_config->inputs,
+                        AUDIO_ELEMENT_MAX_INPUTS);
                 goto err;
             }
 
             if (element_config->outputs > AUDIO_ELEMENT_MAX_OUTPUTS) {
-                log_err("stage(%u), element(%u): too many outputs %u, max %u\n\r", i, j, element_config->outputs, AUDIO_ELEMENT_MAX_OUTPUTS);
+                log_err("stage(%u), element(%u): too many outputs %u, max %u\n\r", i, j, element_config->outputs,
+                        AUDIO_ELEMENT_MAX_OUTPUTS);
                 goto err;
             }
         }
@@ -546,8 +557,8 @@ static void audio_pipeline_buffer_init(struct audio_pipeline *pipeline, struct a
             if (buffer == NULL)
                 log_err("Can't find shared buffer");
             else
-                audio_buf_init(&pipeline->buffer[i], buffer->base, buffer->size, 0,
-                        config->buffer[i].flags, config->buffer[i].shared_id);
+                audio_buf_init(&pipeline->buffer[i], buffer->base, buffer->size, 0, config->buffer[i].flags,
+                               config->buffer[i].shared_id);
         } else {
             storage_id = config->buffer[i].storage;
 
@@ -555,8 +566,8 @@ static void audio_pipeline_buffer_init(struct audio_pipeline *pipeline, struct a
             size = config->storage[storage_id].periods * config->period;
 
             if (config->buffer[i].flags & AUDIO_BUFFER_FLAG_SHARED)
-                audio_buf_init(&pipeline->buffer[i], base, size, config->period,
-                        config->buffer[i].flags, config->buffer[i].shared_id);
+                audio_buf_init(&pipeline->buffer[i], base, size, config->period, config->buffer[i].flags,
+                               config->buffer[i].shared_id);
             else
                 audio_buf_init(&pipeline->buffer[i], base, size, 0, 0, 0);
         }

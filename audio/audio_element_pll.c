@@ -1,5 +1,5 @@
 /*
- * Copyright 2022-2024 NXP
+ * Copyright 2022-2025 NXP
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -14,10 +14,9 @@
 #include "hrpn_ctrl.h"
 #include "rtos_apps/audio/sai_drv.h"
 
-
 #define PLL_SAMPLING_PERIOD_MS 10
-#define PLL_MAX_PPB    (200000)
-#define PLL_MIN_PPB    (-200000)
+#define PLL_MAX_PPB            (200000)
+#define PLL_MIN_PPB            (-200000)
 
 enum {
     PLL_STATE_UNLOCKED,
@@ -66,7 +65,6 @@ static void pll_element_reset(struct audio_element *element);
 
 __WEAK void pll_adjust(int id, int64_t ppb)
 {
-
 }
 
 static void pll_element_response(void *ctrl_handle, uint32_t status)
@@ -80,7 +78,8 @@ static void pll_element_response(void *ctrl_handle, uint32_t status)
     }
 }
 
-int pll_element_ctrl(struct audio_element *element, struct hrpn_cmd_audio_element_pll *cmd, unsigned int len, void *ctrl_handle)
+int pll_element_ctrl(struct audio_element *element, struct hrpn_cmd_audio_element_pll *cmd, unsigned int len,
+                     void *ctrl_handle)
 {
     struct pll_element *pll;
 
@@ -189,7 +188,9 @@ static int pll_element_run(struct audio_element *element)
             goto exit;
 
         /* Initial frequency ratio, in ppb */
-        bclk_ppb = (1000000000LL * (int64_t)(pll->src_bclk - pll->initial_src_bclk)) / (pll->dst_bclk - pll->initial_dst_bclk) - 1000000000LL;
+        bclk_ppb = (1000000000LL * (int64_t)(pll->src_bclk - pll->initial_src_bclk)) /
+                       (pll->dst_bclk - pll->initial_dst_bclk) -
+                   1000000000LL;
 
         bclk_ppb += pll->prev_bclk_ppb;
 
@@ -270,8 +271,7 @@ static void pll_element_stats(struct audio_element *element)
 {
     struct pll_element *pll = element->data;
 
-    log_info("pll(%p), samples: %u\n",
-        pll, pll->sample_count);
+    log_info("pll(%p), samples: %u\n", pll, pll->sample_count);
 
     stats_compute(&pll->stats.bclk_err);
     stats_compute(&pll->stats.bclk_ppb);

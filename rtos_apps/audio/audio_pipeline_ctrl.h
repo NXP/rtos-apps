@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 NXP
+ * Copyright 2022, 2025 NXP
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -14,34 +14,34 @@
 
 /* Audio pipeline commands */
 struct hrpn_cmd_audio_pipeline_id {
-    uint32_t id;		/* pipeline id */
+    uint32_t id; /* pipeline id */
 };
 
 struct hrpn_cmd_audio_element_id {
-    uint32_t type;		/* element type */
-    uint32_t id;		/* element id, for the given type */
+    uint32_t type; /* element type */
+    uint32_t id;   /* element id, for the given type */
 };
 
 struct hrpn_cmd_audio_element_common {
-    uint32_t type;		/* command type */
+    uint32_t type; /* command type */
     struct hrpn_cmd_audio_pipeline_id pipeline;
     struct hrpn_cmd_audio_element_id element;
 };
 
 struct hrpn_resp_audio_element_routing {
-    uint32_t type;		/* command type */
+    uint32_t type; /* command type */
     uint32_t status;
 };
 
 struct hrpn_cmd_audio_element_routing_disconnect {
-    uint32_t type;		/* command type */
+    uint32_t type; /* command type */
     struct hrpn_cmd_audio_pipeline_id pipeline;
     struct hrpn_cmd_audio_element_id element;
     uint32_t output;
 };
 
 struct hrpn_cmd_audio_element_routing_connect {
-    uint32_t type;		/* command type */
+    uint32_t type; /* command type */
     struct hrpn_cmd_audio_pipeline_id pipeline;
     struct hrpn_cmd_audio_element_id element;
     uint32_t output;
@@ -64,20 +64,20 @@ struct hrpn_cmd_audio_element_pll {
 };
 
 struct hrpn_cmd_audio_element_dump {
-    uint32_t type;		/* command type */
+    uint32_t type; /* command type */
     struct hrpn_cmd_audio_pipeline_id pipeline;
     struct hrpn_cmd_audio_element_id element;
 };
 
 struct hrpn_cmd_audio_element_avtp_disconnect {
-    uint32_t type;		/* command type */
+    uint32_t type; /* command type */
     struct hrpn_cmd_audio_pipeline_id pipeline;
     struct hrpn_cmd_audio_element_id element;
     uint32_t stream_index;
 };
 
 struct hrpn_cmd_audio_element_avtp_connect {
-    uint32_t type;		/* command type */
+    uint32_t type; /* command type */
     struct hrpn_cmd_audio_pipeline_id pipeline;
     struct hrpn_cmd_audio_element_id element;
     uint32_t stream_index;
@@ -95,7 +95,7 @@ struct hrpn_cmd_audio_element_avtp {
 };
 
 struct hrpn_resp_audio_element {
-    uint32_t type;		/* command type */
+    uint32_t type; /* command type */
     uint32_t status;
 };
 
@@ -110,17 +110,17 @@ struct hrpn_cmd_audio_element {
 };
 
 struct hrpn_cmd_audio_pipeline_common {
-    uint32_t type;		/* command type */
+    uint32_t type; /* command type */
     struct hrpn_cmd_audio_pipeline_id pipeline;
 };
 
 struct hrpn_cmd_audio_pipeline_dump {
-    uint32_t type;		/* command type */
+    uint32_t type; /* command type */
     struct hrpn_cmd_audio_pipeline_id pipeline;
 };
 
 struct hrpn_resp_audio_pipeline {
-    uint32_t type;		/* command type */
+    uint32_t type; /* command type */
     uint32_t status;
 };
 

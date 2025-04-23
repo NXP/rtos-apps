@@ -1,5 +1,5 @@
 /*
- * Copyright 2022-2023 NXP
+ * Copyright 2022-2023, 2025 NXP
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -12,41 +12,41 @@
 
 #include "audio_format.h"
 
-#define AUDIO_BUFFER_FLAG_SHARED    (1 << 0)
-#define AUDIO_BUFFER_FLAG_SHARED_USER    (1 << 1)
+#define AUDIO_BUFFER_FLAG_SHARED      (1 << 0)
+#define AUDIO_BUFFER_FLAG_SHARED_USER (1 << 1)
 
 /* Configuration */
 struct audio_buffer_config {
-    unsigned int storage;    /* storage array index */
+    unsigned int storage; /* storage array index */
     unsigned int flags;
     unsigned int shared_id;
 };
 
 struct audio_buffer_storage_config {
-    audio_sample_t *base;    /* if NULL allocate on init */
-    unsigned int periods;    /* used to determine the size */
+    audio_sample_t *base; /* if NULL allocate on init */
+    unsigned int periods; /* used to determine the size */
 };
 
 /* Run Time */
 struct audio_buffer {
     audio_sample_t *base;
-    unsigned int read;    /* in units of samples */
-    unsigned int write;    /* in units of samples */
-    unsigned int size;    /* in units of samples */
+    unsigned int read;  /* in units of samples */
+    unsigned int write; /* in units of samples */
+    unsigned int size;  /* in units of samples */
     unsigned int size_mask;
-    unsigned int silence;    /* in units of samples */
+    unsigned int silence; /* in units of samples */
     unsigned int flags;
     unsigned int shared_id;
-    uint32_t input_type:4;
-    uint32_t input_id:12;
-    uint32_t input_element_id:12;
-    uint32_t output_type:4;
-    uint32_t output_id:12;
-    uint32_t output_element_id:12;
+    uint32_t input_type: 4;
+    uint32_t input_id: 12;
+    uint32_t input_element_id: 12;
+    uint32_t output_type: 4;
+    uint32_t output_id: 12;
+    uint32_t output_element_id: 12;
 };
 
-void audio_buf_init(struct audio_buffer *buf, audio_sample_t *base, unsigned int size,
-        unsigned int silence, unsigned int flags, unsigned int shared_id);
+void audio_buf_init(struct audio_buffer *buf, audio_sample_t *base, unsigned int size, unsigned int silence,
+                    unsigned int flags, unsigned int shared_id);
 unsigned int audio_buf_avail(struct audio_buffer *buf);
 unsigned int audio_buf_free(struct audio_buffer *buf);
 bool audio_buf_full(struct audio_buffer *buf);
@@ -108,7 +108,8 @@ static inline audio_sample_t *audio_buf_read_addr(struct audio_buffer *buf, unsi
     return &buf->base[buf->read + offset];
 }
 
-static inline void __audio_buf_write(struct audio_buffer *buf, unsigned int offset, audio_sample_t *samples, unsigned int len)
+static inline void __audio_buf_write(struct audio_buffer *buf, unsigned int offset, audio_sample_t *samples,
+                                     unsigned int len)
 {
     __audio_memcpy(audio_buf_write_addr(buf, offset), samples, len);
 }
@@ -118,7 +119,8 @@ static inline void __audio_buf_write_uint32(struct audio_buffer *buf, unsigned i
     *(uint32_t *)audio_buf_write_addr(buf, offset) = val;
 }
 
-static inline void __audio_buf_read(struct audio_buffer *buf, unsigned int offset, audio_sample_t *samples, unsigned int len)
+static inline void __audio_buf_read(struct audio_buffer *buf, unsigned int offset, audio_sample_t *samples,
+                                    unsigned int len)
 {
     __audio_memcpy(samples, audio_buf_read_addr(buf, offset), len);
 }

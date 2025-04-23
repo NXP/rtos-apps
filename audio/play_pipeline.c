@@ -1,5 +1,5 @@
 /*
- * Copyright 2022-2024 NXP
+ * Copyright 2022-2025 NXP
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -70,8 +70,7 @@ void play_pipeline_stats(void *handle)
 {
     struct pipeline_ctx *ctx = handle;
 
-    log_info("pipeline%d  run: %llu, err: %llu\n", ctx->id,
-            ctx->stats.run, ctx->stats.err);
+    log_info("pipeline%d  run: %llu, err: %llu\n", ctx->id, ctx->stats.run, ctx->stats.err);
 
     audio_pipeline_stats(ctx->pipeline);
 }
@@ -207,8 +206,7 @@ static void handle_avdecc_event(struct pipeline_ctx *ctx, struct genavb_control_
 
         media_stack_connect = &msg.media_stack_connect;
 
-        log_info("GENAVB_MSG_MEDIA_STACK_CONNECT stream index: %u\n",
-                media_stack_connect->stream_index);
+        log_info("GENAVB_MSG_MEDIA_STACK_CONNECT stream index: %u\n", media_stack_connect->stream_index);
 
         if (media_stack_connect->stream_params.direction == AVTP_DIRECTION_LISTENER)
             listener_connect(media_stack_connect);
@@ -221,8 +219,7 @@ static void handle_avdecc_event(struct pipeline_ctx *ctx, struct genavb_control_
 
         media_stack_disconnect = &msg.media_stack_disconnect;
 
-        log_info("GENAVB_MSG_MEDIA_STACK_DISCONNECT stream index: %u\n",
-            media_stack_disconnect->stream_index);
+        log_info("GENAVB_MSG_MEDIA_STACK_DISCONNECT stream index: %u\n", media_stack_disconnect->stream_index);
 
         if (media_stack_disconnect->direction == AVTP_DIRECTION_LISTENER)
             listener_disconnect(media_stack_disconnect->stream_index);
@@ -268,10 +265,9 @@ static void handle_avdecc_controlled_event(struct pipeline_ctx *ctx, struct gena
         log_info("AECP command type (0x%x) seq_id (%d)\n", cmd_type, ntohs(pdu->sequence_id));
 
         switch (cmd_type) {
-        case AECP_AEM_CMD_GET_AUDIO_MAP:
-        {
+        case AECP_AEM_CMD_GET_AUDIO_MAP: {
             /* GET_AUDIO_MAP not fully supported, simply respond with empty audio mappings */
-            struct aecp_aem_get_audio_map_rsp_pdu *audio_map_rsp  = (struct aecp_aem_get_audio_map_rsp_pdu *)(pdu + 1);
+            struct aecp_aem_get_audio_map_rsp_pdu *audio_map_rsp = (struct aecp_aem_get_audio_map_rsp_pdu *)(pdu + 1);
 
             audio_map_rsp->number_of_maps = htons(0);
             audio_map_rsp->number_of_mappings = htons(0);
@@ -322,19 +318,24 @@ static int avb_setup(struct pipeline_ctx *ctx)
 
     avb_hardware_init();
 
-    os_irq_register(BOARD_NET_PORT0_DRV_IRQ0, (void (*)(void(*)))BOARD_NET_PORT0_DRV_IRQ0_HND, NULL, OS_IRQ_PRIO_DEFAULT);
+    os_irq_register(BOARD_NET_PORT0_DRV_IRQ0, (void (*)(void(*)))BOARD_NET_PORT0_DRV_IRQ0_HND, NULL,
+                    OS_IRQ_PRIO_DEFAULT);
 
 #ifdef BOARD_NET_PORT0_DRV_IRQ1_HND
-    os_irq_register(BOARD_NET_PORT0_DRV_IRQ1, (void (*)(void(*)))BOARD_NET_PORT0_DRV_IRQ1_HND, NULL, OS_IRQ_PRIO_DEFAULT);
+    os_irq_register(BOARD_NET_PORT0_DRV_IRQ1, (void (*)(void(*)))BOARD_NET_PORT0_DRV_IRQ1_HND, NULL,
+                    OS_IRQ_PRIO_DEFAULT);
 #endif
 #ifdef BOARD_NET_PORT0_DRV_IRQ2_HND
-    os_irq_register(BOARD_NET_PORT0_DRV_IRQ2, (void (*)(void(*)))BOARD_NET_PORT0_DRV_IRQ2_HND, NULL, OS_IRQ_PRIO_DEFAULT);
+    os_irq_register(BOARD_NET_PORT0_DRV_IRQ2, (void (*)(void(*)))BOARD_NET_PORT0_DRV_IRQ2_HND, NULL,
+                    OS_IRQ_PRIO_DEFAULT);
 #endif
 #ifdef BOARD_NET_PORT0_DRV_IRQ3_HND
-    os_irq_register(BOARD_NET_PORT0_DRV_IRQ3, (void (*)(void(*)))BOARD_NET_PORT0_DRV_IRQ3_HND, NULL, OS_IRQ_PRIO_DEFAULT);
+    os_irq_register(BOARD_NET_PORT0_DRV_IRQ3, (void (*)(void(*)))BOARD_NET_PORT0_DRV_IRQ3_HND, NULL,
+                    OS_IRQ_PRIO_DEFAULT);
 #endif
 
-    os_irq_register(BOARD_GENAVB_TIMER_0_IRQ, (void (*)(void(*)))BOARD_GENAVB_TIMER_0_IRQ_HANDLER, NULL, OS_IRQ_PRIO_DEFAULT);
+    os_irq_register(BOARD_GENAVB_TIMER_0_IRQ, (void (*)(void(*)))BOARD_GENAVB_TIMER_0_IRQ_HANDLER, NULL,
+                    OS_IRQ_PRIO_DEFAULT);
 
 #if (CONFIG_GENAVB_USE_AVDECC == 1)
     system_config_set_avdecc(ctx->avb.aem_id, ctx->avb.milan_mode);
@@ -467,8 +468,8 @@ void *play_pipeline_init(void *parameters)
 
     ctx->async_sem = cfg->async_sem;
 
-    log_info("Starting %s (Sample Rate: %d Hz, Period: %u frames)\n",
-            pipeline_cfg->name, pipeline_cfg->sample_rate, (uint32_t)pipeline_cfg->period);
+    log_info("Starting %s (Sample Rate: %d Hz, Period: %u frames)\n", pipeline_cfg->name, pipeline_cfg->sample_rate,
+             (uint32_t)pipeline_cfg->period);
 
     return ctx;
 

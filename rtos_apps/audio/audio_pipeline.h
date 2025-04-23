@@ -1,5 +1,5 @@
 /*
- * Copyright 2022-2024 NXP
+ * Copyright 2022-2025 NXP
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -12,13 +12,14 @@
 
 #if (CONFIG_GENAVB_ENABLE == 1)
 #include "genavb/genavb.h"
-#define AUDIO_PIPELINE_AVB_MAX_BUFFER_SIZE    256 /*  2 * ( (MAX_SAMPLE_RATE * MAX_BUFFERING_TIME) / MIN_SAMPLES_PER_PERIOD ) */
+#define AUDIO_PIPELINE_AVB_MAX_BUFFER_SIZE                                                                             \
+    256 /*  2 * ( (MAX_SAMPLE_RATE * MAX_BUFFERING_TIME) / MIN_SAMPLES_PER_PERIOD ) */
 #endif
 
-#define AUDIO_PIPELINE_MAX_STAGES    4
-#define AUDIO_PIPELINE_MAX_ELEMENTS    16
-#define AUDIO_PIPELINE_MAX_BUFFERS    256
-#define MAX_PIPELINES    4
+#define AUDIO_PIPELINE_MAX_STAGES   4
+#define AUDIO_PIPELINE_MAX_ELEMENTS 16
+#define AUDIO_PIPELINE_MAX_BUFFERS  256
+#define MAX_PIPELINES               4
 
 /* Configuration */
 struct audio_pipeline_stage_config {

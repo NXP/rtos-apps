@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2021, 2024 NXP
+ * Copyright 2019-2021, 2024-2025 NXP
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -22,7 +22,8 @@ void stats_reset(struct stats *s)
  */
 void stats_print(struct stats *s)
 {
-    log(INFO, "stats(%p) %s min %d mean %d max %d rms^2 %llu stddev^2 %llu absmin %d absmax %d\n\r", s, s->name, s->min, s->mean, s->max, s->ms, s->variance, s->abs_min, s->abs_max);
+    log(INFO, "stats(%p) %s min %d mean %d max %d rms^2 %llu stddev^2 %llu absmin %d absmax %d\n\r", s, s->name, s->min,
+        s->mean, s->max, s->ms, s->variance, s->abs_min, s->abs_max);
 }
 
 /** Update stats with a given sample.

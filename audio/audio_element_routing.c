@@ -1,5 +1,5 @@
 /*
- * Copyright 2022-2024 NXP
+ * Copyright 2022-2025 NXP
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -14,7 +14,7 @@
 #include "hrpn_ctrl.h"
 
 struct routing_output {
-    unsigned int input;    /* input mapped to this output */
+    unsigned int input; /* input mapped to this output */
     struct audio_buffer *buf;
 };
 
@@ -38,7 +38,8 @@ static void routing_element_response(void *ctrl_handle, uint32_t status)
     }
 }
 
-int routing_element_ctrl(struct audio_element *element, struct hrpn_cmd_audio_element_routing *cmd, unsigned int len, void *ctrl_handle)
+int routing_element_ctrl(struct audio_element *element, struct hrpn_cmd_audio_element_routing *cmd, unsigned int len,
+                         void *ctrl_handle)
 {
     struct routing_element *routing;
     unsigned int output, input;
@@ -141,7 +142,6 @@ static void routing_element_reset(struct audio_element *element)
 
 static void routing_element_exit(struct audio_element *element)
 {
-
 }
 
 static void routing_element_dump(struct audio_element *element)
@@ -194,7 +194,8 @@ unsigned int routing_element_size(struct audio_element_config *config)
     return size;
 }
 
-int routing_element_init(struct audio_element *element, struct audio_element_config *config, struct audio_buffer *buffer)
+int routing_element_init(struct audio_element *element, struct audio_element_config *config,
+                         struct audio_buffer *buffer)
 {
     struct routing_element *routing = element->data;
     audio_sample_t *silence_storage;
@@ -212,7 +213,8 @@ int routing_element_init(struct audio_element *element, struct audio_element_con
     routing->outputs = config->outputs;
 
     routing->in = (struct audio_buffer **)((uint8_t *)routing + sizeof(struct routing_element));
-    routing->out = (struct routing_output *)((uint8_t *)routing->in + (config->inputs + 1) * sizeof(struct audio_buffer *));
+    routing->out =
+        (struct routing_output *)((uint8_t *)routing->in + (config->inputs + 1) * sizeof(struct audio_buffer *));
     silence_storage = (audio_sample_t *)((uint8_t *)routing->out + config->outputs * sizeof(struct routing_output));
 
     for (i = 0; i < routing->inputs; i++)

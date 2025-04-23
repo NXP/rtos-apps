@@ -1,5 +1,5 @@
 /*
- * Copyright 2022-2024 NXP
+ * Copyright 2022-2025 NXP
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -36,7 +36,8 @@ static void audio_element_response(void *ctrl_handle, uint32_t status)
     }
 }
 
-int audio_element_ctrl(struct audio_element *element, struct hrpn_cmd_audio_element *cmd, unsigned int len, void *ctrl_handle)
+int audio_element_ctrl(struct audio_element *element, struct hrpn_cmd_audio_element *cmd, unsigned int len,
+                       void *ctrl_handle)
 {
     int rc = 0;
 

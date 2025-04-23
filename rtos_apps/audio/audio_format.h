@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 NXP
+ * Copyright 2022, 2025 NXP
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -15,8 +15,8 @@
  */
 typedef double audio_sample_t;
 
-#define AUDIO_SAMPLE_SILENCE    ((audio_sample_t)0.0)
-#define AUDIO_SAMPLE_SCALE    ((audio_sample_t)2147483647.0)    /* 2^31 - 1 */
+#define AUDIO_SAMPLE_SILENCE ((audio_sample_t)0.0)
+#define AUDIO_SAMPLE_SCALE   ((audio_sample_t)2147483647.0) /* 2^31 - 1 */
 
 static inline int32_t audio_sample_to_int32(audio_sample_t v)
 {
@@ -57,7 +57,8 @@ static inline void audio_invert_int32(int32_t *val)
  * - output = (input & mask) << shift
  * - conversion to audio_sample_t
  */
-static inline void audio_convert_from(audio_sample_t *samples, unsigned int len, bool invert, uint32_t mask, uint32_t shift)
+static inline void audio_convert_from(audio_sample_t *samples, unsigned int len, bool invert, uint32_t mask,
+                                      uint32_t shift)
 {
     int32_t val;
     int i;
@@ -88,7 +89,8 @@ static inline void audio_convert_from(audio_sample_t *samples, unsigned int len,
  * - 32bit inversion of output
  * if invert is true, for endianess conversion.
  */
-static inline void audio_convert_to(audio_sample_t *samples, unsigned int len, bool invert, uint32_t mask, uint32_t shift)
+static inline void audio_convert_to(audio_sample_t *samples, unsigned int len, bool invert, uint32_t mask,
+                                    uint32_t shift)
 {
     audio_sample_t *sample;
     int32_t *val;

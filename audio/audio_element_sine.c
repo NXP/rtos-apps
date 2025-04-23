@@ -1,5 +1,5 @@
 /*
- * Copyright 2022-2023 NXP
+ * Copyright 2022-2023, 2025 NXP
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -18,7 +18,7 @@ struct sine_element {
     unsigned int phase;
 
     double amplitude; /* sine amplitude, ]0, 1] */
-    double dphase; /* change of phase per sample */
+    double dphase;    /* change of phase per sample */
 };
 
 static int sine_element_run(struct audio_element *element)

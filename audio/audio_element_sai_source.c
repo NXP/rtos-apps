@@ -1,5 +1,5 @@
 /*
- * Copyright 2022-2023 NXP
+ * Copyright 2022-2023, 2025 NXP
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -12,7 +12,7 @@
 
 #include "rtos_apps/audio/sai_drv.h"
 
-#define SAI_RX_FIFO_PERIODS    2
+#define SAI_RX_FIFO_PERIODS 2
 
 /*
  Sai source
@@ -34,16 +34,16 @@ use case 3
 */
 
 struct sai_source_map {
-    volatile uint32_t *rx_fifo;    /* sai rx fifo address */
-    struct audio_buffer *out;    /* output audio buffer address */
+    volatile uint32_t *rx_fifo; /* sai rx fifo address */
+    struct audio_buffer *out;   /* output audio buffer address */
 };
 
 struct sai_output {
     struct audio_buffer *buf;
     bool convert;
-    bool invert;            /* format conversion */
-    unsigned int shift;        /* format conversion */
-    unsigned int mask;        /* format conversion */
+    bool invert;        /* format conversion */
+    unsigned int shift; /* format conversion */
+    unsigned int mask;  /* format conversion */
 };
 
 struct sai_line {
@@ -143,7 +143,8 @@ static int sai_source_element_run(struct audio_element *element)
 
         for (i = 0; i < sai->out_n; i++) {
             if (sai->out[i].convert)
-                audio_convert_from(audio_buf_write_addr(sai->out[i].buf, 0), element->period, sai->out[i].invert, sai->out[i].mask, sai->out[i].shift);
+                audio_convert_from(audio_buf_write_addr(sai->out[i].buf, 0), element->period, sai->out[i].invert,
+                                   sai->out[i].mask, sai->out[i].shift);
 
             audio_buf_write_update(sai->out[i].buf, element->period);
         }
@@ -211,11 +212,9 @@ static void sai_source_element_stats(struct audio_element *element)
     for (i = 0; i < sai->line_n; i++) {
         line = &sai->line[i];
 
-        log_info("rx line: %u, sai(%u, %u)\n",
-             i, line->sai_id, line->id);
+        log_info("rx line: %u, sai(%u, %u)\n", i, line->sai_id, line->id);
 
-        log_info("  underflow: %u, overflow: %u\n",
-            line->underflow, line->overflow);
+        log_info("  underflow: %u, overflow: %u\n", line->underflow, line->overflow);
 
         stats_compute(&line->latency);
         stats_print(&line->latency);
@@ -311,10 +310,9 @@ int sai_source_element_check_config(struct audio_element_config *config)
 
             if ((SAI_RX_FIFO_PERIODS * line_config->channel_n * config->period) > SAI_RX_MAX_FIFO_SIZE) {
                 log_err("sai source: invalid rx fifo size: %u\n",
-                    SAI_RX_FIFO_PERIODS * line_config->channel_n * config->period);
+                        SAI_RX_FIFO_PERIODS * line_config->channel_n * config->period);
                 goto err;
             }
-
         }
     }
 
@@ -336,7 +334,8 @@ unsigned int sai_source_element_size(struct audio_element_config *config)
     return size;
 }
 
-int sai_source_element_init(struct audio_element *element, struct audio_element_config *config, struct audio_buffer *buffer)
+int sai_source_element_init(struct audio_element *element, struct audio_element_config *config,
+                            struct audio_buffer *buffer)
 {
     struct sai_source_element *sai = element->data;
     struct sai_rx_config *sai_config;

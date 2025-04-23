@@ -1,5 +1,5 @@
 /*
- * Copyright 2022-2023 NXP
+ * Copyright 2022-2023, 2025 NXP
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -13,7 +13,7 @@
 #include "rtos_apps/audio/audio_element_dtmf.h"
 #include "rtos_apps/audio/audio_format.h"
 
-#define USEC_PER_SEC    1000000
+#define USEC_PER_SEC 1000000
 
 struct dtmf_element {
     struct audio_buffer *out;
@@ -24,14 +24,14 @@ struct dtmf_element {
     double dphase1;
     double dphase2;
 
-    unsigned int phase;    /* current phase, in sample units */
-    unsigned int dtmf_samples;    /* number of samples to play per dtmf */
-    unsigned int dtmf_pause_samples;    /* number of samples of silence to play between each dtmf */
-    unsigned int sequence_pause_samples;    /* number of samples of silence to play between each dtmf sequence */
+    unsigned int phase;                  /* current phase, in sample units */
+    unsigned int dtmf_samples;           /* number of samples to play per dtmf */
+    unsigned int dtmf_pause_samples;     /* number of samples of silence to play between each dtmf */
+    unsigned int sequence_pause_samples; /* number of samples of silence to play between each dtmf sequence */
 
-    char *sequence;    /* dtmf sequence */
-    unsigned int sequence_size;    /* dtmf sequence size */
-    unsigned int sequence_id;    /* current dtmf in sequence */
+    char *sequence;             /* dtmf sequence */
+    unsigned int sequence_size; /* dtmf sequence size */
+    unsigned int sequence_id;   /* current dtmf in sequence */
 
     unsigned int state;
 };

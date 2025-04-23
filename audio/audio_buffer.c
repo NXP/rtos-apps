@@ -1,5 +1,5 @@
 /*
- * Copyright 2022-2023 NXP
+ * Copyright 2022-2023, 2025 NXP
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -30,20 +30,18 @@
 */
 void audio_buf_dump(struct audio_buffer *buf)
 {
-    log_info("buf(%p): base %p, size %x/%x, read %x, write %x, flags %d, shared_id %d\n",
-          buf, buf->base, buf->size, buf->size_mask, buf->read, buf->write,
-          buf->flags, buf->shared_id);
+    log_info("buf(%p): base %p, size %x/%x, read %x, write %x, flags %d, shared_id %d\n", buf, buf->base, buf->size,
+             buf->size_mask, buf->read, buf->write, buf->flags, buf->shared_id);
 }
 
 void audio_buf_routing_dump(struct audio_buffer *buf)
 {
-    log_info("buf(%p): %12s(%2d:%2d) -> %12s(%2d:%2d)\n",
-            buf, element_name[buf->input_type], buf->input_element_id, buf->input_id,
-            element_name[buf->output_type], buf->output_element_id, buf->output_id);
+    log_info("buf(%p): %12s(%2d:%2d) -> %12s(%2d:%2d)\n", buf, element_name[buf->input_type], buf->input_element_id,
+             buf->input_id, element_name[buf->output_type], buf->output_element_id, buf->output_id);
 }
 
-void audio_buf_init(struct audio_buffer *buf, audio_sample_t *base, unsigned int size,
-        unsigned int silence, unsigned int flags, unsigned int shared_id)
+void audio_buf_init(struct audio_buffer *buf, audio_sample_t *base, unsigned int size, unsigned int silence,
+                    unsigned int flags, unsigned int shared_id)
 {
     buf->base = base;
     buf->size = size;
@@ -112,7 +110,7 @@ void audio_buf_write_head(struct audio_buffer *buf, audio_sample_t *samples, uns
     read = buf->read = (buf->read - len) & buf->size_mask;
     for (i = 0; i < len; i++) {
         buf->base[read] = samples[i];
-        read  = (read + 1) & buf->size_mask;
+        read = (read + 1) & buf->size_mask;
     }
 }
 

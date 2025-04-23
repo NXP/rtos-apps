@@ -1,5 +1,5 @@
 /*
- * Copyright 2021-2024 NXP
+ * Copyright 2021-2025 NXP
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -50,22 +50,22 @@ void play_pipeline_exit_avb(void *handle);
  * "value" != 0: if "value" is in array "supported_list", "var" = "value",
  * then return 0, otherwise return -1;
  */
-#define assign_nonzero_valid_val(var, value, valid_list)        \
-({                                    \
-    int __i, __ret = -1;                        \
-                                    \
-    if ((value) == 0) {                        \
-        __ret = 0;                        \
-    } else {                            \
-        for (__i = 0; __i < ARRAY_SIZE((valid_list)); __i++) {    \
-            if ((value) == (valid_list)[__i]) {        \
-                (var) = (value);            \
-                __ret = 0;                \
-                break;                    \
-            }                        \
-        }                            \
-    }                                \
-    (__ret);                            \
-})
+#define assign_nonzero_valid_val(var, value, valid_list)                                                               \
+    ({                                                                                                                 \
+        int __i, __ret = -1;                                                                                           \
+                                                                                                                       \
+        if ((value) == 0) {                                                                                            \
+            __ret = 0;                                                                                                 \
+        } else {                                                                                                       \
+            for (__i = 0; __i < ARRAY_SIZE((valid_list)); __i++) {                                                     \
+                if ((value) == (valid_list)[__i]) {                                                                    \
+                    (var) = (value);                                                                                   \
+                    __ret = 0;                                                                                         \
+                    break;                                                                                             \
+                }                                                                                                      \
+            }                                                                                                          \
+        }                                                                                                              \
+        (__ret);                                                                                                       \
+    })
 
 #endif /* _AUDIO_H_ */

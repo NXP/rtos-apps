@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 NXP
+ * Copyright 2023, 2025 NXP
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -41,7 +41,7 @@ void pll_adjust(int id, int64_t ppb)
     dsm = orig_dsm + (ppb * ((1 << 16) * mainDiv + orig_dsm)) / 1000000000LL;
 
     if (dsm <= -(1 << 15))
-        dsm = - ((1 << 15) - 1);
+        dsm = -((1 << 15) - 1);
     else if (dsm >= (1 << 15))
         dsm = (1 << 15) - 1;
 

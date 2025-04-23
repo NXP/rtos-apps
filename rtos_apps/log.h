@@ -1,5 +1,5 @@
 /*
- * Copyright 2022, 2024 NXP
+ * Copyright 2022, 2024-2025 NXP
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -30,22 +30,22 @@ extern rtos_apps_log_level_t rtos_apps_log_level_config;
  *  or
  * 	    log_info("---\n");
  */
-#define log(LEVEL, format, ...) \
-    do { \
-        if (rtos_apps_log_level_config >= LOG_ ## LEVEL) \
-            rtos_printf("%-4.4s: %-22.22s: " format "\r", #LEVEL, __func__, ##__VA_ARGS__); \
+#define log(LEVEL, format, ...)                                                                                        \
+    do {                                                                                                               \
+        if (rtos_apps_log_level_config >= LOG_##LEVEL)                                                                 \
+            rtos_printf("%-4.4s: %-22.22s: " format "\r", #LEVEL, __func__, ##__VA_ARGS__);                            \
     } while (0)
 
-#define log_crit(...)     log(CRIT, __VA_ARGS__)
-#define log_err(...)      log(ERR, __VA_ARGS__)
-#define log_warn(...)     log(WARN, __VA_ARGS__)
-#define log_info(...)     log(INFO, __VA_ARGS__)
-#define log_debug(...)    log(DEBUG, __VA_ARGS__)
+#define log_crit(...)  log(CRIT, __VA_ARGS__)
+#define log_err(...)   log(ERR, __VA_ARGS__)
+#define log_warn(...)  log(WARN, __VA_ARGS__)
+#define log_info(...)  log(INFO, __VA_ARGS__)
+#define log_debug(...) log(DEBUG, __VA_ARGS__)
 
-#define log_raw(LEVEL, ...) \
-    do { \
-        if (rtos_apps_log_level_config >= LOG_ ## LEVEL) \
-            rtos_printf(__VA_ARGS__); \
+#define log_raw(LEVEL, ...)                                                                                            \
+    do {                                                                                                               \
+        if (rtos_apps_log_level_config >= LOG_##LEVEL)                                                                 \
+            rtos_printf(__VA_ARGS__);                                                                                  \
     } while (0)
 
 #define log_raw_info(...) log_raw(INFO, __VA_ARGS__)

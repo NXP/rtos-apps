@@ -1,5 +1,5 @@
 /*
- * Copyright 2022-2024 NXP
+ * Copyright 2022-2025 NXP
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -54,7 +54,7 @@ struct avtp_stream {
     unsigned int cur_batch_size;
     unsigned int sample_size;
 
-    struct audio_buffer *channel_buf[AVTP_RX_CHANNEL_N];    /* output audio buffer address */
+    struct audio_buffer *channel_buf[AVTP_RX_CHANNEL_N]; /* output audio buffer address */
 
     unsigned int err;
     unsigned int clock_err;
@@ -70,9 +70,9 @@ struct avtp_stream {
     float sample_dt;
 
     bool convert;
-    bool invert;    /* format conversion */
-    unsigned int shift;    /* format conversion */
-    unsigned int mask;    /* format conversion */
+    bool invert;        /* format conversion */
+    unsigned int shift; /* format conversion */
+    unsigned int mask;  /* format conversion */
 };
 
 struct avtp_source_element {
@@ -118,7 +118,8 @@ exit:
     return;
 }
 
-static void crf_listener_connect(struct avtp_source_element *avtp, unsigned int stream_index, struct genavb_stream_params *params, struct audio_element *element)
+static void crf_listener_connect(struct avtp_source_element *avtp, unsigned int stream_index,
+                                 struct genavb_stream_params *params, struct audio_element *element)
 {
     struct crf_stream *crf_stream = &avtp->crf_stream;
 
@@ -140,7 +141,8 @@ exit:
     return;
 }
 
-static void avtp_source_connect(struct avtp_source_element *avtp, unsigned int stream_index, struct genavb_stream_params *params, struct audio_element *element)
+static void avtp_source_connect(struct avtp_source_element *avtp, unsigned int stream_index,
+                                struct genavb_stream_params *params, struct audio_element *element)
 {
     struct avtp_stream *stream = &avtp->stream[stream_index];
     struct genavb_handle *handle;
@@ -181,8 +183,8 @@ static void avtp_source_connect(struct avtp_source_element *avtp, unsigned int s
     }
 
     if (avdecc_fmt_channels_per_sample(&params->format) > avtp_source_channel_n()) {
-        log_err("unsupported number of channels: %u > %u\n",
-                avdecc_fmt_channels_per_sample(&params->format), avtp_source_channel_n());
+        log_err("unsupported number of channels: %u > %u\n", avdecc_fmt_channels_per_sample(&params->format),
+                avtp_source_channel_n());
 
         goto exit;
     }
@@ -204,7 +206,8 @@ static void avtp_source_connect(struct avtp_source_element *avtp, unsigned int s
     stream->cur_batch_size = cur_batch_size;
 
     if (element->period < avdecc_fmt_samples_per_packet(&params->format, params->stream_class))
-        cur_batch_size = avdecc_fmt_samples_per_packet(&params->format, params->stream_class) * avdecc_fmt_sample_size(&params->format);
+        cur_batch_size = avdecc_fmt_samples_per_packet(&params->format, params->stream_class) *
+                         avdecc_fmt_sample_size(&params->format);
     else
         cur_batch_size = stream->cur_batch_size;
 
@@ -216,7 +219,8 @@ static void avtp_source_connect(struct avtp_source_element *avtp, unsigned int s
 
         /* Before connecting any AVTP stream, check if we need to set the clock domain source for AVB_CLOCK_DOMAIN_0 */
         if (init_media_clock_source(&avtp->crf_stream.stream, params->clock_domain, params) < 0) {
-            log_err("init_media_clock_source() failed for domain %d, can not connect stream input (%u)\n", avtp->clock_domain, stream_index);
+            log_err("init_media_clock_source() failed for domain %d, can not connect stream input (%u)\n",
+                    avtp->clock_domain, stream_index);
             return;
         }
     }
@@ -276,7 +280,8 @@ static void avtp_source_element_response(void *ctrl_handle, uint32_t status)
     }
 }
 
-int avtp_source_element_ctrl(struct audio_element *element, struct hrpn_cmd_audio_element_avtp *cmd, unsigned int len, void *ctrl_handle)
+int avtp_source_element_ctrl(struct audio_element *element, struct hrpn_cmd_audio_element_avtp *cmd, unsigned int len,
+                             void *ctrl_handle)
 {
     struct avtp_source_element *avtp;
 
@@ -337,30 +342,31 @@ err:
     return -1;
 }
 
-#define  GENAVB_PROCESSING_TIME    500000U
-static int listener_timestamp_accept(unsigned int ts, unsigned int now, unsigned int period, unsigned int sample_rate, unsigned int sr_class)
+#define GENAVB_PROCESSING_TIME 500000U
+static int listener_timestamp_accept(unsigned int ts, unsigned int now, unsigned int period, unsigned int sample_rate,
+                                     unsigned int sr_class)
 {
     /* Timestamp + playback offset must be after now (otherwise packet are too late) */
     /* Timestamp must be before now + transit time + timing uncertainty (otherwise they arrived too early) */
-    if (avtp_after(ts + GENAVB_PROCESSING_TIME, now)
-    && avtp_before(ts, now + sr_class_max_transit_time(sr_class)
-                + sr_class_max_timing_uncertainty(sr_class)))
+    if (avtp_after(ts + GENAVB_PROCESSING_TIME, now) &&
+        avtp_before(ts, now + sr_class_max_transit_time(sr_class) + sr_class_max_timing_uncertainty(sr_class)))
         return 1;
 
     return 0;
 }
 
-static int listener_receive(struct avtp_source_element *avtp, unsigned int stream_index, unsigned int period, unsigned int sample_rate)
+static int listener_receive(struct avtp_source_element *avtp, unsigned int stream_index, unsigned int period,
+                            unsigned int sample_rate)
 {
     struct avtp_stream *stream = &avtp->stream[stream_index];
     int i, j, k;
     int read_bytes = 0;
-#define PERIOD_MAX    32 /* TODO - use genavbstream_listener_receive() directly */
+#define PERIOD_MAX 32 /* TODO - use genavbstream_listener_receive() directly */
     uint32_t data[AVTP_RX_CHANNEL_N * PERIOD_MAX];
     int ret = -1;
 
     if (stream->first_start) {
-#define  MAX_EVENTS    12
+#define MAX_EVENTS 12
         struct genavb_event event[MAX_EVENTS] = {0};
         struct genavb_event *event_ts = NULL;
         unsigned int event_len = MAX_EVENTS;
@@ -391,7 +397,7 @@ static int listener_receive(struct avtp_source_element *avtp, unsigned int strea
         }
 
         for (idx = 0; idx < event_len; idx++) {
-            if (event[idx].event_mask  & (AVTP_TIMESTAMP_INVALID | AVTP_TIMESTAMP_UNCERTAIN))
+            if (event[idx].event_mask & (AVTP_TIMESTAMP_INVALID | AVTP_TIMESTAMP_UNCERTAIN))
                 continue;
 
             ts = event[idx].ts - (event[idx].index / stream->sample_size) * (unsigned int)stream->sample_dt;
@@ -453,7 +459,7 @@ static int listener_receive(struct avtp_source_element *avtp, unsigned int strea
     k = 0;
     for (j = 0; j < period; j++) {
 
-        for (i = 0; i < avtp_source_channel_n(); i++){
+        for (i = 0; i < avtp_source_channel_n(); i++) {
             __audio_buf_write_uint32(stream->channel_buf[i], j, data[k]);
             k++;
         }
@@ -461,7 +467,8 @@ static int listener_receive(struct avtp_source_element *avtp, unsigned int strea
 
     if (stream->convert) {
         for (i = 0; i < avtp_source_channel_n(); i++)
-            audio_convert_from(audio_buf_write_addr(stream->channel_buf[i], 0), period, stream->invert, stream->mask, stream->shift);
+            audio_convert_from(audio_buf_write_addr(stream->channel_buf[i], 0), period, stream->invert, stream->mask,
+                               stream->shift);
     }
 
     ret = 0;
@@ -541,8 +548,7 @@ static void avtp_source_element_dump(struct audio_element *element)
     log_info("avtp source(%p/%p)\n", avtp, element);
 
     for (i = 0; i < avtp->stream_n; i++)
-        log_info("stream %d %sconnected\n",
-            i, avtp->stream[i].connected ? "" : "dis");
+        log_info("stream %d %sconnected\n", i, avtp->stream[i].connected ? "" : "dis");
 
     for (i = 0; i < avtp->out_n; i++)
         audio_buf_dump(avtp->out[i].buf);
@@ -554,19 +560,15 @@ static void avtp_source_element_stats(struct audio_element *element)
     int i;
 
     for (i = 0; i < avtp->stream_n; i++) {
-        log_info("rx stream: %u, avtp(%p, %u)\n",
-             i, avtp->stream[i].handle, avtp->stream[i].id);
+        log_info("rx stream: %u, avtp(%p, %u)\n", i, avtp->stream[i].handle, avtp->stream[i].id);
 
-        log_info("  connected: %u\n",
-            avtp->stream[i].connected);
-        log_info("  batch size: %u\n",
-            avtp->stream[i].cur_batch_size);
-        log_info("  underflow: %u, overflow: %u, err: %u, received: %u\n",
-            avtp->stream[i].underflow, avtp->stream[i].overflow, avtp->stream[i].err,
-            avtp->stream[i].received);
-        log_info("  sync errors => read: %u, underflow: %u, clock: %u, ts: %u, event: %u\n",
-            avtp->stream[i].sync_err, avtp->stream[i].start_underflow, avtp->stream[i].clock_err,
-            avtp->stream[i].ts_err, avtp->stream[i].event_err);
+        log_info("  connected: %u\n", avtp->stream[i].connected);
+        log_info("  batch size: %u\n", avtp->stream[i].cur_batch_size);
+        log_info("  underflow: %u, overflow: %u, err: %u, received: %u\n", avtp->stream[i].underflow,
+                 avtp->stream[i].overflow, avtp->stream[i].err, avtp->stream[i].received);
+        log_info("  sync errors => read: %u, underflow: %u, clock: %u, ts: %u, event: %u\n", avtp->stream[i].sync_err,
+                 avtp->stream[i].start_underflow, avtp->stream[i].clock_err, avtp->stream[i].ts_err,
+                 avtp->stream[i].event_err);
     }
     log_info("crf rx connected: %u\n", avtp->crf_stream.connected);
 }
@@ -584,8 +586,7 @@ int avtp_source_element_check_config(struct audio_element_config *config)
     }
 
     if (config->u.avtp_source.stream_n > avtp_source_stream_n()) {
-        log_err("number of streams not supported: %u != %u\n",
-                   config->u.avtp_source.stream_n, avtp_source_stream_n());
+        log_err("number of streams not supported: %u != %u\n", config->u.avtp_source.stream_n, avtp_source_stream_n());
         goto err;
     }
 
@@ -600,7 +601,8 @@ unsigned int avtp_source_element_size(struct audio_element_config *config)
     return sizeof(struct avtp_source_element);
 }
 
-int avtp_source_element_init(struct audio_element *element, struct audio_element_config *config, struct audio_buffer *buffer)
+int avtp_source_element_init(struct audio_element *element, struct audio_element_config *config,
+                             struct audio_buffer *buffer)
 {
     struct avtp_source_element *avtp = element->data;
     int i, j, k;

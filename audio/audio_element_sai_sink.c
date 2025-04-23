@@ -1,5 +1,5 @@
 /*
- * Copyright 2022-2023 NXP
+ * Copyright 2022-2023, 2025 NXP
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -12,19 +12,19 @@
 
 #include "rtos_apps/audio/sai_drv.h"
 
-#define SAI_TX_FIFO_PERIODS    2
+#define SAI_TX_FIFO_PERIODS 2
 
 struct sai_sink_map {
-    volatile uint32_t *tx_fifo;    /* sai tx fifo address */
+    volatile uint32_t *tx_fifo; /* sai tx fifo address */
     struct audio_buffer *in;    /* input audio buffer address */
 };
 
 struct sai_input {
-    struct audio_buffer *buf;    /* input audio buffer address */
+    struct audio_buffer *buf; /* input audio buffer address */
     bool convert;
-    bool invert;    /* format conversion */
-    unsigned int shift;    /* format conversion */
-    unsigned int mask;    /* format conversion */
+    bool invert;        /* format conversion */
+    unsigned int shift; /* format conversion */
+    unsigned int mask;  /* format conversion */
 };
 
 struct sai_line {
@@ -61,7 +61,8 @@ static void sai_sink_element_fifo_write(struct audio_element *element)
 
     for (i = 0; i < sai->in_n; i++) {
         if (sai->in[i].convert)
-            audio_convert_to(audio_buf_read_addr(sai->in[i].buf, 0), element->period, sai->in[i].invert, sai->in[i].mask, sai->in[i].shift);
+            audio_convert_to(audio_buf_read_addr(sai->in[i].buf, 0), element->period, sai->in[i].invert,
+                             sai->in[i].mask, sai->in[i].shift);
     }
 
     for (i = 0; i < element->period; i++) {
@@ -204,11 +205,9 @@ static void sai_sink_element_stats(struct audio_element *element)
     for (i = 0; i < sai->line_n; i++) {
         line = &sai->line[i];
 
-        log_info("tx line: %u, sai(%u, %u)\n",
-             i, line->sai_id, line->id);
+        log_info("tx line: %u, sai(%u, %u)\n", i, line->sai_id, line->id);
 
-        log_info("  underflow: %u, overflow: %u\n",
-            line->underflow, line->overflow);
+        log_info("  underflow: %u, overflow: %u\n", line->underflow, line->overflow);
 
         stats_compute(&line->latency);
         stats_print(&line->latency);
@@ -303,7 +302,8 @@ int sai_sink_element_check_config(struct audio_element_config *config)
             }
 
             if ((SAI_TX_FIFO_PERIODS * line_config->channel_n * config->period) > SAI_TX_MAX_FIFO_SIZE) {
-                log_err("sai sink: invalid tx fifo size: %u\n", SAI_TX_FIFO_PERIODS * line_config->channel_n * config->period);
+                log_err("sai sink: invalid tx fifo size: %u\n",
+                        SAI_TX_FIFO_PERIODS * line_config->channel_n * config->period);
                 goto err;
             }
         }
@@ -327,7 +327,8 @@ unsigned int sai_sink_element_size(struct audio_element_config *config)
     return size;
 }
 
-int sai_sink_element_init(struct audio_element *element, struct audio_element_config *config, struct audio_buffer *buffer)
+int sai_sink_element_init(struct audio_element *element, struct audio_element_config *config,
+                          struct audio_buffer *buffer)
 {
     struct sai_sink_element *sai = element->data;
     struct sai_tx_config *sai_config;

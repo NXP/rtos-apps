@@ -1,5 +1,5 @@
 /*
- * Copyright 2023-2024 NXP
+ * Copyright 2023-2025 NXP
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -54,9 +54,9 @@ struct avtp_stream {
     unsigned int sent;
 
     bool convert;
-    bool invert;    /* format conversion */
-    unsigned int shift;    /* format conversion */
-    unsigned int mask;    /* format conversion */
+    bool invert;        /* format conversion */
+    unsigned int shift; /* format conversion */
+    unsigned int mask;  /* format conversion */
 };
 
 struct avtp_sink_element {
@@ -102,7 +102,8 @@ exit:
     return;
 }
 
-static void crf_talker_connect(struct avtp_sink_element *avtp, unsigned int stream_index, struct genavb_stream_params *params, struct audio_element *element)
+static void crf_talker_connect(struct avtp_sink_element *avtp, unsigned int stream_index,
+                               struct genavb_stream_params *params, struct audio_element *element)
 {
     struct crf_stream *crf_stream = &avtp->crf_stream;
 
@@ -124,7 +125,8 @@ exit:
     return;
 }
 
-static void avtp_sink_connect(struct avtp_sink_element *avtp, unsigned int stream_index, struct genavb_stream_params *params, struct audio_element *element)
+static void avtp_sink_connect(struct avtp_sink_element *avtp, unsigned int stream_index,
+                              struct genavb_stream_params *params, struct audio_element *element)
 {
     struct avtp_stream *stream = &avtp->stream[stream_index];
     struct genavb_handle *handle;
@@ -165,7 +167,8 @@ static void avtp_sink_connect(struct avtp_sink_element *avtp, unsigned int strea
     }
 
     if (avdecc_fmt_channels_per_sample(&params->format) > avtp_sink_channel_n()) {
-        log_err("unsupported number of channels: %u > %u\n", avdecc_fmt_channels_per_sample(&params->format), avtp_sink_channel_n());
+        log_err("unsupported number of channels: %u > %u\n", avdecc_fmt_channels_per_sample(&params->format),
+                avtp_sink_channel_n());
 
         goto exit;
     }
@@ -185,7 +188,8 @@ static void avtp_sink_connect(struct avtp_sink_element *avtp, unsigned int strea
     stream->cur_batch_size = cur_batch_size;
 
     if (element->period < avdecc_fmt_samples_per_packet(&params->format, params->stream_class))
-        cur_batch_size = avdecc_fmt_samples_per_packet(&params->format, params->stream_class) * avdecc_fmt_sample_size(&params->format);
+        cur_batch_size = avdecc_fmt_samples_per_packet(&params->format, params->stream_class) *
+                         avdecc_fmt_sample_size(&params->format);
     else
         cur_batch_size = stream->cur_batch_size;
 
@@ -197,7 +201,8 @@ static void avtp_sink_connect(struct avtp_sink_element *avtp, unsigned int strea
 
         /* Before connecting any AVTP stream, check if we need to set the clock domain source for AVB_CLOCK_DOMAIN_0 */
         if (init_media_clock_source(&avtp->crf_stream.stream, params->clock_domain, NULL) < 0) {
-            log_err("init_media_clock_source() failed for domain %d, can not connect stream output (%u)\n", avtp->clock_domain, stream_index);
+            log_err("init_media_clock_source() failed for domain %d, can not connect stream output (%u)\n",
+                    avtp->clock_domain, stream_index);
             return;
         }
     }
@@ -255,7 +260,8 @@ static void avtp_sink_element_response(void *ctrl_handle, uint32_t status)
     }
 }
 
-int avtp_sink_element_ctrl(struct audio_element *element, struct hrpn_cmd_audio_element_avtp *cmd, unsigned int len, void *ctrl_handle)
+int avtp_sink_element_ctrl(struct audio_element *element, struct hrpn_cmd_audio_element_avtp *cmd, unsigned int len,
+                           void *ctrl_handle)
 {
     struct avtp_sink_element *avtp;
 
@@ -325,10 +331,11 @@ static int talker_send(struct avtp_sink_element *avtp, unsigned int stream_index
 
     if (stream->convert)
         for (i = 0; i < avtp_sink_channel_n(); i++)
-            audio_convert_to(audio_buf_read_addr(stream->channel_buf[i], 0), period, stream->invert, stream->mask, stream->shift);
+            audio_convert_to(audio_buf_read_addr(stream->channel_buf[i], 0), period, stream->invert, stream->mask,
+                             stream->shift);
 
 #define PERIOD_MAX 32
-    uint32_t data[AVTP_TX_CHANNEL_N * PERIOD_MAX] = { 0 }; /* dynamic size with period ? */
+    uint32_t data[AVTP_TX_CHANNEL_N * PERIOD_MAX] = {0}; /* dynamic size with period ? */
     k = 0;
     for (j = 0; j < period; j++) {
         for (i = 0; i < avtp_sink_channel_n(); i++) {
@@ -390,7 +397,7 @@ static void avtp_sink_element_reset(struct audio_element *element)
     event.index = 0;
     for (i = 0; i < avtp->stream_n; i++) {
         stream = &avtp->stream[i];
-        if (stream->handle){
+        if (stream->handle) {
             rc = genavb_stream_send(stream->handle, NULL, 0, &event, 1);
             if (rc)
                 log_err("genavb_stream flush failed !\n");
@@ -436,7 +443,8 @@ static void avtp_sink_element_stats(struct audio_element *element)
 
         log_info("  connected: %u\n", avtp->stream[i].connected);
         log_info("  batch size: %u\n", avtp->stream[i].cur_batch_size);
-        log_info("  underflow: %u, overflow: %u err: %u sent: %u\n", avtp->stream[i].underflow, avtp->stream[i].overflow, avtp->stream[i].err, avtp->stream[i].sent);
+        log_info("  underflow: %u, overflow: %u err: %u sent: %u\n", avtp->stream[i].underflow,
+                 avtp->stream[i].overflow, avtp->stream[i].err, avtp->stream[i].sent);
     }
     log_info("crf tx connected: %u\n", avtp->crf_stream.connected);
 }
@@ -454,15 +462,14 @@ int avtp_sink_element_check_config(struct audio_element_config *config)
     }
 
     if (config->u.avtp_sink.stream_n > avtp_sink_stream_n()) {
-        log_err("number of streams not supported: %u != %u\n",
-                   config->u.avtp_sink.stream_n, avtp_sink_stream_n());
+        log_err("number of streams not supported: %u != %u\n", config->u.avtp_sink.stream_n, avtp_sink_stream_n());
         goto err;
     }
 
     return 0;
 
-    err:
-        return -1;
+err:
+    return -1;
 }
 
 unsigned int avtp_sink_element_size(struct audio_element_config *config)
@@ -470,7 +477,8 @@ unsigned int avtp_sink_element_size(struct audio_element_config *config)
     return sizeof(struct avtp_sink_element);
 }
 
-int avtp_sink_element_init(struct audio_element *element, struct audio_element_config *config, struct audio_buffer *buffer)
+int avtp_sink_element_init(struct audio_element *element, struct audio_element_config *config,
+                           struct audio_buffer *buffer)
 {
     struct avtp_sink_element *avtp = element->data;
     int i, j, k;
