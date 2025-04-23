@@ -10,6 +10,7 @@
 #include "rtos_apps/audio/audio_pipeline.h"
 #include "hrpn_ctrl.h"
 
+/* clang-format off */
 const char *element_name[AUDIO_ELEMENT_MAX] = {
     [AUDIO_ELEMENT_DTMF_SOURCE] = "DTMF_SOURCE",
     [AUDIO_ELEMENT_ROUTING] = "ROUTING",
@@ -22,6 +23,7 @@ const char *element_name[AUDIO_ELEMENT_MAX] = {
     [AUDIO_ELEMENT_AVTP_SINK] = "AVTP_SINK",
 #endif
 };
+/* clang-format on */
 
 static void audio_element_response(void *ctrl_handle, uint32_t status)
 {
