@@ -8,7 +8,7 @@
 #include "rtos_apps/audio/audio_app.h"
 #include "rtos_apps/audio/audio_element.h"
 #include "rtos_apps/audio/audio_pipeline.h"
-#include "hrpn_ctrl.h"
+#include "rtos_apps/audio/audio_ctrl.h"
 
 /* clang-format off */
 const char *element_name[AUDIO_ELEMENT_MAX] = {
@@ -27,23 +27,23 @@ const char *element_name[AUDIO_ELEMENT_MAX] = {
 
 static void audio_element_response(void *ctrl_handle, uint32_t status)
 {
-    struct hrpn_resp_audio_element resp;
+    struct audio_resp_element resp;
 
     if (ctrl_handle) {
-        resp.type = HRPN_RESP_TYPE_AUDIO_ELEMENT;
+        resp.type = AUDIO_RESP_TYPE_ELEMENT;
         resp.status = status;
         audio_app_ctrl_send(ctrl_handle, &resp, sizeof(resp));
     }
 }
 
-int audio_element_ctrl(struct audio_element *element, struct hrpn_cmd_audio_element *cmd, unsigned int len,
+int audio_element_ctrl(struct audio_element *element, struct audio_cmd_element *cmd, unsigned int len,
                        void *ctrl_handle)
 {
     int rc = 0;
 
     switch (cmd->u.common.type) {
-    case HRPN_CMD_TYPE_AUDIO_ELEMENT_DUMP:
-        if (len != sizeof(struct hrpn_cmd_audio_element_dump))
+    case AUDIO_CMD_TYPE_ELEMENT_DUMP:
+        if (len != sizeof(struct audio_cmd_element_dump))
             goto err;
 
         if (!element)
@@ -51,28 +51,28 @@ int audio_element_ctrl(struct audio_element *element, struct hrpn_cmd_audio_elem
 
         audio_element_dump(element);
 
-        audio_element_response(ctrl_handle, HRPN_RESP_STATUS_SUCCESS);
+        audio_element_response(ctrl_handle, AUDIO_RESP_STATUS_SUCCESS);
 
         break;
 
-    case HRPN_CMD_TYPE_AUDIO_ELEMENT_ROUTING_CONNECT:
-    case HRPN_CMD_TYPE_AUDIO_ELEMENT_ROUTING_DISCONNECT:
+    case AUDIO_CMD_TYPE_ELEMENT_ROUTING_CONNECT:
+    case AUDIO_CMD_TYPE_ELEMENT_ROUTING_DISCONNECT:
         rc = routing_element_ctrl(element, &cmd->u.routing, len, ctrl_handle);
         break;
 
-    case HRPN_CMD_TYPE_AUDIO_ELEMENT_PLL_ENABLE:
-    case HRPN_CMD_TYPE_AUDIO_ELEMENT_PLL_DISABLE:
-    case HRPN_CMD_TYPE_AUDIO_ELEMENT_PLL_ID:
+    case AUDIO_CMD_TYPE_ELEMENT_PLL_ENABLE:
+    case AUDIO_CMD_TYPE_ELEMENT_PLL_DISABLE:
+    case AUDIO_CMD_TYPE_ELEMENT_PLL_ID:
         rc = pll_element_ctrl(element, &cmd->u.pll, len, ctrl_handle);
         break;
 
 #if (CONFIG_GENAVB_ENABLE == 1)
-    case HRPN_CMD_TYPE_AUDIO_ELEMENT_AVTP_SOURCE_CONNECT:
-    case HRPN_CMD_TYPE_AUDIO_ELEMENT_AVTP_SOURCE_DISCONNECT:
+    case AUDIO_CMD_TYPE_ELEMENT_AVTP_SOURCE_CONNECT:
+    case AUDIO_CMD_TYPE_ELEMENT_AVTP_SOURCE_DISCONNECT:
         rc = avtp_source_element_ctrl(element, &cmd->u.avtp, len, ctrl_handle);
         break;
-    case HRPN_CMD_TYPE_AUDIO_ELEMENT_AVTP_SINK_CONNECT:
-    case HRPN_CMD_TYPE_AUDIO_ELEMENT_AVTP_SINK_DISCONNECT:
+    case AUDIO_CMD_TYPE_ELEMENT_AVTP_SINK_CONNECT:
+    case AUDIO_CMD_TYPE_ELEMENT_AVTP_SINK_DISCONNECT:
         rc = avtp_sink_element_ctrl(element, &cmd->u.avtp, len, ctrl_handle);
         break;
 #endif
@@ -85,7 +85,7 @@ int audio_element_ctrl(struct audio_element *element, struct hrpn_cmd_audio_elem
     return rc;
 
 err:
-    audio_element_response(ctrl_handle, HRPN_RESP_STATUS_ERROR);
+    audio_element_response(ctrl_handle, AUDIO_RESP_STATUS_ERROR);
 
     return -1;
 }

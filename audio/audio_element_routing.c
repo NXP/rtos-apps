@@ -11,7 +11,7 @@
 #include "rtos_apps/audio/audio_element.h"
 #include "rtos_apps/audio/audio_element_routing.h"
 #include "rtos_apps/audio/audio_format.h"
-#include "hrpn_ctrl.h"
+#include "rtos_apps/audio/audio_ctrl.h"
 
 struct routing_output {
     unsigned int input; /* input mapped to this output */
@@ -29,16 +29,16 @@ struct routing_element {
 
 static void routing_element_response(void *ctrl_handle, uint32_t status)
 {
-    struct hrpn_resp_audio_element_routing resp;
+    struct audio_resp_element_routing resp;
 
     if (ctrl_handle) {
-        resp.type = HRPN_RESP_TYPE_AUDIO_ELEMENT_ROUTING;
+        resp.type = AUDIO_RESP_TYPE_ELEMENT_ROUTING;
         resp.status = status;
         audio_app_ctrl_send(ctrl_handle, &resp, sizeof(resp));
     }
 }
 
-int routing_element_ctrl(struct audio_element *element, struct hrpn_cmd_audio_element_routing *cmd, unsigned int len,
+int routing_element_ctrl(struct audio_element *element, struct audio_cmd_element_routing *cmd, unsigned int len,
                          void *ctrl_handle)
 {
     struct routing_element *routing;
@@ -53,8 +53,8 @@ int routing_element_ctrl(struct audio_element *element, struct hrpn_cmd_audio_el
     routing = element->data;
 
     switch (cmd->u.common.type) {
-    case HRPN_CMD_TYPE_AUDIO_ELEMENT_ROUTING_CONNECT:
-        if ((len != sizeof(struct hrpn_cmd_audio_element_routing_connect)))
+    case AUDIO_CMD_TYPE_ELEMENT_ROUTING_CONNECT:
+        if ((len != sizeof(struct audio_cmd_element_routing_connect)))
             goto err;
 
         if (cmd->u.connect.output >= routing->outputs)
@@ -68,8 +68,8 @@ int routing_element_ctrl(struct audio_element *element, struct hrpn_cmd_audio_el
 
         break;
 
-    case HRPN_CMD_TYPE_AUDIO_ELEMENT_ROUTING_DISCONNECT:
-        if ((len != sizeof(struct hrpn_cmd_audio_element_routing_disconnect)))
+    case AUDIO_CMD_TYPE_ELEMENT_ROUTING_DISCONNECT:
+        if ((len != sizeof(struct audio_cmd_element_routing_disconnect)))
             goto err;
 
         if (cmd->u.disconnect.output >= routing->outputs)
@@ -91,12 +91,12 @@ int routing_element_ctrl(struct audio_element *element, struct hrpn_cmd_audio_el
 
     rtos_mutex_unlock(&routing->mutex);
 
-    routing_element_response(ctrl_handle, HRPN_RESP_STATUS_SUCCESS);
+    routing_element_response(ctrl_handle, AUDIO_RESP_STATUS_SUCCESS);
 
     return 0;
 
 err:
-    routing_element_response(ctrl_handle, HRPN_RESP_STATUS_ERROR);
+    routing_element_response(ctrl_handle, AUDIO_RESP_STATUS_ERROR);
 
     return -1;
 }

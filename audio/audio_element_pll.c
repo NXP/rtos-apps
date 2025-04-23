@@ -11,7 +11,7 @@
 #include "rtos_apps/audio/audio_app.h"
 #include "rtos_apps/audio/audio_element.h"
 #include "rtos_apps/audio/audio_element_pll.h"
-#include "hrpn_ctrl.h"
+#include "rtos_apps/audio/audio_ctrl.h"
 #include "rtos_apps/audio/sai_drv.h"
 
 #define PLL_SAMPLING_PERIOD_MS 10
@@ -69,16 +69,16 @@ __WEAK void pll_adjust(int id, int64_t ppb)
 
 static void pll_element_response(void *ctrl_handle, uint32_t status)
 {
-    struct hrpn_resp_audio_element resp;
+    struct audio_resp_element resp;
 
     if (ctrl_handle) {
-        resp.type = HRPN_RESP_TYPE_AUDIO_ELEMENT_PLL;
+        resp.type = AUDIO_RESP_TYPE_ELEMENT_PLL;
         resp.status = status;
         audio_app_ctrl_send(ctrl_handle, &resp, sizeof(resp));
     }
 }
 
-int pll_element_ctrl(struct audio_element *element, struct hrpn_cmd_audio_element_pll *cmd, unsigned int len,
+int pll_element_ctrl(struct audio_element *element, struct audio_cmd_element_pll *cmd, unsigned int len,
                      void *ctrl_handle)
 {
     struct pll_element *pll;
@@ -92,7 +92,7 @@ int pll_element_ctrl(struct audio_element *element, struct hrpn_cmd_audio_elemen
     pll = element->data;
 
     switch (cmd->u.common.type) {
-    case HRPN_CMD_TYPE_AUDIO_ELEMENT_PLL_ENABLE:
+    case AUDIO_CMD_TYPE_ELEMENT_PLL_ENABLE:
         rtos_mutex_lock(&pll->mutex, RTOS_WAIT_FOREVER);
 
         pll_element_reset(element);
@@ -102,7 +102,7 @@ int pll_element_ctrl(struct audio_element *element, struct hrpn_cmd_audio_elemen
 
         break;
 
-    case HRPN_CMD_TYPE_AUDIO_ELEMENT_PLL_DISABLE:
+    case AUDIO_CMD_TYPE_ELEMENT_PLL_DISABLE:
         rtos_mutex_lock(&pll->mutex, RTOS_WAIT_FOREVER);
 
         pll->enabled = false;
@@ -111,7 +111,7 @@ int pll_element_ctrl(struct audio_element *element, struct hrpn_cmd_audio_elemen
 
         break;
 
-    case HRPN_CMD_TYPE_AUDIO_ELEMENT_PLL_ID:
+    case AUDIO_CMD_TYPE_ELEMENT_PLL_ID:
         rtos_mutex_lock(&pll->mutex, RTOS_WAIT_FOREVER);
 
         pll->pll_id = cmd->pll_id;
@@ -127,12 +127,12 @@ int pll_element_ctrl(struct audio_element *element, struct hrpn_cmd_audio_elemen
         break;
     }
 
-    pll_element_response(ctrl_handle, HRPN_RESP_STATUS_SUCCESS);
+    pll_element_response(ctrl_handle, AUDIO_RESP_STATUS_SUCCESS);
 
     return 0;
 
 err:
-    pll_element_response(ctrl_handle, HRPN_RESP_STATUS_ERROR);
+    pll_element_response(ctrl_handle, AUDIO_RESP_STATUS_ERROR);
     return -1;
 }
 

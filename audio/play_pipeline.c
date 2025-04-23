@@ -14,7 +14,7 @@
 #include "rtos_apps/log.h"
 #include "rtos_apps/audio/audio_pipeline.h"
 #include "rtos_apps/audio/audio.h"
-#include "hrpn_ctrl.h"
+#include "rtos_apps/audio/audio_ctrl.h"
 #include "rtos_abstraction_layer.h"
 
 #if (CONFIG_GENAVB_ENABLE == 1)
@@ -22,6 +22,7 @@
 #include "avb_tsn/clock_domain.h"
 #include "avb_tsn/genavb.h"
 #include "avb_tsn/stats_task.h"
+#include "genavb/control.h"
 #include "genavb/genavb.h"
 #include "os/irq.h"
 #include "system_config.h"
@@ -113,11 +114,11 @@ int play_pipeline_run(void *handle, struct event *e)
 
 static void listener_disconnect(unsigned int stream_index)
 {
-    struct hrpn_cmd_audio_element_avtp_disconnect disconnect;
+    struct audio_cmd_element_avtp_disconnect disconnect;
     int i;
 
     /* need to disconnect streams in AVTP audio element */
-    disconnect.type = HRPN_CMD_TYPE_AUDIO_ELEMENT_AVTP_SOURCE_DISCONNECT;
+    disconnect.type = AUDIO_CMD_TYPE_ELEMENT_AVTP_SOURCE_DISCONNECT;
     disconnect.pipeline.id = 0;
     disconnect.element.type = AUDIO_ELEMENT_AVTP_SOURCE;
     disconnect.element.id = 0;
@@ -125,17 +126,17 @@ static void listener_disconnect(unsigned int stream_index)
 
     for (i = 0; i < MAX_PIPELINES; i++) {
         disconnect.pipeline.id = i;
-        audio_pipeline_ctrl((struct hrpn_cmd_audio_pipeline *)&disconnect, sizeof(disconnect), NULL);
+        audio_pipeline_ctrl((struct audio_cmd_pipeline *)&disconnect, sizeof(disconnect), NULL);
     }
 }
 
 static void listener_connect(struct genavb_msg_media_stack_connect *media_stack_connect)
 {
-    struct hrpn_cmd_audio_element_avtp_connect connect;
+    struct audio_cmd_element_avtp_connect connect;
     int i;
 
     /* need to connect streams in AVTP audio element */
-    connect.type = HRPN_CMD_TYPE_AUDIO_ELEMENT_AVTP_SOURCE_CONNECT;
+    connect.type = AUDIO_CMD_TYPE_ELEMENT_AVTP_SOURCE_CONNECT;
     connect.pipeline.id = 0;
     connect.element.type = AUDIO_ELEMENT_AVTP_SOURCE;
     connect.element.id = 0;
@@ -144,17 +145,17 @@ static void listener_connect(struct genavb_msg_media_stack_connect *media_stack_
 
     for (i = 0; i < MAX_PIPELINES; i++) {
         connect.pipeline.id = i;
-        audio_pipeline_ctrl((struct hrpn_cmd_audio_pipeline *)&connect, sizeof(connect), NULL);
+        audio_pipeline_ctrl((struct audio_cmd_pipeline *)&connect, sizeof(connect), NULL);
     }
 }
 
 static void talker_disconnect(unsigned int stream_index)
 {
-    struct hrpn_cmd_audio_element_avtp_disconnect disconnect;
+    struct audio_cmd_element_avtp_disconnect disconnect;
     int i;
 
     /* need to disconnect streams in AVTP audio element */
-    disconnect.type = HRPN_CMD_TYPE_AUDIO_ELEMENT_AVTP_SINK_DISCONNECT;
+    disconnect.type = AUDIO_CMD_TYPE_ELEMENT_AVTP_SINK_DISCONNECT;
     disconnect.pipeline.id = 0;
     disconnect.element.type = AUDIO_ELEMENT_AVTP_SINK;
     disconnect.element.id = 0;
@@ -162,17 +163,17 @@ static void talker_disconnect(unsigned int stream_index)
 
     for (i = 0; i < MAX_PIPELINES; i++) {
         disconnect.pipeline.id = i;
-        audio_pipeline_ctrl((struct hrpn_cmd_audio_pipeline *)&disconnect, sizeof(disconnect), NULL);
+        audio_pipeline_ctrl((struct audio_cmd_pipeline *)&disconnect, sizeof(disconnect), NULL);
     }
 }
 
 static void talker_connect(struct genavb_msg_media_stack_connect *media_stack_connect)
 {
-    struct hrpn_cmd_audio_element_avtp_connect connect;
+    struct audio_cmd_element_avtp_connect connect;
     int i;
 
     /* need to connect streams in AVTP audio element */
-    connect.type = HRPN_CMD_TYPE_AUDIO_ELEMENT_AVTP_SINK_CONNECT;
+    connect.type = AUDIO_CMD_TYPE_ELEMENT_AVTP_SINK_CONNECT;
     connect.pipeline.id = 0;
     connect.element.type = AUDIO_ELEMENT_AVTP_SINK;
     connect.element.id = 0;
@@ -181,7 +182,7 @@ static void talker_connect(struct genavb_msg_media_stack_connect *media_stack_co
 
     for (i = 0; i < MAX_PIPELINES; i++) {
         connect.pipeline.id = i;
-        audio_pipeline_ctrl((struct hrpn_cmd_audio_pipeline *)&connect, sizeof(connect), NULL);
+        audio_pipeline_ctrl((struct audio_cmd_pipeline *)&connect, sizeof(connect), NULL);
     }
 }
 

@@ -20,7 +20,7 @@ struct pll_element_config {
 struct audio_element_config;
 struct audio_element;
 
-int pll_element_ctrl(struct audio_element *element, struct hrpn_cmd_audio_element_pll *cmd, unsigned int len,
+int pll_element_ctrl(struct audio_element *element, struct audio_cmd_element_pll *cmd, unsigned int len,
                      void *ctrl_handle);
 int pll_element_check_config(struct audio_element_config *config);
 unsigned int pll_element_size(struct audio_element_config *config);

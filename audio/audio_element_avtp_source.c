@@ -23,7 +23,7 @@
 #include "rtos_apps/audio/audio_element_avtp_source.h"
 #include "rtos_apps/audio/audio_format.h"
 #include "rtos_apps/audio/audio_pipeline.h"
-#include "hrpn_ctrl.h"
+#include "rtos_apps/audio/audio_ctrl.h"
 
 #include "types.h"
 
@@ -271,16 +271,16 @@ exit:
 
 static void avtp_source_element_response(void *ctrl_handle, uint32_t status)
 {
-    struct hrpn_resp_audio_element resp;
+    struct audio_resp_element resp;
 
     if (ctrl_handle) {
-        resp.type = HRPN_RESP_TYPE_AUDIO_ELEMENT_AVTP;
+        resp.type = AUDIO_RESP_TYPE_ELEMENT_AVTP;
         resp.status = status;
         audio_app_ctrl_send(ctrl_handle, &resp, sizeof(resp));
     }
 }
 
-int avtp_source_element_ctrl(struct audio_element *element, struct hrpn_cmd_audio_element_avtp *cmd, unsigned int len,
+int avtp_source_element_ctrl(struct audio_element *element, struct audio_cmd_element_avtp *cmd, unsigned int len,
                              void *ctrl_handle)
 {
     struct avtp_source_element *avtp;
@@ -294,9 +294,9 @@ int avtp_source_element_ctrl(struct audio_element *element, struct hrpn_cmd_audi
     avtp = element->data;
 
     switch (cmd->u.common.type) {
-    case HRPN_CMD_TYPE_AUDIO_ELEMENT_AVTP_SOURCE_CONNECT:
+    case AUDIO_CMD_TYPE_ELEMENT_AVTP_SOURCE_CONNECT:
 
-        if ((len != sizeof(struct hrpn_cmd_audio_element_avtp_connect)))
+        if ((len != sizeof(struct audio_cmd_element_avtp_connect)))
             goto err;
 
         if (cmd->u.connect.stream_index >= avtp->stream_n + 1)
@@ -312,9 +312,9 @@ int avtp_source_element_ctrl(struct audio_element *element, struct hrpn_cmd_audi
 
         break;
 
-    case HRPN_CMD_TYPE_AUDIO_ELEMENT_AVTP_SOURCE_DISCONNECT:
+    case AUDIO_CMD_TYPE_ELEMENT_AVTP_SOURCE_DISCONNECT:
 
-        if ((len != sizeof(struct hrpn_cmd_audio_element_avtp_disconnect)))
+        if ((len != sizeof(struct audio_cmd_element_avtp_disconnect)))
             goto err;
 
         if (cmd->u.disconnect.stream_index >= avtp->stream_n + 1)
@@ -332,12 +332,12 @@ int avtp_source_element_ctrl(struct audio_element *element, struct hrpn_cmd_audi
         break;
     }
 
-    avtp_source_element_response(ctrl_handle, HRPN_RESP_STATUS_SUCCESS);
+    avtp_source_element_response(ctrl_handle, AUDIO_RESP_STATUS_SUCCESS);
 
     return 0;
 
 err:
-    avtp_source_element_response(ctrl_handle, HRPN_RESP_STATUS_ERROR);
+    avtp_source_element_response(ctrl_handle, AUDIO_RESP_STATUS_ERROR);
 
     return -1;
 }

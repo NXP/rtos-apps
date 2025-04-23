@@ -12,7 +12,7 @@
 #include "rtos_apps/audio/audio_app.h"
 #include "rtos_apps/audio/audio_element.h"
 #include "rtos_apps/audio/audio_pipeline.h"
-#include "hrpn_ctrl.h"
+#include "rtos_apps/audio/audio_ctrl.h"
 
 #define STORAGE_DEFAULT_PERIODS 2
 
@@ -100,10 +100,10 @@ static struct audio_buffer *audio_pipeline_shared_buffer_find(unsigned shared_id
 
 static void audio_pipeline_response(void *ctrl_handle, uint32_t status)
 {
-    struct hrpn_resp_audio_pipeline resp;
+    struct audio_resp_audio_pipeline resp;
 
     if (ctrl_handle) {
-        resp.type = HRPN_RESP_TYPE_AUDIO_PIPELINE;
+        resp.type = AUDIO_RESP_TYPE_PIPELINE;
         resp.status = status;
         audio_app_ctrl_send(ctrl_handle, &resp, sizeof(resp));
     }
@@ -120,19 +120,19 @@ static void audio_routing_dump(struct audio_pipeline *pipeline)
     }
 }
 
-int audio_pipeline_ctrl(struct hrpn_cmd_audio_pipeline *cmd, unsigned int len, void *ctrl_handle)
+int audio_pipeline_ctrl(struct audio_cmd_pipeline *cmd, unsigned int len, void *ctrl_handle)
 {
     struct audio_pipeline *pipeline = NULL;
     struct audio_element *element = NULL;
     int rc = 0;
 
     /* search for matching pipeline id */
-    if (len >= sizeof(struct hrpn_cmd_audio_pipeline_common))
+    if (len >= sizeof(struct audio_cmd_pipeline_common))
         pipeline = audio_pipeline_table_find(cmd->u.common.pipeline.id);
 
     switch (cmd->u.common.type) {
-    case HRPN_CMD_TYPE_AUDIO_PIPELINE_DUMP:
-        if (len != sizeof(struct hrpn_cmd_audio_pipeline_dump))
+    case AUDIO_CMD_TYPE_PIPELINE_DUMP:
+        if (len != sizeof(struct audio_cmd_pipeline_dump))
             goto err;
 
         if (!pipeline)
@@ -141,12 +141,12 @@ int audio_pipeline_ctrl(struct hrpn_cmd_audio_pipeline *cmd, unsigned int len, v
         audio_pipeline_dump(pipeline);
         audio_routing_dump(pipeline);
 
-        audio_pipeline_response(ctrl_handle, HRPN_RESP_STATUS_SUCCESS);
+        audio_pipeline_response(ctrl_handle, AUDIO_RESP_STATUS_SUCCESS);
 
         break;
 
     default:
-        if (pipeline && (len >= sizeof(struct hrpn_cmd_audio_element_common)))
+        if (pipeline && (len >= sizeof(struct audio_cmd_element_common)))
             element = audio_pipeline_element_find(pipeline, cmd->u.element.u.common.element.type,
                                                   cmd->u.element.u.common.element.id);
 
@@ -158,7 +158,7 @@ int audio_pipeline_ctrl(struct hrpn_cmd_audio_pipeline *cmd, unsigned int len, v
     return rc;
 
 err:
-    audio_pipeline_response(ctrl_handle, HRPN_RESP_STATUS_ERROR);
+    audio_pipeline_response(ctrl_handle, AUDIO_RESP_STATUS_ERROR);
 
     return -1;
 }
