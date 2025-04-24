@@ -153,7 +153,10 @@ static inline unsigned int __sai_rx_level(void *base, unsigned int line)
     wfp = (rfr & I2S_RFR_WFP_MASK) >> I2S_RFR_WFP_SHIFT;
     rfp = (rfr & I2S_RFR_RFP_MASK) >> I2S_RFR_RFP_SHIFT;
 
-    return (uint8_t)(wfp - rfp);
+    if (wfp >= rfp)
+        return wfp - rfp;
+    else
+        return (2 * FSL_FEATURE_SAI_FIFO_COUNTn(base)) - rfp + wfp;
 }
 
 static inline unsigned int __sai_tx_level(void *base, unsigned int line)
@@ -166,7 +169,10 @@ static inline unsigned int __sai_tx_level(void *base, unsigned int line)
     wfp = (tfr & I2S_TFR_WFP_MASK) >> I2S_TFR_WFP_SHIFT;
     rfp = (tfr & I2S_TFR_RFP_MASK) >> I2S_TFR_RFP_SHIFT;
 
-    return (uint8_t)(wfp - rfp);
+    if (wfp >= rfp)
+        return wfp - rfp;
+    else
+        return (2 * FSL_FEATURE_SAI_FIFO_COUNTn(base)) - rfp + wfp;
 }
 
 static inline void *__sai_rx_fifo_addr(void *base, unsigned int line)
