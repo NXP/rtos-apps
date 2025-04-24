@@ -168,6 +168,8 @@ void sai_disable_tx(struct sai_device *dev)
 
 static void sai_master_clock_config(struct sai_cfg *sai_config)
 {
+#if (defined(FSL_FEATURE_SAI_HAS_MCR) && (FSL_FEATURE_SAI_HAS_MCR)) ||                                                 \
+    (defined(FSL_FEATURE_SAI_HAS_MCLKDIV_REGISTER) && (FSL_FEATURE_SAI_HAS_MCLKDIV_REGISTER))
     I2S_Type *sai = (I2S_Type *)sai_config->sai_base;
     sai_master_clock_t mclkConfig;
 
@@ -175,6 +177,7 @@ static void sai_master_clock_config(struct sai_cfg *sai_config)
     mclkConfig.mclkHz = sai_config->source_clock_hz;
     mclkConfig.mclkSourceClkHz = sai_config->source_clock_hz;
     SAI_SetMasterClockConfig(sai, &mclkConfig);
+#endif
 }
 
 static void sai_irq_handler_continuous(void *data)
