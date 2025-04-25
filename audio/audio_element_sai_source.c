@@ -308,7 +308,8 @@ int sai_source_element_check_config(struct audio_element_config *config)
                 goto err;
             }
 
-            if ((SAI_RX_FIFO_PERIODS * line_config->channel_n * config->period) > SAI_RX_MAX_FIFO_SIZE) {
+            if ((SAI_RX_FIFO_PERIODS * line_config->channel_n * config->period) >
+                FSL_FEATURE_SAI_FIFO_COUNTn(__sai_base(sai_config->id))) {
                 log_err("sai source: invalid rx fifo size: %u\n",
                         SAI_RX_FIFO_PERIODS * line_config->channel_n * config->period);
                 goto err;
