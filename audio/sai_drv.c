@@ -5,7 +5,6 @@
  */
 
 #include "app_board.h"
-#include "os/irq.h"
 
 #include "rtos_abstraction_layer.h"
 
@@ -13,6 +12,17 @@
 #include "rtos_apps/audio/sai_drv.h"
 
 #include "fsl_sai.h"
+
+#if (CONFIG_HAS_CORTEX_A)
+#include "os/irq.h"
+#endif
+
+struct sai_irq_handler_ctx {
+    void (*func)(void *data);
+    void *data;
+};
+
+static struct sai_irq_handler_ctx handler[4];
 
 static I2S_Type *const s_saiBases[] = I2S_BASE_PTRS;
 
@@ -264,6 +274,23 @@ static inline bool sai_is_valid_watermark(void *sai_base, uint32_t watermark)
     return watermark && !(watermark > (uint32_t)FSL_FEATURE_SAI_FIFO_COUNTn(sai_base));
 }
 
+#if (CONFIG_HAS_CORTEX_M)
+void SAI1_IRQHandler(void)
+{
+    handler[1].func(handler[1].data);
+}
+
+void SAI2_IRQHandler(void)
+{
+    handler[2].func(handler[2].data);
+}
+
+void SAI3_IRQHandler(void)
+{
+    handler[3].func(handler[3].data);
+}
+#endif
+
 int sai_drv_setup(struct sai_device *dev, struct sai_cfg *sai_config)
 {
     sai_transceiver_t config;
@@ -347,6 +374,7 @@ int sai_drv_setup(struct sai_device *dev, struct sai_cfg *sai_config)
     /* Currently rx and tx use the same irq number */
     sai_irq_n = s_saiTxIRQ[sai_id];
 
+#if (CONFIG_HAS_CORTEX_A)
     switch (sai_config->working_mode) {
     case SAI_RX_IRQ_MODE:
         ret = os_irq_register(sai_irq_n, sai_irq_handler_continuous, dev, OS_IRQ_PRIO_DEFAULT);
@@ -362,7 +390,19 @@ int sai_drv_setup(struct sai_device *dev, struct sai_cfg *sai_config)
     default:
         break;
     }
-
+#else
+    handler[sai_id].data = dev;
+    switch (sai_config->working_mode) {
+    case SAI_RX_IRQ_MODE:
+        handler[sai_id].func = sai_irq_handler_continuous;
+    case SAI_CALLBACK_MODE:
+        handler[sai_id].func = sai_irq_handler;
+    case SAI_POLLING_MODE:
+    default:
+        break;
+    }
+    EnableIRQ(sai_irq_n);
+#endif
 out:
     return rc;
 }
