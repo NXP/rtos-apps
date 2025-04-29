@@ -49,7 +49,7 @@ struct audio_cmd_run {
     uint32_t id;
     uint32_t frequency;
     uint32_t period;
-    bool use_audio_hat;
+    bool use_alternate_config;
     uint8_t addr[6];
 };
 

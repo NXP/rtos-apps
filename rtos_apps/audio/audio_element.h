@@ -7,7 +7,7 @@
 #ifndef _AUDIO_ELEMENT_H_
 #define _AUDIO_ELEMENT_H_
 
-#if (CONFIG_GENAVB_ENABLE == 1)
+#if defined(CONFIG_RTOS_APPS_AUDIO_GENAVB_ENABLE)
 #include "audio_element_avtp_sink.h"
 #include "audio_element_avtp_source.h"
 #endif
@@ -30,7 +30,7 @@ enum {
     AUDIO_ELEMENT_SAI_SOURCE,
     AUDIO_ELEMENT_SINE_SOURCE,
     AUDIO_ELEMENT_PLL,
-#if (CONFIG_GENAVB_ENABLE == 1)
+#if defined(CONFIG_RTOS_APPS_AUDIO_GENAVB_ENABLE)
     AUDIO_ELEMENT_AVTP_SOURCE, /* AVB audio stream listener */
     AUDIO_ELEMENT_AVTP_SINK,   /* AVB audio stream talker */
 #endif
@@ -59,7 +59,7 @@ struct audio_element_config {
         struct sai_sink_element_config sai_sink;
         struct sai_source_element_config sai_source;
         struct sine_element_config sine;
-#if (CONFIG_GENAVB_ENABLE == 1)
+#if defined(CONFIG_RTOS_APPS_AUDIO_GENAVB_ENABLE)
         struct avtp_source_element_config avtp_source;
         struct avtp_sink_element_config avtp_sink;
 #endif

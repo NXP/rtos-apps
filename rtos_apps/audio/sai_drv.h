@@ -56,7 +56,7 @@ struct sai_cfg {
     uint32_t msel;
 };
 
-uint32_t get_sai_id(I2S_Type *base);
+uint32_t sai_get_id(I2S_Type *base);
 
 void *__sai_base(uint32_t id);
 

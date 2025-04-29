@@ -6,7 +6,7 @@
 #ifndef _AUDIO_PIPELINE_CTRL_H_
 #define _AUDIO_PIPELINE_CTRL_H_
 
-#if (CONFIG_GENAVB_ENABLE == 1)
+#if defined(CONFIG_RTOS_APPS_AUDIO_GENAVB_ENABLE)
 #include "genavb/genavb.h"
 #endif
 
@@ -81,7 +81,7 @@ struct audio_cmd_element_avtp_connect {
     struct audio_cmd_pipeline_id pipeline;
     struct audio_cmd_element_id element;
     uint32_t stream_index;
-#if (CONFIG_GENAVB_ENABLE == 1)
+#if defined(CONFIG_RTOS_APPS_AUDIO_GENAVB_ENABLE)
     struct genavb_stream_params stream_params;
 #endif
 };

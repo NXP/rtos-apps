@@ -252,7 +252,7 @@ void *__sai_base(uint32_t id)
     return s_saiBases[id];
 }
 
-uint32_t get_sai_id(I2S_Type *base)
+uint32_t sai_get_id(I2S_Type *base)
 {
     uint32_t i;
 
@@ -300,7 +300,7 @@ int sai_drv_setup(struct sai_device *dev, struct sai_cfg *sai_config)
     int ret;
     int rc = 0;
 
-    sai_id = get_sai_id(sai);
+    sai_id = sai_get_id(sai);
 
     /* SAI init */
     SAI_Init(sai);
@@ -395,8 +395,10 @@ int sai_drv_setup(struct sai_device *dev, struct sai_cfg *sai_config)
     switch (sai_config->working_mode) {
     case SAI_RX_IRQ_MODE:
         handler[sai_id].func = sai_irq_handler_continuous;
+        break;
     case SAI_CALLBACK_MODE:
         handler[sai_id].func = sai_irq_handler;
+        break;
     case SAI_POLLING_MODE:
     default:
         break;

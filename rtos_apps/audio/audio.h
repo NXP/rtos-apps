@@ -39,11 +39,7 @@ void *play_pipeline_init(void *parameters);
 int play_pipeline_run(void *handle, struct event *e);
 void play_pipeline_stats(void *handle);
 void play_pipeline_exit(void *handle);
-
-/* AVB-specific callbacks */
-void *play_pipeline_init_avb(void *parameters);
-void play_pipeline_ctrl_avb(void *handle);
-void play_pipeline_exit_avb(void *handle);
+void play_pipeline_ctrl(void *handle);
 
 /* assign_nonzero_valid_val(): Validate and assign nonzero value.
  * "value" == 0: "var" use default value, return 0;

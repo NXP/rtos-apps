@@ -8,9 +8,56 @@
 #define _AUDIO_APP_H_
 
 #include <stdint.h>
+#include <stdbool.h>
+
+#include "sai_drv.h"
+
+#define AUDIO_APP_MAX_SUPPORTED_PERIOD 10
+#define AUDIO_APP_MAX_CFG              8
+
+enum codec_id {
+    CODEC_ID_WM8962,
+};
+
+struct sai_active_config {
+    void *sai_base;
+    uint32_t clk_id;
+    uint32_t clk_freq;
+    uint32_t masterSlave;
+    uint32_t msel;
+    uint32_t audio_pll;
+    uint32_t audio_pll_mul;
+    uint32_t audio_pll_div;
+    uint32_t slot_count;        /* Number of words in audio frame: channels count */
+    sai_word_width_t slot_size; /* Word size in bits */
+    uint32_t rx_mask;
+    uint32_t tx_mask;
+    sai_sync_mode_t rx_sync_mode;
+    sai_sync_mode_t tx_sync_mode;
+    enum codec_id cid;
+};
+
+extern const int audio_app_supported_period[AUDIO_APP_MAX_SUPPORTED_PERIOD];
+extern const struct play_pipeline_config *audio_app_play_config[AUDIO_APP_MAX_CFG];
+extern const struct play_pipeline_config *audio_app_play_alternate_config[AUDIO_APP_MAX_CFG];
+extern struct sai_active_config audio_app_sai_active_list[];
+extern int32_t audio_app_sai_active_list_nelems;
 
 int audio_app_ctrl_send(void *ctrl_handle, void *data, uint32_t len);
 int audio_app_ctrl_recv(void *ctrl_handle, void *data, uint32_t *len);
 void *audio_app_ctrl_init(void);
+
+bool audio_app_check_params(uint32_t period, uint32_t rate);
+void audio_app_pin_mux_dynamic_config(bool use_alternate_config);
+void audio_app_sai_alternate_config(bool use_alternate_config, unsigned int rate);
+
+int32_t audio_app_codec_setup(enum codec_id cid);
+int32_t audio_app_codec_set_format(enum codec_id cid, uint32_t mclk, uint32_t sample_rate, uint32_t bitwidth);
+int32_t audio_app_codec_close(enum codec_id cid);
+bool audio_app_codec_is_rate_supported(uint32_t rate, bool use_alternate_config);
+
+void audio_app_sai_clock_setup(void);
+uint32_t audio_app_sai_select_audio_pll_mux(int sai_id, int srate);
+uint32_t audio_app_sai_get_clock_freq(unsigned int sai_active_index);
 
 #endif /* _AUDIO_APP_H_ */

@@ -18,7 +18,7 @@ const char *element_name[AUDIO_ELEMENT_MAX] = {
     [AUDIO_ELEMENT_SAI_SOURCE] = "SAI_SOURCE",
     [AUDIO_ELEMENT_SINE_SOURCE] = "SINE_SOURCE",
     [AUDIO_ELEMENT_PLL] = "PLL",
-#if (CONFIG_GENAVB_ENABLE == 1)
+#if defined(CONFIG_RTOS_APPS_AUDIO_GENAVB_ENABLE)
     [AUDIO_ELEMENT_AVTP_SOURCE] = "AVTP_SOURCE",
     [AUDIO_ELEMENT_AVTP_SINK] = "AVTP_SINK",
 #endif
@@ -66,7 +66,7 @@ int audio_element_ctrl(struct audio_element *element, struct audio_cmd_element *
         rc = pll_element_ctrl(element, &cmd->u.pll, len, ctrl_handle);
         break;
 
-#if (CONFIG_GENAVB_ENABLE == 1)
+#if defined(CONFIG_RTOS_APPS_AUDIO_GENAVB_ENABLE)
     case AUDIO_CMD_TYPE_ELEMENT_AVTP_SOURCE_CONNECT:
     case AUDIO_CMD_TYPE_ELEMENT_AVTP_SOURCE_DISCONNECT:
         rc = avtp_source_element_ctrl(element, &cmd->u.avtp, len, ctrl_handle);
@@ -136,7 +136,7 @@ int audio_element_check_config(struct audio_element_config *config)
         rc = sine_element_check_config(config);
         break;
 
-#if (CONFIG_GENAVB_ENABLE == 1)
+#if defined(CONFIG_RTOS_APPS_AUDIO_GENAVB_ENABLE)
     case AUDIO_ELEMENT_AVTP_SOURCE:
         rc = avtp_source_element_check_config(config);
         break;
@@ -182,7 +182,7 @@ unsigned int audio_element_data_size(struct audio_element_config *config)
         size = sine_element_size(config);
         break;
 
-#if (CONFIG_GENAVB_ENABLE == 1)
+#if defined(CONFIG_RTOS_APPS_AUDIO_GENAVB_ENABLE)
     case AUDIO_ELEMENT_AVTP_SOURCE:
         size = avtp_source_element_size(config);
         break;
@@ -234,7 +234,7 @@ int audio_element_init(struct audio_element *element, struct audio_element_confi
         rc = sine_element_init(element, config, buffer);
         break;
 
-#if (CONFIG_GENAVB_ENABLE == 1)
+#if defined(CONFIG_RTOS_APPS_AUDIO_GENAVB_ENABLE)
     case AUDIO_ELEMENT_AVTP_SOURCE:
         rc = avtp_source_element_init(element, config, buffer);
         break;

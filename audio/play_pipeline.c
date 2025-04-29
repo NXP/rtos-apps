@@ -14,10 +14,11 @@
 #include "rtos_apps/log.h"
 #include "rtos_apps/audio/audio_pipeline.h"
 #include "rtos_apps/audio/audio.h"
+#include "rtos_apps/audio/audio_app.h"
 #include "rtos_apps/audio/audio_ctrl.h"
 #include "rtos_abstraction_layer.h"
 
-#if (CONFIG_GENAVB_ENABLE == 1)
+#if defined(CONFIG_RTOS_APPS_AUDIO_GENAVB_ENABLE)
 #include "avb_hardware.h"
 #include "avb_tsn/clock_domain.h"
 #include "avb_tsn/genavb.h"
@@ -50,7 +51,7 @@ struct avtp_avb_ctx {
     bool milan_mode;
 };
 
-#endif /* #if (CONFIG_GENAVB_ENABLE == 1) */
+#endif /* #if defined(CONFIG_RTOS_APPS_AUDIO_GENAVB_ENABLE) */
 
 struct pipeline_ctx {
     rtos_sem_t *async_sem;
@@ -61,7 +62,7 @@ struct pipeline_ctx {
         uint64_t err;
     } stats;
 
-#if (CONFIG_GENAVB_ENABLE == 1)
+#if defined(CONFIG_RTOS_APPS_AUDIO_GENAVB_ENABLE)
     struct avtp_avb_ctx avb;
 #endif
 
@@ -110,7 +111,12 @@ int play_pipeline_run(void *handle, struct event *e)
     return err;
 }
 
-#if (CONFIG_GENAVB_ENABLE == 1)
+void play_pipeline_ctrl(void *handle)
+{
+    return;
+}
+
+#if defined(CONFIG_RTOS_APPS_AUDIO_GENAVB_ENABLE)
 
 static void listener_disconnect(unsigned int stream_index)
 {
@@ -446,7 +452,7 @@ void play_pipeline_exit_avb(void *handle)
 
     play_pipeline_exit(handle);
 }
-#endif /* #if (CONFIG_GENAVB_ENABLE == 1) */
+#endif /* #if defined(CONFIG_RTOS_APPS_AUDIO_GENAVB_ENABLE) */
 
 void *play_pipeline_init(void *parameters)
 {

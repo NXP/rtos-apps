@@ -345,7 +345,7 @@ static int audio_pipeline_config_check(struct audio_pipeline_config *config)
             log_warn("storage(%u) referenced by %u buffers\n", i, buffer);
     }
 
-#if CONFIG_GENAVB_ENABLE
+#if defined(CONFIG_RTOS_APPS_AUDIO_GENAVB_ENABLE)
     /* Check maximum number of AVTP elements */
     count = audio_pipeline_count_element(config, AUDIO_ELEMENT_AVTP_SOURCE);
     if (count > AUDIO_ELEMENT_AVTP_SOURCE_MAX) {
