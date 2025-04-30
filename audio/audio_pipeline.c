@@ -16,13 +16,13 @@
 
 #define STORAGE_DEFAULT_PERIODS 2
 
-static struct audio_pipeline *pipeline_table[MAX_PIPELINES];
+static struct audio_pipeline *pipeline_table[AUDIO_PIPELINE_MAX_PIPELINES];
 
 static int audio_pipeline_table_add(struct audio_pipeline *pipeline)
 {
     int i;
 
-    for (i = 0; i < MAX_PIPELINES; i++) {
+    for (i = 0; i < AUDIO_PIPELINE_MAX_PIPELINES; i++) {
         if (!pipeline_table[i]) {
             pipeline_table[i] = pipeline;
             goto done;
@@ -39,14 +39,14 @@ static void audio_pipeline_table_del(struct audio_pipeline *pipeline)
 {
     int i;
 
-    for (i = 0; i < MAX_PIPELINES; i++)
+    for (i = 0; i < AUDIO_PIPELINE_MAX_PIPELINES; i++)
         if (pipeline_table[i] == pipeline)
             pipeline_table[i] = NULL;
 }
 
 static struct audio_pipeline *audio_pipeline_table_find(unsigned int id)
 {
-    if (id >= MAX_PIPELINES)
+    if (id >= AUDIO_PIPELINE_MAX_PIPELINES)
         return NULL;
 
     return pipeline_table[id];
@@ -84,7 +84,7 @@ static struct audio_buffer *audio_pipeline_shared_buffer_find(unsigned shared_id
     struct audio_buffer *buffer;
     int i, j;
 
-    for (i = 0; i < MAX_PIPELINES; i++) {
+    for (i = 0; i < AUDIO_PIPELINE_MAX_PIPELINES; i++) {
         pipeline = audio_pipeline_table_find(i);
         if (pipeline == NULL)
             break;

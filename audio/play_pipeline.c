@@ -124,7 +124,7 @@ static void listener_disconnect(unsigned int stream_index)
     disconnect.element.id = 0;
     disconnect.stream_index = stream_index;
 
-    for (i = 0; i < MAX_PIPELINES; i++) {
+    for (i = 0; i < AUDIO_PIPELINE_MAX_PIPELINES; i++) {
         disconnect.pipeline.id = i;
         audio_pipeline_ctrl((struct audio_cmd_pipeline *)&disconnect, sizeof(disconnect), NULL);
     }
@@ -143,7 +143,7 @@ static void listener_connect(struct genavb_msg_media_stack_connect *media_stack_
     connect.stream_index = media_stack_connect->stream_index;
     connect.stream_params = media_stack_connect->stream_params;
 
-    for (i = 0; i < MAX_PIPELINES; i++) {
+    for (i = 0; i < AUDIO_PIPELINE_MAX_PIPELINES; i++) {
         connect.pipeline.id = i;
         audio_pipeline_ctrl((struct audio_cmd_pipeline *)&connect, sizeof(connect), NULL);
     }
@@ -161,7 +161,7 @@ static void talker_disconnect(unsigned int stream_index)
     disconnect.element.id = 0;
     disconnect.stream_index = stream_index;
 
-    for (i = 0; i < MAX_PIPELINES; i++) {
+    for (i = 0; i < AUDIO_PIPELINE_MAX_PIPELINES; i++) {
         disconnect.pipeline.id = i;
         audio_pipeline_ctrl((struct audio_cmd_pipeline *)&disconnect, sizeof(disconnect), NULL);
     }
@@ -180,7 +180,7 @@ static void talker_connect(struct genavb_msg_media_stack_connect *media_stack_co
     connect.stream_index = media_stack_connect->stream_index;
     connect.stream_params = media_stack_connect->stream_params;
 
-    for (i = 0; i < MAX_PIPELINES; i++) {
+    for (i = 0; i < AUDIO_PIPELINE_MAX_PIPELINES; i++) {
         connect.pipeline.id = i;
         audio_pipeline_ctrl((struct audio_cmd_pipeline *)&connect, sizeof(connect), NULL);
     }
