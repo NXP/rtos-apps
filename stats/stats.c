@@ -105,7 +105,7 @@ int hist_init(struct hist *hist, unsigned int n_slots, unsigned slot_size)
     if ((n_slots + 1) > RTOS_APPS_STATS_MAX_SLOTS)
         return -1;
 
-    hist->n_slots = n_slots + 1;
+    hist->n_slots = n_slots;
     hist->slot_size = slot_size;
 
     return 0;
@@ -115,8 +115,8 @@ void hist_update(struct hist *hist, unsigned int value)
 {
     unsigned int slot = value / hist->slot_size;
 
-    if (slot >= hist->n_slots)
-        slot = hist->n_slots - 1;
+    if (slot > hist->n_slots)
+        slot = hist->n_slots;
 
     hist->slots[slot]++;
 }
@@ -125,7 +125,7 @@ void hist_reset(struct hist *hist)
 {
     int i;
 
-    for (i = 0; i < (hist->n_slots + 1); i++)
+    for (i = 0; i <= hist->n_slots; i++)
         hist->slots[i] = 0;
 }
 
