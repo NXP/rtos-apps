@@ -1,5 +1,5 @@
 /*
- * Copyright 2018, 2024 NXP
+ * Copyright 2018, 2024-2025 NXP
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -33,7 +33,7 @@ struct stats {
     void (*func)(struct stats *s);
 };
 
-#define RTOS_APPS_STATS_MAX_SLOTS 256
+#define RTOS_APPS_STATS_MAX_SLOTS 101
 
 struct hist {
     uint32_t slots[RTOS_APPS_STATS_MAX_SLOTS];
