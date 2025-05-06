@@ -7,6 +7,25 @@
 #include "rtos_apps/log.h"
 #include "rtos_apps/stats.h"
 
+/** Initialize a stats structure.
+ * @s: 			Pointer to structure to be initialized
+ * @log2_size:	Set size to be reached before statistics are computed, expressed as a power of 2
+ * @name:		character field used by stats_print
+ * @func:		pointer to the function to be called when stats are computed
+ *
+ */
+void stats_init(struct stats *s, unsigned int log2_size, const char *name, void (*func)(struct stats *s))
+{
+    s->log2_size = log2_size;
+    s->name = name;
+    s->func = func;
+
+    s->abs_min = 0x7fffffff;
+    s->abs_max = -0x7fffffff;
+
+    stats_reset(s);
+}
+
 void stats_reset(struct stats *s)
 {
     s->current_count = 0;
@@ -22,7 +41,7 @@ void stats_reset(struct stats *s)
  */
 void stats_print(struct stats *s)
 {
-    log(INFO, "stats(%p) %s min %d mean %d max %d rms^2 %llu stddev^2 %llu absmin %d absmax %d\n\r", s, s->name, s->min,
+    log_info("stats(%p) %s min %d mean %d max %d rms^2 %llu stddev^2 %llu absmin %d absmax %d\n\r", s, s->name, s->min,
         s->mean, s->max, s->ms, s->variance, s->abs_min, s->abs_max);
 }
 
@@ -133,11 +152,11 @@ void hist_print(struct hist *hist)
 {
     int i;
 
-    log(INFO, "n_slot %d slot_size %d \n", hist->n_slots, hist->slot_size);
+    log_info("n_slot %d slot_size %d \n", hist->n_slots, hist->slot_size);
 
-    log_raw(INFO, "%.4s: %-22.s: ", "INFO", __func__);
+    log_raw_info("%.4s: %-22.s: ", "INFO", __func__);
     for (i = 0; i < (hist->n_slots + 1); i++) {
-        log_raw(INFO, "%u ", hist->slots[i]);
+        log_raw_info("%u ", hist->slots[i]);
     }
-    log_raw(INFO, "\r\n");
+    log_raw_info("\r\n");
 }

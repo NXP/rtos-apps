@@ -29,7 +29,7 @@ struct stats {
     int32_t abs_min;
     int32_t abs_max;
 
-    char *name;
+    const char *name;
     void (*func)(struct stats *s);
 };
 
@@ -41,6 +41,7 @@ struct hist {
     int slot_size;
 };
 
+void stats_init(struct stats *s, unsigned int log2_size, const char *name, void (*func)(struct stats *s));
 void stats_reset(struct stats *s);
 void stats_print(struct stats *s);
 void stats_update(struct stats *s, int32_t val);
@@ -50,24 +51,5 @@ int hist_init(struct hist *hist, unsigned int n_slots, unsigned slot_size);
 void hist_update(struct hist *hist, unsigned int value);
 void hist_reset(struct hist *hist);
 void hist_print(struct hist *hist);
-
-/** Initialize a stats structure.
- * @s: 			Pointer to structure to be initialized
- * @log2_size:	Set size to be reached before statistics are computed, expressed as a power of 2
- * @name:		character field used by stats_print
- * @func:		pointer to the function to be called when stats are computed
- *
- */
-static inline void stats_init(struct stats *s, unsigned int log2_size, void *name, void (*func)(struct stats *s))
-{
-    s->log2_size = log2_size;
-    s->name = name;
-    s->func = func;
-
-    s->abs_min = 0x7fffffff;
-    s->abs_max = -0x7fffffff;
-
-    stats_reset(s);
-}
 
 #endif /* _RTOS_APPS_STATS_H_ */
