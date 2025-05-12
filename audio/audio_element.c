@@ -4,11 +4,12 @@
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
-#include "rtos_apps/log.h"
 #include "rtos_apps/audio/audio_app.h"
-#include "rtos_apps/audio/audio_element.h"
-#include "rtos_apps/audio/audio_pipeline.h"
 #include "rtos_apps/audio/audio_ctrl.h"
+#include "rtos_apps/log.h"
+
+#include "audio_element.h"
+#include "audio_pipeline.h"
 
 /* clang-format off */
 const char *element_name[AUDIO_ELEMENT_MAX] = {

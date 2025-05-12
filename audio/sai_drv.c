@@ -4,14 +4,11 @@
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
-#include "app_board.h"
-
 #include "rtos_abstraction_layer.h"
 
 #include "rtos_apps/log.h"
-#include "rtos_apps/audio/sai_drv.h"
 
-#include "fsl_sai.h"
+#include "sai_drv.h"
 
 #if (CONFIG_HAS_CORTEX_A)
 #include "os/irq.h"

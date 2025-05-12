@@ -8,11 +8,13 @@
 
 #include "rtos_apps/audio/audio.h"
 #include "rtos_apps/audio/audio_app.h"
-#include "rtos_apps/audio/audio_entry.h"
-#include "rtos_apps/audio/audio_pipeline.h"
 #include "rtos_apps/audio/audio_ctrl.h"
-#include "rtos_apps/audio/sai_drv.h"
+#include "rtos_apps/audio/audio_entry.h"
 #include "rtos_apps/log.h"
+
+#include "audio.h"
+#include "audio_pipeline.h"
+#include "sai_drv.h"
 
 struct mode_handler {
     void *(*init)(void *);

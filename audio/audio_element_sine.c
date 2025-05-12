@@ -7,10 +7,11 @@
 #include <math.h>
 
 #include "rtos_apps/log.h"
-#include "rtos_apps/audio/audio_buffer.h"
-#include "rtos_apps/audio/audio_element.h"
-#include "rtos_apps/audio/audio_element_sine.h"
-#include "rtos_apps/audio/audio_format.h"
+
+#include "audio_buffer.h"
+#include "audio_element.h"
+#include "audio_element_sine.h"
+#include "audio_format.h"
 
 #ifndef M_PI
 #define M_PI 3.14159265358979323846

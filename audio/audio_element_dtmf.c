@@ -9,9 +9,10 @@
 #include <string.h>
 
 #include "rtos_apps/log.h"
-#include "rtos_apps/audio/audio_element.h"
-#include "rtos_apps/audio/audio_element_dtmf.h"
-#include "rtos_apps/audio/audio_format.h"
+
+#include "audio_element.h"
+#include "audio_element_dtmf.h"
+#include "audio_format.h"
 
 #define USEC_PER_SEC 1000000
 #ifndef M_PI

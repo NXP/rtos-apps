@@ -15,12 +15,13 @@
 
 #include "rtos_abstraction_layer.h"
 
-#include "rtos_apps/log.h"
 #include "rtos_apps/audio/audio_app.h"
-#include "rtos_apps/audio/audio_element.h"
-#include "rtos_apps/audio/audio_element_avtp_sink.h"
-#include "rtos_apps/audio/audio_format.h"
 #include "rtos_apps/audio/audio_ctrl.h"
+#include "rtos_apps/log.h"
+
+#include "audio_element.h"
+#include "audio_element_avtp_sink.h"
+#include "audio_format.h"
 
 /*
  * AVTP sink: AVB audio stream talker

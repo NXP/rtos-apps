@@ -3,8 +3,8 @@
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
-#ifndef _AUDIO_CTRL_H_
-#define _AUDIO_CTRL_H_
+#ifndef _RTOS_APPS_AUDIO_CTRL_H_
+#define _RTOS_APPS_AUDIO_CTRL_H_
 
 #include <stdint.h>
 #include <stdbool.h>
@@ -88,4 +88,4 @@ struct audio_response {
     } u;
 };
 
-#endif /* _AUDIO_CTRL_H_ */
+#endif /* _RTOS_APPS_AUDIO_CTRL_H_ */

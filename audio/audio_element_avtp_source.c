@@ -19,13 +19,12 @@
 
 #include "rtos_apps/log.h"
 #include "rtos_apps/audio/audio_app.h"
-#include "rtos_apps/audio/audio_element.h"
-#include "rtos_apps/audio/audio_element_avtp_source.h"
-#include "rtos_apps/audio/audio_format.h"
-#include "rtos_apps/audio/audio_pipeline.h"
 #include "rtos_apps/audio/audio_ctrl.h"
 
-#include "types.h"
+#include "audio_element.h"
+#include "audio_element_avtp_source.h"
+#include "audio_format.h"
+#include "audio_pipeline.h"
 
 /*
  * AVTP source: AVB audio stream listener

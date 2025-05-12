@@ -4,10 +4,8 @@
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
-#ifndef _AUDIO_ELEMENT_SAI_SOURCE_H_
-#define _AUDIO_ELEMENT_SAI_SOURCE_H_
-
-#include "audio_buffer.h"
+#ifndef _RTOS_APPS_AUDIO_ELEMENT_SAI_SOURCE_H_
+#define _RTOS_APPS_AUDIO_ELEMENT_SAI_SOURCE_H_
 
 #define SAI_RX_MAX_INSTANCE          6
 #define SAI_RX_MAX_ID                8
@@ -40,12 +38,4 @@ struct sai_source_element_config {
     } sai[SAI_RX_MAX_INSTANCE];
 };
 
-struct audio_element_config;
-struct audio_element;
-
-int sai_source_element_check_config(struct audio_element_config *config);
-unsigned int sai_source_element_size(struct audio_element_config *config);
-int sai_source_element_init(struct audio_element *element, struct audio_element_config *config,
-                            struct audio_buffer *buffer);
-
-#endif /* _AUDIO_ELEMENT_SAI_SOURCE_H_ */
+#endif /* _RTOS_APPS_AUDIO_ELEMENT_SAI_SOURCE_H_ */

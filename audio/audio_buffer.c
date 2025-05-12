@@ -5,8 +5,8 @@
  */
 
 #include "rtos_apps/log.h"
-#include "rtos_apps/audio/audio_buffer.h"
-#include "rtos_apps/audio/audio_element.h"
+#include "audio_buffer.h"
+#include "audio_element.h"
 
 /*
  * Audio buffer structure (circular) with single writter/reader.

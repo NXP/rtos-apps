@@ -9,14 +9,12 @@
 
 #include "rtos_abstraction_layer.h"
 
-#include "app_board.h"
-
-#include "rtos_apps/log.h"
-#include "rtos_apps/audio/audio_pipeline.h"
-#include "rtos_apps/audio/audio.h"
-#include "rtos_apps/audio/audio_app.h"
 #include "rtos_apps/audio/audio_ctrl.h"
-#include "rtos_abstraction_layer.h"
+#include "rtos_apps/log.h"
+
+#include "app_board.h"
+#include "audio_pipeline.h"
+#include "audio.h"
 
 #if defined(CONFIG_RTOS_APPS_AUDIO_GENAVB_ENABLE)
 #include "avb_hardware.h"

@@ -6,11 +6,11 @@
 
 #include "rtos_apps/log.h"
 #include "rtos_apps/stats.h"
-#include "rtos_apps/audio/audio_element.h"
-#include "rtos_apps/audio/audio_element_sai_sink.h"
-#include "rtos_apps/audio/audio_format.h"
 
-#include "rtos_apps/audio/sai_drv.h"
+#include "audio_element.h"
+#include "audio_element_sai_sink.h"
+#include "audio_format.h"
+#include "sai_drv.h"
 
 #define SAI_TX_FIFO_PERIODS 2
 

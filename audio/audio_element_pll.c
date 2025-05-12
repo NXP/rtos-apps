@@ -6,13 +6,14 @@
 
 #include "rtos_abstraction_layer.h"
 
+#include "rtos_apps/audio/audio_app.h"
+#include "rtos_apps/audio/audio_ctrl.h"
 #include "rtos_apps/log.h"
 #include "rtos_apps/stats.h"
-#include "rtos_apps/audio/audio_app.h"
-#include "rtos_apps/audio/audio_element.h"
-#include "rtos_apps/audio/audio_element_pll.h"
-#include "rtos_apps/audio/audio_ctrl.h"
-#include "rtos_apps/audio/sai_drv.h"
+
+#include "audio_element.h"
+#include "audio_element_pll.h"
+#include "sai_drv.h"
 
 #define PLL_SAMPLING_PERIOD_MS 10
 #define PLL_MAX_PPB            (200000)

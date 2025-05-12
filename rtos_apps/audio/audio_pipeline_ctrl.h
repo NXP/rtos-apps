@@ -3,14 +3,14 @@
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
-#ifndef _AUDIO_PIPELINE_CTRL_H_
-#define _AUDIO_PIPELINE_CTRL_H_
+#ifndef _RTOS_APPS_AUDIO_PIPELINE_CTRL_H_
+#define _RTOS_APPS_AUDIO_PIPELINE_CTRL_H_
+
+#include <stdint.h>
 
 #if defined(CONFIG_RTOS_APPS_AUDIO_GENAVB_ENABLE)
 #include "genavb/genavb.h"
 #endif
-
-#include <stdint.h>
 
 /* Audio pipeline commands */
 struct audio_cmd_pipeline_id {
@@ -132,4 +132,4 @@ struct audio_cmd_pipeline {
     } u;
 };
 
-#endif /* _AUDIO_PIPELINE_CTRL_H_ */
+#endif /* _RTOS_APPS_AUDIO_PIPELINE_CTRL_H_ */

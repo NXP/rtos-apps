@@ -1,16 +1,14 @@
 /*
- * Copyright 2024 NXP
+ * Copyright 2024-2025 NXP
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
-#ifndef _AUDIO_APP_H_
-#define _AUDIO_APP_H_
+#ifndef _RTOS_APPS_AUDIO_APP_H_
+#define _RTOS_APPS_AUDIO_APP_H_
 
 #include <stdint.h>
 #include <stdbool.h>
-
-#include "sai_drv.h"
 
 #define AUDIO_APP_MAX_SUPPORTED_PERIOD 10
 #define AUDIO_APP_MAX_CFG              8
@@ -29,11 +27,11 @@ struct sai_active_config {
     uint32_t audio_pll_mul;
     uint32_t audio_pll_div;
     uint32_t slot_count;        /* Number of words in audio frame: channels count */
-    sai_word_width_t slot_size; /* Word size in bits */
+    int slot_size; /* Word size in bits */
     uint32_t rx_mask;
     uint32_t tx_mask;
-    sai_sync_mode_t rx_sync_mode;
-    sai_sync_mode_t tx_sync_mode;
+    int rx_sync_mode;
+    int tx_sync_mode;
     enum codec_id cid;
 };
 
@@ -60,4 +58,4 @@ void audio_app_sai_clock_setup(void);
 uint32_t audio_app_sai_select_audio_pll_mux(int sai_id, int srate);
 uint32_t audio_app_sai_get_clock_freq(unsigned int sai_active_index);
 
-#endif /* _AUDIO_APP_H_ */
+#endif /* _RTOS_APPS_AUDIO_APP_H_ */
