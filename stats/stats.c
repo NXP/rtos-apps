@@ -154,7 +154,7 @@ void hist_print(struct hist *hist)
 
     log_info("n_slot %d slot_size %d \n", hist->n_slots, hist->slot_size);
 
-    log_raw_info("%.4s: %-22.s: ", "INFO", __func__);
+    log_raw_info(RTOS_APPS_LOG_FMT, "INFO", RTOS_APPS_LOG_ARGS);
     for (i = 0; i < (hist->n_slots + 1); i++) {
         log_raw_info("%u ", hist->slots[i]);
     }

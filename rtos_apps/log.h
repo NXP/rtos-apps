@@ -22,6 +22,28 @@ typedef enum {
 /** Current log level configuration */
 extern rtos_apps_log_level_t rtos_apps_log_level_config;
 
+#if defined(CONFIG_RTOS_APPS_LOG_TIMESTAMP)
+
+#include <stdint.h>
+#include <inttypes.h>
+
+extern uint64_t rtos_apps_log_timestamp;
+
+static inline void rtos_apps_log_timestamp_update(uint64_t timestamp)
+{
+    rtos_apps_log_timestamp = timestamp;
+}
+
+#define RTOS_APPS_LOG_FMT  "%-4.4s %11.11" PRIu64 " %-22.22s: "
+#define RTOS_APPS_LOG_ARGS rtos_apps_log_timestamp, __func__
+
+#else
+
+#define RTOS_APPS_LOG_FMT  "%-4.4s %-22.22s: "
+#define RTOS_APPS_LOG_ARGS __func__
+
+#endif
+
 /** Logging macros definitions
  *
  *  Usage:
@@ -33,7 +55,7 @@ extern rtos_apps_log_level_t rtos_apps_log_level_config;
 #define log(LEVEL, format, ...)                                                                                        \
     do {                                                                                                               \
         if (rtos_apps_log_level_config >= LOG_##LEVEL)                                                                 \
-            rtos_printf("%-4.4s: %-22.22s: " format "\r", #LEVEL, __func__, ##__VA_ARGS__);                            \
+            rtos_printf(RTOS_APPS_LOG_FMT format "\r", #LEVEL, RTOS_APPS_LOG_ARGS, ##__VA_ARGS__);                     \
     } while (0)
 
 #define log_crit(...)  log(CRIT, __VA_ARGS__)
