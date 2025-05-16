@@ -34,12 +34,12 @@ static inline void rtos_apps_log_timestamp_update(uint64_t timestamp)
     rtos_apps_log_timestamp = timestamp;
 }
 
-#define RTOS_APPS_LOG_FMT  "%-4.4s %11.11" PRIu64 " %-22.22s: "
+#define RTOS_APPS_LOG_FMT  "%-4.4s %11.11" PRIu64 " " CONFIG_RTOS_APPS_LOG_STR "%-22.22s: "
 #define RTOS_APPS_LOG_ARGS rtos_apps_log_timestamp, __func__
 
 #else
 
-#define RTOS_APPS_LOG_FMT  "%-4.4s %-22.22s: "
+#define RTOS_APPS_LOG_FMT  "%-4.4s " CONFIG_RTOS_APPS_LOG_STR "%-22.22s: "
 #define RTOS_APPS_LOG_ARGS __func__
 
 #endif
