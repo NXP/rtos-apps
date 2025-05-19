@@ -1,0 +1,10 @@
+NXP Software Content Register
+
+Release Name:       rtos-apps
+Version:            <version>
+Date Created:       <date>
+Outgoing License:   BSD-3 Clause
+License File:       LICENSE.txt
+Release Location:   https://mcuxpresso.nxp.com
+Description:        A library of re-usable application components
+Origin:             NXP (BSD-3-Clause)
