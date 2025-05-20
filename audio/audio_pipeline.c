@@ -224,6 +224,7 @@ static unsigned int audio_pipeline_count_buffers(struct audio_pipeline_config *c
     return count;
 }
 
+#if defined(CONFIG_RTOS_APPS_AUDIO_GENAVB_ENABLE)
 static unsigned int audio_pipeline_count_element(struct audio_pipeline_config *config, unsigned int element_type)
 {
     struct audio_pipeline_stage_config *stage_config;
@@ -243,13 +244,17 @@ static unsigned int audio_pipeline_count_element(struct audio_pipeline_config *c
 
     return count;
 }
+#endif
 
 static int audio_pipeline_config_check(struct audio_pipeline_config *config)
 {
     struct audio_pipeline_stage_config *stage_config;
     struct audio_element_config *element_config;
     unsigned int input, output;
-    unsigned int buffer, count;
+    unsigned int buffer;
+#if defined(CONFIG_RTOS_APPS_AUDIO_GENAVB_ENABLE)
+    unsigned int count;
+#endif
     int i, j, k;
 
     /* Sanity check pipeline configuration */

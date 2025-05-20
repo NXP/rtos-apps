@@ -297,7 +297,9 @@ int sai_drv_setup(struct sai_device *dev, struct sai_cfg *sai_config)
     IRQn_Type sai_irq_n;
     I2S_Type *sai = (I2S_Type *)sai_config->sai_base;
     uint32_t sai_id;
+#if (CONFIG_HAS_CORTEX_A)
     int ret;
+#endif
     int rc = 0;
 
     sai_id = sai_get_id(sai);
