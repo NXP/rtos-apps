@@ -187,7 +187,7 @@ static inline void *__sai_tx_fifo_addr(void *base, unsigned int line)
 
 static inline uint32_t __sai_rx_bitclock(void *base)
 {
-#if (I2S_RBCR_BCNT)
+#if defined(I2S_RBCR_BCNT)
     return ((I2S_Type *)base)->RBCR;
 #else
     return 1;
@@ -196,7 +196,7 @@ static inline uint32_t __sai_rx_bitclock(void *base)
 
 static inline uint32_t __sai_tx_bitclock(void *base)
 {
-#if (I2S_TBCR_BCNT)
+#if defined(I2S_TBCR_BCNT)
     return ((I2S_Type *)base)->TBCR;
 #else
     return 1;
