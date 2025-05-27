@@ -6,7 +6,6 @@
 
 #include "rtos_abstraction_layer.h"
 
-#include "rtos_apps/audio/audio.h"
 #include "rtos_apps/audio/audio_app.h"
 #include "rtos_apps/audio/audio_ctrl.h"
 #include "rtos_apps/audio/audio_entry.h"
@@ -15,6 +14,9 @@
 #include "audio.h"
 #include "audio_pipeline.h"
 #include "sai_drv.h"
+
+#define offset_of(type, member)           ((unsigned long)&(((type *)0)->member))
+#define container_of(entry, type, member) ((type *)((unsigned char *)(entry)-offset_of(type, member)))
 
 struct mode_handler {
     void *(*init)(void *);
@@ -53,11 +55,14 @@ struct data_ctx {
         rtos_mqueue_t *mqueue_h;
         /* pipeline_ctx handle for current thread */
         void *handle;
-    } thread_data_ctx[MAX_AUDIO_DATA_THREADS];
+        unsigned int id;
+        rtos_thread_t thread;
+    } thread_data_ctx[AUDIO_APP_MAX_DATA_THREADS];
 
     struct ctrl_ctx ctrl;
     const struct mode_handler *handler;
     rtos_mutex_t reset_mut;
+    rtos_thread_t thread;
 };
 
 const static struct mode_handler g_handler = {
@@ -317,30 +322,35 @@ static void response(void *ctrl_handle, uint32_t status)
     audio_app_ctrl_send(ctrl_handle, &resp, sizeof(resp));
 }
 
-void audio_process_data(void *context, uint8_t thread_id)
+static void data_task(void *context)
 {
-    struct data_ctx *ctx = context;
+    struct thread_data_ctx_t *thread = context;
+    struct data_ctx *ctx = container_of(thread, struct data_ctx, thread_data_ctx[thread->id]);
     struct event e;
 
-    if (!rtos_mqueue_receive(ctx->thread_data_ctx[thread_id].mqueue_h, &e, RTOS_WAIT_FOREVER)) {
+    do {
 
-        rtos_mutex_lock(&ctx->thread_data_ctx[thread_id].mutex, RTOS_WAIT_FOREVER);
+        if (!rtos_mqueue_receive(thread->mqueue_h, &e, RTOS_WAIT_FOREVER)) {
 
-        if (ctx->handler) {
-            if (ctx->handler->run(ctx->thread_data_ctx[thread_id].handle, &e) != 0) {
-                audio_reset(ctx, thread_id);
-            } else {
-                if (thread_id == 0 && e.type == EVENT_TYPE_DATA) {
+            rtos_mutex_lock(&thread->mutex, RTOS_WAIT_FOREVER);
+
+            if (ctx->handler) {
+                if (ctx->handler->run(thread->handle, &e) != 0) {
+                    audio_reset(ctx, thread->id);
+                } else {
+                    if (thread->id == 0 && e.type == EVENT_TYPE_DATA) {
 #if USE_TX_IRQ
-                    sai_enable_irq(&ctx->dev[ctx->sai_dev_irq_source], false, true);
+                        sai_enable_irq(&ctx->dev[ctx->sai_dev_irq_source], false, true);
 #else
-                    sai_enable_irq(&ctx->dev[ctx->sai_dev_irq_source], true, false);
+                        sai_enable_irq(&ctx->dev[ctx->sai_dev_irq_source], true, false);
 #endif
+                    }
                 }
             }
+
+            rtos_mutex_unlock(&thread->mutex);
         }
-        rtos_mutex_unlock(&ctx->thread_data_ctx[thread_id].mutex);
-    }
+    } while (1);
 }
 
 static void audio_stats(struct data_ctx *ctx)
@@ -550,7 +560,7 @@ static void audio_control_handler(struct data_ctx *ctx)
 #define STATS_POLL_PERIOD   10000
 #define STATS_COUNT         (STATS_POLL_PERIOD / CONTROL_POLL_PERIOD)
 
-void audio_control_loop(void *context)
+static void ctrl_task(void *context)
 {
     struct data_ctx *ctx = context;
     int count;
@@ -576,7 +586,7 @@ void audio_control_loop(void *context)
     } while (1);
 }
 
-static int audio_thread_init(struct thread_data_ctx_t *thread)
+static int audio_thread_init(struct thread_data_ctx_t *thread, const struct rtos_apps_audio_config *config)
 {
     if (rtos_mutex_init(&thread->mutex) < 0) {
         log_err("rtos_mutex_init(thread) failed\n");
@@ -594,7 +604,15 @@ static int audio_thread_init(struct thread_data_ctx_t *thread)
         goto err_mqueue;
     }
 
+    if (rtos_thread_create(&thread->thread, config->data_priority, thread->id, config->data_stack_size, "audio data", data_task, thread) < 0) {
+        log_err("rtos_thread_create(audio data) failed\n");
+        goto err_thread;
+    }
+
     return 0;
+
+err_thread:
+    rtos_mqueue_destroy(thread->mqueue_h);
 
 err_mqueue:
     rtos_sem_destroy(&thread->async_sem);
@@ -606,50 +624,55 @@ err_mutex:
 
 static void audio_thread_exit(struct thread_data_ctx_t *thread)
 {
+    rtos_thread_abort(&thread->thread);
     rtos_mqueue_destroy(thread->mqueue_h);
     rtos_sem_destroy(&thread->async_sem);
 }
 
-void *audio_control_init(uint8_t thread_count)
+int rtos_apps_audio_init(const struct rtos_apps_audio_config *config)
 {
-    struct data_ctx *audio_ctx;
+    struct data_ctx *ctx;
     int i;
 
-    audio_ctx = rtos_malloc(sizeof(*audio_ctx));
-    if (!audio_ctx) {
+    ctx = rtos_malloc(sizeof(*ctx));
+    if (!ctx) {
         log_err("rtos_malloc() failed\n");
         goto err_malloc;
     }
 
-    memset(audio_ctx, 0, sizeof(*audio_ctx));
+    memset(ctx, 0, sizeof(*ctx));
 
-    audio_ctx->thread_count = thread_count;
+    ctx->thread_count = config->thread_count;
 
-    audio_ctx->ctrl.ctrl_handle = audio_app_ctrl_init();
-    if (!audio_ctx->ctrl.ctrl_handle) {
-        log_err("audio_app_ctrl_init() failed\n");
-        goto err_ctrl;
-    }
+    ctx->ctrl.ctrl_handle = config->ctrl_handle;
 
-    if (rtos_mutex_init(&audio_ctx->reset_mut) < 0) {
+    if (rtos_mutex_init(&ctx->reset_mut) < 0) {
         log_err("rtos_mutex_init(reset) failed\n");
         goto err_mutex;
     }
 
-    for (i = 0; i < thread_count; i++)
-        if (audio_thread_init(&audio_ctx->thread_data_ctx[i]) < 0)
-            goto err_thread;
+    for (i = 0; i < ctx->thread_count; i++) {
+        ctx->thread_data_ctx[i].id = i;
 
-    return audio_ctx;
+        if (audio_thread_init(&ctx->thread_data_ctx[i], config) < 0)
+            goto err_thread;
+    }
+
+    if (rtos_thread_create(&ctx->thread, config->ctrl_priority, 0, config->ctrl_stack_size, "audio ctrl", ctrl_task, ctx) < 0) {
+        log_err("rtos_thread_create(audio ctrl) failed\n");
+        goto err_ctrl;
+    }
+
+    return 0;
 
 err_thread:
     while (i--)
-        audio_thread_exit(&audio_ctx->thread_data_ctx[i]);
+        audio_thread_exit(&ctx->thread_data_ctx[i]);
 
 err_mutex:
 err_ctrl:
-    rtos_free(audio_ctx);
+    rtos_free(ctx);
 
 err_malloc:
-    return NULL;
+    return -1;
 }

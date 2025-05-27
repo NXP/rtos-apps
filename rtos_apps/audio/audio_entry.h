@@ -9,8 +9,18 @@
 
 #include <stdint.h>
 
-void *audio_control_init(uint8_t thread_count);
-void audio_control_loop(void *context);
-void audio_process_data(void *context, uint8_t thread_id);
+struct rtos_apps_audio_config {
+    unsigned int thread_count;
+
+    unsigned int data_priority;
+    unsigned int data_stack_size;
+
+    unsigned int ctrl_priority;
+    unsigned int ctrl_stack_size;
+
+    void *ctrl_handle;
+};
+
+int rtos_apps_audio_init(const struct rtos_apps_audio_config *config);
 
 #endif /* _RTOS_APPS_AUDIO_ENTRY_H_ */
