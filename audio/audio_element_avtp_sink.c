@@ -4,20 +4,17 @@
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
-#include "avb_tsn/clock_domain.h"
-#include "avb_tsn/crf_stream.h"
-#include "avb_tsn/genavb.h"
-#include "avb_tsn/media_clock.h"
-#include "genavb/control_clock_domain.h"
+#include "genavb.h"
+
 #include "genavb/genavb.h"
 #include "genavb/streaming.h"
-#include "genavb/types.h"
 
 #include "rtos_abstraction_layer.h"
 
 #include "rtos_apps/audio/audio_app.h"
 #include "rtos_apps/audio/audio_ctrl.h"
 #include "rtos_apps/log.h"
+#include "rtos_apps/types.h"
 
 #include "audio_element.h"
 #include "audio_element_avtp_sink.h"
@@ -31,12 +28,6 @@
 
 struct avtp_input {
     struct audio_buffer *buf;
-};
-
-struct crf_stream {
-    aar_crf_stream_t stream;
-    unsigned int connected;
-    int index;
 };
 
 struct avtp_stream {
@@ -63,7 +54,6 @@ struct avtp_stream {
 struct avtp_sink_element {
     unsigned int stream_n;
     struct avtp_stream stream[AVTP_TX_STREAM_N];
-    struct crf_stream crf_stream;
     unsigned int in_n;
     struct avtp_input in[AVTP_TX_STREAM_N * AVTP_TX_CHANNEL_N];
 
@@ -84,46 +74,6 @@ static unsigned int avtp_sink_channel_n(void)
 static unsigned int avtp_sink_in_n(void)
 {
     return AVTP_TX_STREAM_N * AVTP_TX_CHANNEL_N;
-}
-
-static void crf_talker_disconnect(struct avtp_sink_element *avtp)
-{
-    struct crf_stream *crf_stream = &avtp->crf_stream;
-
-    if (!crf_stream->connected)
-        goto exit;
-
-    crf_disconnect(&crf_stream->stream);
-    crf_stream->connected = 0;
-    crf_stream->index = -1;
-
-    log_info("disconnected\n");
-
-exit:
-    return;
-}
-
-static void crf_talker_connect(struct avtp_sink_element *avtp, unsigned int stream_index,
-                               struct genavb_stream_params *params, struct audio_element *element)
-{
-    struct crf_stream *crf_stream = &avtp->crf_stream;
-
-    if (crf_stream->connected) {
-        log_warn("stream already connected, exit.\n");
-
-        goto exit;
-    }
-
-    if (!crf_connect(&crf_stream->stream, MEDIA_CLOCK_MASTER, avtp->clock_domain, params)) {
-        avtp->crf_stream.index = stream_index;
-        crf_stream->connected = 1;
-        log_info("connected, clock domain: %d\n", avtp->clock_domain);
-    } else {
-        log_err("connection failed\n");
-    }
-
-exit:
-    return;
 }
 
 static void avtp_sink_connect(struct avtp_sink_element *avtp, unsigned int stream_index,
@@ -193,20 +143,6 @@ static void avtp_sink_connect(struct avtp_sink_element *avtp, unsigned int strea
                          avdecc_fmt_sample_size(&params->format);
     else
         cur_batch_size = stream->cur_batch_size;
-
-    params->flags = 0; /* disable media clock recovery */
-    params->talker.latency = 500000;
-
-    if (avtp->clock_domain != GENAVB_CLOCK_DOMAIN_DEFAULT) {
-        params->clock_domain = avtp->clock_domain;
-
-        /* Before connecting any AVTP stream, check if we need to set the clock domain source for AVB_CLOCK_DOMAIN_0 */
-        if (init_media_clock_source(&avtp->crf_stream.stream, params->clock_domain, NULL) < 0) {
-            log_err("init_media_clock_source() failed for domain %d, can not connect stream output (%u)\n",
-                    avtp->clock_domain, stream_index);
-            return;
-        }
-    }
 
     /* Create new AVTP stream, update stream_handle */
     if ((avb_result = genavb_stream_create(handle, &stream->handle, params, &cur_batch_size, 0)) != GENAVB_SUCCESS) {
@@ -283,13 +219,7 @@ int avtp_sink_element_ctrl(struct audio_element *element, struct audio_cmd_eleme
         if (cmd->u.connect.stream_index >= avtp->stream_n + 1)
             goto err;
 
-        /* FIXME fix mapping, as stream_index is for both CRF and AVTP streams, and that it is not mapped
-         * with the avtp_stream array
-         */
-        if (avdecc_format_is_crf(&cmd->u.connect.stream_params.format))
-            crf_talker_connect(avtp, cmd->u.connect.stream_index, &cmd->u.connect.stream_params, element);
-        else
-            avtp_sink_connect(avtp, cmd->u.connect.stream_index, &cmd->u.connect.stream_params, element);
+        avtp_sink_connect(avtp, cmd->u.connect.stream_index, &cmd->u.connect.stream_params, element);
 
         break;
 
@@ -301,10 +231,7 @@ int avtp_sink_element_ctrl(struct audio_element *element, struct audio_cmd_eleme
         if (cmd->u.disconnect.stream_index >= avtp->stream_n + 1)
             goto err;
 
-        if ((int)cmd->u.disconnect.stream_index == avtp->crf_stream.index)
-            crf_talker_disconnect(avtp);
-        else
-            avtp_sink_disconnect(avtp, cmd->u.disconnect.stream_index);
+        avtp_sink_disconnect(avtp, cmd->u.disconnect.stream_index);
 
         break;
 
@@ -414,8 +341,6 @@ static void avtp_sink_element_exit(struct audio_element *element)
     struct avtp_sink_element *avtp = element->data;
     int i;
 
-    crf_talker_disconnect(avtp);
-
     for (i = 0; i < avtp->stream_n; i++)
         avtp_sink_disconnect(avtp, i);
 }
@@ -447,7 +372,6 @@ static void avtp_sink_element_stats(struct audio_element *element)
         log_info("  underflow: %u, overflow: %u err: %u sent: %u\n", avtp->stream[i].underflow,
                  avtp->stream[i].overflow, avtp->stream[i].err, avtp->stream[i].sent);
     }
-    log_info("crf tx connected: %u\n", avtp->crf_stream.connected);
 }
 
 int avtp_sink_element_check_config(struct audio_element_config *config)
@@ -509,9 +433,6 @@ int avtp_sink_element_init(struct audio_element *element, struct audio_element_c
             avtp->stream[i].channel_buf[j]->output_id = k;
         }
     }
-
-    avtp->crf_stream.connected = 0;
-    avtp->crf_stream.index = -1;
 
     for (i = 0; i < avtp->in_n; i++)
         avtp->in[i].buf = &buffer[config->input[i]];

@@ -7,6 +7,10 @@
 #ifndef _AUDIO_H_
 #define _AUDIO_H_
 
+#if defined(CONFIG_RTOS_APPS_AUDIO_GENAVB_ENABLE)
+#include "audio_avb.h"
+#endif
+
 struct audio_config {
     uint32_t rate;
     uint32_t period;
@@ -20,6 +24,23 @@ struct audio_config {
 struct event {
     unsigned int type;
     uintptr_t data;
+};
+
+struct pipeline_ctx {
+    rtos_sem_t *async_sem;
+    struct audio_pipeline *pipeline;
+
+    struct {
+        uint64_t run;
+        uint64_t err;
+    } stats;
+
+#if defined(CONFIG_RTOS_APPS_AUDIO_GENAVB_ENABLE)
+    struct avtp_avb_ctx avb;
+#endif
+
+    /* pipeline index, '0' for master pipeline */
+    uint8_t id;
 };
 
 enum {

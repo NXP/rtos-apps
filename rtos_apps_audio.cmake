@@ -28,6 +28,7 @@ if (CONFIG_RTOS_APPS_AUDIO_GENAVB_ENABLE)
     target_sources(${RTOS_APPS_TARGET} PRIVATE
         ${CMAKE_CURRENT_LIST_DIR}/audio/audio_element_avtp_sink.c
         ${CMAKE_CURRENT_LIST_DIR}/audio/audio_element_avtp_source.c
+        ${CMAKE_CURRENT_LIST_DIR}/audio/audio_avb.c
     )
 
     target_compile_definitions(${RTOS_APPS_TARGET} PRIVATE

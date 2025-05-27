@@ -10,6 +10,9 @@
 #include <stdint.h>
 #include <stdbool.h>
 
+#include "audio_pipeline.h"
+#include "genavb.h"
+
 #define AUDIO_APP_MAX_SUPPORTED_PERIOD 10
 #define AUDIO_APP_MAX_CFG              8
 #define AUDIO_APP_MAX_DATA_THREADS     2
@@ -57,6 +60,9 @@ int32_t audio_app_codec_setup(enum codec_id cid);
 int32_t audio_app_codec_set_format(enum codec_id cid, uint32_t mclk, uint32_t sample_rate, uint32_t bitwidth);
 int32_t audio_app_codec_close(enum codec_id cid);
 bool audio_app_codec_is_rate_supported(uint32_t rate, bool use_alternate_config);
+
+struct genavb_handle *audio_app_avb_init(void);
+void audio_app_avb_exit(void);
 
 void audio_app_sai_clock_setup(void);
 uint32_t audio_app_sai_select_audio_pll_mux(int sai_id, int srate);
