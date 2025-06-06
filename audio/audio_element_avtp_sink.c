@@ -401,7 +401,7 @@ static void avtp_sink_element_reset(struct audio_element *element)
         if (stream->handle) {
             rc = genavb_stream_send(stream->handle, NULL, 0, &event, 1);
             if (rc)
-                log_err("genavb_stream flush failed !\n");
+                log_err("genavb_stream_send(AVTP_FLUSH) failed\n");
         }
     }
 

@@ -303,7 +303,7 @@ static int audio_pipeline_config_check(struct audio_pipeline_config *config)
         }
 
         if (output > 1) {
-            log_err("buffer(%u) referenced by %u outputs \n", i, output);
+            log_err("buffer(%u) referenced by %u outputs\n", i, output);
             goto err;
         }
 
@@ -355,14 +355,14 @@ static int audio_pipeline_config_check(struct audio_pipeline_config *config)
     /* Check maximum number of AVTP elements */
     count = audio_pipeline_count_element(config, AUDIO_ELEMENT_AVTP_SOURCE);
     if (count > AUDIO_ELEMENT_AVTP_SOURCE_MAX) {
-        log_err("rtos-apps/audio/audio_ELEMENT_AVTP_SOURCE count: %u, while max supported %u\n", count,
+        log_err("AUDIO_ELEMENT_AVTP_SOURCE count: %u, while max supported %u\n", count,
                 AUDIO_ELEMENT_AVTP_SOURCE_MAX);
         goto err;
     }
 
     count = audio_pipeline_count_element(config, AUDIO_ELEMENT_AVTP_SINK);
     if (count > AUDIO_ELEMENT_AVTP_SINK_MAX) {
-        log_err("rtos-apps/audio/audio_ELEMENT_AVTP_SINK count: %u, while max supported %u\n", count,
+        log_err("AUDIO_ELEMENT_AVTP_SINK count: %u, while max supported %u\n", count,
                 AUDIO_ELEMENT_AVTP_SINK_MAX);
         goto err;
     }
@@ -413,7 +413,7 @@ static int audio_pipeline_early_config_check(struct audio_pipeline_config *confi
         stage_config = &config->stage[i];
 
         if (stage_config->elements > AUDIO_PIPELINE_MAX_ELEMENTS) {
-            log_err("stage(%u): too many elements %u, max %u\n\r", i, stage_config->elements,
+            log_err("stage(%u): too many elements %u, max %u\n", i, stage_config->elements,
                     AUDIO_PIPELINE_MAX_ELEMENTS);
             goto err;
         }
@@ -422,13 +422,13 @@ static int audio_pipeline_early_config_check(struct audio_pipeline_config *confi
             element_config = &stage_config->element[j];
 
             if (element_config->inputs > AUDIO_ELEMENT_MAX_INPUTS) {
-                log_err("stage(%u), element(%u): too many inputs %u, max %u\n\r", i, j, element_config->inputs,
+                log_err("stage(%u), element(%u): too many inputs %u, max %u\n", i, j, element_config->inputs,
                         AUDIO_ELEMENT_MAX_INPUTS);
                 goto err;
             }
 
             if (element_config->outputs > AUDIO_ELEMENT_MAX_OUTPUTS) {
-                log_err("stage(%u), element(%u): too many outputs %u, max %u\n\r", i, j, element_config->outputs,
+                log_err("stage(%u), element(%u): too many outputs %u, max %u\n", i, j, element_config->outputs,
                         AUDIO_ELEMENT_MAX_OUTPUTS);
                 goto err;
             }
@@ -563,7 +563,7 @@ static void audio_pipeline_buffer_init(struct audio_pipeline *pipeline, struct a
         if (config->buffer[i].flags & AUDIO_BUFFER_FLAG_SHARED_USER) {
             buffer = audio_pipeline_shared_buffer_find(config->buffer[i].shared_id);
             if (buffer == NULL)
-                log_err("Can't find shared buffer");
+                log_err("audio_pipeline_shared_buffer_find() failed\n");
             else
                 audio_buf_init(&pipeline->buffer[i], buffer->base, buffer->size, 0, config->buffer[i].flags,
                                config->buffer[i].shared_id);

@@ -459,7 +459,7 @@ void *play_pipeline_init(void *parameters)
     struct pipeline_ctx *ctx;
 
     ctx = rtos_malloc(sizeof(struct pipeline_ctx) + sizeof(struct audio_pipeline_config));
-    rtos_assert(ctx, "Audio pipeline failed with memory allocation error");
+    rtos_assert(ctx, "rtos_malloc() failed\n");
     memset(ctx, 0, sizeof(struct pipeline_ctx));
 
     pipeline_cfg = (struct audio_pipeline_config *)(ctx + 1);

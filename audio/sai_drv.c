@@ -254,15 +254,14 @@ uint32_t sai_get_id(I2S_Type *base)
     uint32_t i;
 
     for (i = 0; i < ARRAY_SIZE(s_saiBases); i++) {
-        if (s_saiBases[i] == base)
-            break;
+        if ((s_saiBases[i] == base) && base)
+            goto found;
     }
 
-    if (i >= ARRAY_SIZE(s_saiBases)) {
-        /* Can't find SAI instance, hang here */
-        rtos_assert(false, "Can't find SAI instance (%p)", base);
-    }
+    /* Can't find SAI instance, hang here */
+    rtos_assert(false, "Can't find SAI instance(%p)\n", base);
 
+found:
     return i;
 }
 
@@ -377,12 +376,12 @@ int sai_drv_setup(struct sai_device *dev, struct sai_cfg *sai_config)
     switch (sai_config->working_mode) {
     case SAI_RX_IRQ_MODE:
         ret = os_irq_register(sai_irq_n, sai_irq_handler_continuous, dev, OS_IRQ_PRIO_DEFAULT);
-        rtos_assert(!ret, "Failed to register SAI IRQ! (%d)", ret);
+        rtos_assert(!ret, "os_irq_register(SAI IRQ) failed: %d\n", ret);
         os_irq_enable(sai_irq_n);
         break;
     case SAI_CALLBACK_MODE:
         ret = os_irq_register(sai_irq_n, sai_irq_handler, dev, OS_IRQ_PRIO_DEFAULT);
-        rtos_assert(!ret, "Failed to register SAI IRQ! (%d)", ret);
+        rtos_assert(!ret, "os_irq_register(SAI IRQ) failed: %d\n", ret);
         os_irq_enable(sai_irq_n);
         break;
     case SAI_POLLING_MODE:

@@ -176,7 +176,6 @@ static int sai_setup(struct data_ctx *ctx)
         sai_config.sample_rate = ctx->sample_rate;
 
         sai_id = sai_get_id(audio_app_sai_active_list[i].sai_base);
-        rtos_assert(sai_id, "SAI%d enabled but not supported in this platform!", i);
 
         sai_config.source_clock_hz = audio_app_sai_get_clock_freq(i);
 
@@ -289,7 +288,7 @@ static void audio_reset(struct data_ctx *ctx, unsigned int id)
 
     e.type = EVENT_TYPE_DATA;
     if (ctx->handler->run(ctx->thread_data_ctx[id].handle, &e) < 0)
-        rtos_assert(false, "handler couldn't restart");
+        rtos_assert(false, "handler couldn't restart\n");
 
     if (id == 0) {
 #if USE_TX_IRQ
@@ -391,7 +390,7 @@ static int audio_run(struct data_ctx *ctx, struct audio_cmd_run *run)
     }
 
     if (pipeline_count == 0) {
-        log_err("Unsupported configuration: use_alternate_config_hat(%d) pipeline id(%u)\n", run->use_alternate_config,
+        log_err("Unsupported configuration: use_alternate_config(%d) pipeline id(%u)\n", run->use_alternate_config,
                 run->id);
         goto exit;
     }
@@ -584,26 +583,26 @@ void *audio_control_init(uint8_t thread_count)
     int err = 0;
 
     audio_ctx = rtos_malloc(sizeof(*audio_ctx));
-    rtos_assert(audio_ctx, "Audio context failed with memory allocation error");
+    rtos_assert(audio_ctx, "rtos_malloc() failed\n");
     memset(audio_ctx, 0, sizeof(*audio_ctx));
 
     audio_ctx->thread_count = thread_count;
 
     audio_ctx->ctrl.ctrl_handle = audio_app_ctrl_init();
-    rtos_assert(audio_ctx->ctrl.ctrl_handle, "audio_app_ctrl transport initialization failed!");
+    rtos_assert(audio_ctx->ctrl.ctrl_handle, "audio_app_ctrl_init() failed\n");
 
     for (i = 0; i < thread_count; i++) {
         err = rtos_mutex_init(&audio_ctx->thread_data_ctx[i].mutex);
-        rtos_assert(!err, "mutex initialization failed!");
+        rtos_assert(!err, "rtos_mutex_init(thread) failed\n");
 
         err = rtos_sem_init(&audio_ctx->thread_data_ctx[i].async_sem, 0);
-        rtos_assert(!err, "asynchronous semaphore initialization failed!");
+        rtos_assert(!err, "rtos_sem_init(async) failed\n");
 
         err = rtos_mutex_init(&audio_ctx->reset_mut);
-        rtos_assert(!err, "reset mutex initialization failed!");
+        rtos_assert(!err, "rtos_mutex_init(reset) failed\n");
 
         audio_ctx->thread_data_ctx[i].mqueue_h = rtos_mqueue_alloc_init(10, sizeof(struct event));
-        rtos_assert(audio_ctx->thread_data_ctx[i].mqueue_h, "message queue initialization failed!");
+        rtos_assert(audio_ctx->thread_data_ctx[i].mqueue_h, "rtos_mqueue_alloc_init() failed\n");
     }
 
     return audio_ctx;
