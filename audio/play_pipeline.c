@@ -459,7 +459,11 @@ void *play_pipeline_init(void *parameters)
     struct pipeline_ctx *ctx;
 
     ctx = rtos_malloc(sizeof(struct pipeline_ctx) + sizeof(struct audio_pipeline_config));
-    rtos_assert(ctx, "rtos_malloc() failed\n");
+    if (!ctx) {
+        log_err("rtos_malloc() failed\n");
+        goto err_alloc;
+    }
+
     memset(ctx, 0, sizeof(struct pipeline_ctx));
 
     pipeline_cfg = (struct audio_pipeline_config *)(ctx + 1);
@@ -485,6 +489,8 @@ void *play_pipeline_init(void *parameters)
 
 err_init:
     rtos_free(ctx);
+
+err_alloc:
     return NULL;
 }
 

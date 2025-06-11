@@ -576,34 +576,80 @@ void audio_control_loop(void *context)
     } while (1);
 }
 
+static int audio_thread_init(struct thread_data_ctx_t *thread)
+{
+    if (rtos_mutex_init(&thread->mutex) < 0) {
+        log_err("rtos_mutex_init(thread) failed\n");
+        goto err_mutex;
+    }
+
+    if (rtos_sem_init(&thread->async_sem, 0) < 0) {
+        log_err("rtos_sem_init(async) failed\n");
+        goto err_sem;
+    }
+
+    thread->mqueue_h = rtos_mqueue_alloc_init(10, sizeof(struct event));
+    if (!thread->mqueue_h) {
+        log_err("rtos_mqueue_alloc_init() failed\n");
+        goto err_mqueue;
+    }
+
+    return 0;
+
+err_mqueue:
+    rtos_sem_destroy(&thread->async_sem);
+
+err_sem:
+err_mutex:
+    return -1;
+}
+
+static void audio_thread_exit(struct thread_data_ctx_t *thread)
+{
+    rtos_mqueue_destroy(thread->mqueue_h);
+    rtos_sem_destroy(&thread->async_sem);
+}
+
 void *audio_control_init(uint8_t thread_count)
 {
     struct data_ctx *audio_ctx;
     int i;
-    int err = 0;
 
     audio_ctx = rtos_malloc(sizeof(*audio_ctx));
-    rtos_assert(audio_ctx, "rtos_malloc() failed\n");
+    if (!audio_ctx) {
+        log_err("rtos_malloc() failed\n");
+        goto err_malloc;
+    }
+
     memset(audio_ctx, 0, sizeof(*audio_ctx));
 
     audio_ctx->thread_count = thread_count;
 
     audio_ctx->ctrl.ctrl_handle = audio_app_ctrl_init();
-    rtos_assert(audio_ctx->ctrl.ctrl_handle, "audio_app_ctrl_init() failed\n");
-
-    for (i = 0; i < thread_count; i++) {
-        err = rtos_mutex_init(&audio_ctx->thread_data_ctx[i].mutex);
-        rtos_assert(!err, "rtos_mutex_init(thread) failed\n");
-
-        err = rtos_sem_init(&audio_ctx->thread_data_ctx[i].async_sem, 0);
-        rtos_assert(!err, "rtos_sem_init(async) failed\n");
-
-        err = rtos_mutex_init(&audio_ctx->reset_mut);
-        rtos_assert(!err, "rtos_mutex_init(reset) failed\n");
-
-        audio_ctx->thread_data_ctx[i].mqueue_h = rtos_mqueue_alloc_init(10, sizeof(struct event));
-        rtos_assert(audio_ctx->thread_data_ctx[i].mqueue_h, "rtos_mqueue_alloc_init() failed\n");
+    if (!audio_ctx->ctrl.ctrl_handle) {
+        log_err("audio_app_ctrl_init() failed\n");
+        goto err_ctrl;
     }
 
+    if (rtos_mutex_init(&audio_ctx->reset_mut) < 0) {
+        log_err("rtos_mutex_init(reset) failed\n");
+        goto err_mutex;
+    }
+
+    for (i = 0; i < thread_count; i++)
+        if (audio_thread_init(&audio_ctx->thread_data_ctx[i]) < 0)
+            goto err_thread;
+
     return audio_ctx;
+
+err_thread:
+    while (i--)
+        audio_thread_exit(&audio_ctx->thread_data_ctx[i]);
+
+err_mutex:
+err_ctrl:
+    rtos_free(audio_ctx);
+
+err_malloc:
+    return NULL;
 }
