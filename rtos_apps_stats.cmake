@@ -2,10 +2,10 @@
 include_guard(GLOBAL)
 message("rtos_apps: stats component is included.")
 
-target_sources(${MCUX_SDK_PROJECT_NAME} PRIVATE
+target_sources(${RTOS_APPS_TARGET} PRIVATE
     ${CMAKE_CURRENT_LIST_DIR}/stats/stats.c
 )
 
-target_include_directories(${MCUX_SDK_PROJECT_NAME} PRIVATE
+target_include_directories(${RTOS_APPS_TARGET} PRIVATE
     ${CMAKE_CURRENT_LIST_DIR}
 )

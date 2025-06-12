@@ -2,18 +2,18 @@
 include_guard(GLOBAL)
 message("rtos_apps: log component is included.")
 
-target_sources(${MCUX_SDK_PROJECT_NAME} PRIVATE
+target_sources(${RTOS_APPS_TARGET} PRIVATE
     ${CMAKE_CURRENT_LIST_DIR}/log/log.c
 )
 
 if(CONFIG_RTOS_APPS_LOG_TIMESTAMP)
-    target_compile_definitions(${MCUX_SDK_PROJECT_NAME} PRIVATE CONFIG_RTOS_APPS_LOG_TIMESTAMP)
+    target_compile_definitions(${RTOS_APPS_TARGET} PRIVATE CONFIG_RTOS_APPS_LOG_TIMESTAMP)
 endif()
 
-target_compile_definitions(${MCUX_SDK_PROJECT_NAME} PRIVATE
+target_compile_definitions(${RTOS_APPS_TARGET} PRIVATE
     CONFIG_RTOS_APPS_LOG_STR=\"${CONFIG_RTOS_APPS_LOG_STR}\"
 )
 
-target_include_directories(${MCUX_SDK_PROJECT_NAME} PRIVATE
+target_include_directories(${RTOS_APPS_TARGET} PRIVATE
     ${CMAKE_CURRENT_LIST_DIR}
 )
