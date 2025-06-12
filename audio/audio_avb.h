@@ -28,7 +28,7 @@ struct avtp_avb_ctx {
     struct genavb_control_handle *controlled_h;
     struct genavb_control_handle *clk_h;
     struct genavb_handle *avb_handle;
-    struct crf_stream crf_stream;
+    struct crf_stream crf_stream; /* Only support a single CRF stream at once per avb context */
 };
 
 /* AVB specific callbacks */

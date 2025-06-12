@@ -144,6 +144,10 @@ static void avtp_sink_connect(struct avtp_sink_element *avtp, unsigned int strea
     else
         cur_batch_size = stream->cur_batch_size;
 
+    if (avtp->clock_domain != GENAVB_CLOCK_DOMAIN_DEFAULT) {
+        params->clock_domain = avtp->clock_domain;
+    }
+
     /* Create new AVTP stream, update stream_handle */
     if ((avb_result = genavb_stream_create(handle, &stream->handle, params, &cur_batch_size, 0)) != GENAVB_SUCCESS) {
         log_err("genavb_stream_create() failed: %s\n", genavb_strerror(avb_result));

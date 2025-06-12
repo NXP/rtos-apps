@@ -24,6 +24,75 @@
 
 #include "system_config.h"
 
+static int clock_domain_set_source(struct genavb_msg_clock_domain_set_source *set_source, struct pipeline_ctx *ctx)
+{
+    genavb_msg_type_t msg_type = GENAVB_MSG_CLOCK_DOMAIN_SET_SOURCE;
+    struct genavb_msg_clock_domain_response set_source_rsp;
+    unsigned int msg_len = sizeof(*set_source);
+    int rc;
+
+    rc = genavb_control_send_sync(ctx->avb.clk_h, &msg_type, set_source, msg_len, &set_source_rsp, &msg_len, 1000);
+    if ((rc == GENAVB_SUCCESS) && (msg_type == GENAVB_MSG_CLOCK_DOMAIN_RESPONSE))
+        rc = set_source_rsp.status;
+
+    return 0;
+}
+
+static void crf_disconnect(struct pipeline_ctx *ctx)
+{
+    struct crf_stream *crf_stream = &ctx->avb.crf_stream;
+
+    if (!crf_stream->connected)
+        goto exit;
+
+    if (!crf_stream->stream.stream_handle) {
+        log_err("CRF stream(%p) already disconnected for domain_index (%u)\n", crf_stream,
+                crf_stream->stream.stream_params.clock_domain);
+        return;
+    }
+
+    if (genavb_stream_destroy(crf_stream->stream.stream_handle) != GENAVB_SUCCESS)
+        log_err("CRF stream(%p): genavb_stream_destroy() failed\n", crf_stream);
+
+    crf_stream->stream.stream_handle = NULL;
+    crf_stream->connected = 0;
+    crf_stream->index = -1;
+
+    log_info("CRF stream(%p) disconnected\n", crf_stream);
+
+exit:
+    return;
+}
+
+static void crf_connect(struct pipeline_ctx *ctx, unsigned int stream_index, struct genavb_stream_params *params)
+{
+    struct crf_stream *crf_stream = &ctx->avb.crf_stream;
+
+    if (crf_stream->connected) {
+        log_err("CRF stream(%p) already connected to stream_index(%u)\n", crf_stream, crf_stream->index);
+
+        goto exit;
+    }
+
+    /* FIXME - override avdecc clock domain for now */
+    if (params)
+        params->clock_domain = GENAVB_CLOCK_DOMAIN_0;
+
+    if (genavb_stream_create(ctx->avb.avb_handle, &crf_stream->stream.stream_handle, params,
+                             &crf_stream->stream.cur_batch_size, 0) != GENAVB_SUCCESS) {
+        log_err("CRF stream(%p): genavb_stream_create() failed\n", crf_stream);
+
+        goto exit;
+    } else {
+        crf_stream->index = stream_index;
+        crf_stream->connected = 1;
+        log_info("CRF stream(%p) connected\n", crf_stream);
+    }
+
+exit:
+    return;
+}
+
 static void listener_disconnect(unsigned int stream_index)
 {
     struct audio_cmd_element_avtp_disconnect disconnect;
@@ -102,6 +171,7 @@ static void handle_avdecc_event(struct pipeline_ctx *ctx, struct genavb_control_
 {
     struct genavb_msg_media_stack_connect *media_stack_connect;
     struct genavb_msg_media_stack_disconnect *media_stack_disconnect;
+    struct genavb_msg_clock_domain_set_source *media_stack_set_clock_source;
     union genavb_media_stack_msg msg;
     genavb_msg_type_t msg_type;
     unsigned int msg_len;
@@ -123,10 +193,14 @@ static void handle_avdecc_event(struct pipeline_ctx *ctx, struct genavb_control_
 
         log_info("GENAVB_MSG_MEDIA_STACK_CONNECT stream index: %u\n", media_stack_connect->stream_index);
 
-        if (media_stack_connect->stream_params.direction == AVTP_DIRECTION_LISTENER)
-            listener_connect(media_stack_connect);
-        else
-            talker_connect(media_stack_connect);
+        if (avdecc_format_is_crf(&media_stack_connect->stream_params.format)) {
+            crf_connect(ctx, media_stack_connect->stream_index, &media_stack_connect->stream_params);
+        } else {
+            if (media_stack_connect->stream_params.direction == AVTP_DIRECTION_LISTENER)
+                listener_connect(media_stack_connect);
+            else
+                talker_connect(media_stack_connect);
+        }
 
         break;
 
@@ -136,10 +210,27 @@ static void handle_avdecc_event(struct pipeline_ctx *ctx, struct genavb_control_
 
         log_info("GENAVB_MSG_MEDIA_STACK_DISCONNECT stream index: %u\n", media_stack_disconnect->stream_index);
 
-        if (media_stack_disconnect->direction == AVTP_DIRECTION_LISTENER)
-            listener_disconnect(media_stack_disconnect->stream_index);
-        else
-            talker_disconnect(media_stack_disconnect->stream_index);
+        if ((int)media_stack_disconnect->stream_index == ctx->avb.crf_stream.index) {
+            crf_disconnect(ctx);
+        } else {
+            if (media_stack_disconnect->direction == AVTP_DIRECTION_LISTENER)
+                listener_disconnect(media_stack_disconnect->stream_index);
+            else
+                talker_disconnect(media_stack_disconnect->stream_index);
+        }
+        break;
+
+    case GENAVB_MSG_MEDIA_SET_CLOCK_SOURCE:
+
+        media_stack_set_clock_source = &msg.media_stack_set_clock_source;
+
+        log_info("GENAVB_MSG_MEDIA_SET_CLOCK_SOURCE: domain(%u) type(%u)\n", media_stack_set_clock_source->domain,
+                 media_stack_set_clock_source->source_type);
+
+        if (clock_domain_set_source(media_stack_set_clock_source, ctx) < 0) {
+            log_err("clock_domain_set_source(%u) failed\n", media_stack_set_clock_source->domain);
+            goto exit;
+        }
 
         break;
 
@@ -219,6 +310,9 @@ exit:
 
 int audio_avb_init(struct pipeline_ctx *ctx)
 {
+    genavb_msg_type_t msg_type = GENAVB_MSG_MEDIA_STACK_ENTITY_START;
+    struct genavb_msg_media_stack_start media_stack_start;
+    unsigned int msg_len = sizeof(media_stack_start);
     int genavb_result;
     int rc = 0;
 
@@ -227,6 +321,14 @@ int audio_avb_init(struct pipeline_ctx *ctx)
     ctx->avb.avb_handle = audio_app_avb_init();
     if (ctx->avb.avb_handle == NULL) {
         log_err("audio_app_avb_init() failed\n");
+        rc = -1;
+
+        goto exit;
+    }
+
+    genavb_result = genavb_control_open(ctx->avb.avb_handle, &ctx->avb.clk_h, GENAVB_CTRL_CLOCK_DOMAIN);
+    if (rc != GENAVB_SUCCESS) {
+        log_err("genavb_control_open(GENAVB_CTRL_CLOCK_DOMAIN)  failed: %s\n", genavb_strerror(rc));
         rc = -1;
 
         goto exit;
@@ -251,6 +353,18 @@ int audio_avb_init(struct pipeline_ctx *ctx)
         goto exit;
     }
 
+    /*
+    * Start the AVDECC (non-controller) entity
+    */
+    media_stack_start.entity_id = 0;
+    rc = genavb_control_send(ctx->avb.ctrl_h, msg_type, &media_stack_start, msg_len);
+    if (genavb_result != GENAVB_SUCCESS) {
+        log_err("genavb_control_send(GENAVB_MSG_MEDIA_STACK_ENTITY_START) failed: %s\n", genavb_strerror(genavb_result));
+        rc = -1;
+
+        goto exit;
+    }
+
 exit:
     return rc;
 }
@@ -259,6 +373,9 @@ void audio_avb_exit(struct pipeline_ctx *ctx)
 {
     genavb_control_close(ctx->avb.controlled_h);
     genavb_control_close(ctx->avb.ctrl_h);
+
+    genavb_control_close(ctx->avb.clk_h);
+    ctx->avb.clk_h = NULL;
 
     audio_app_avb_exit();
 }

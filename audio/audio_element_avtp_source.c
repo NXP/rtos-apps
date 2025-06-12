@@ -164,6 +164,10 @@ static void avtp_source_connect(struct avtp_source_element *avtp, unsigned int s
     params->flags = stream->connection_flags;
     stream->sr_class = params->stream_class;
 
+    if (avtp->clock_domain != GENAVB_CLOCK_DOMAIN_DEFAULT) {
+        params->clock_domain = avtp->clock_domain;
+    }
+
     /* Create new AVTP stream, update stream_handle */
     if ((avb_result = genavb_stream_create(handle, &stream->handle, params, &cur_batch_size, 0)) != GENAVB_SUCCESS) {
         log_err("genavb_stream_create() failed: %s\n", genavb_strerror(avb_result));
