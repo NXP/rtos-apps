@@ -1,0 +1,17 @@
+config MCUX_COMPONENT_component.rtos_apps.log
+    bool "Logging component"
+    default n
+
+    if MCUX_COMPONENT_component.rtos_apps.log
+
+            config RTOS_APPS_LOG_TIMESTAMP
+                bool "Timestamp support"
+                default n
+
+            config RTOS_APPS_LOG_STR
+                string "Log string"
+                default ""
+                help
+                    Provides a string name for logging
+                    Macro value is in quotes
+    endif
