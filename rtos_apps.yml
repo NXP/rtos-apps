@@ -1,0 +1,66 @@
+__load_cmake__:
+- components/rtos-apps/mcux_rtos_apps.cmake
+__load_kconfig__:
+- components/rtos-apps/Kconfig
+component.rtos_apps.log:
+  belong_to: set.component.rtos_apps
+  contents:
+    package_base_path: rtos-apps
+    project_base_path: rtos-apps
+    repo_base_path: components/rtos-apps
+  section-type: component
+  section_info:
+    description: Component rtos-apps log
+    display_name: rtos-apps_log
+    full_name: Component rtos-apps log
+    taxonomy:
+      belong_to: component_rtos_apps
+      csub: rtos_apps.log
+    type: software_component
+    user_visible: always
+    version: 1.0.0
+scr.component.rtos_apps:
+  belong_to: set.component.rtos_apps
+  contents:
+    Description: NXP RTOS Application Layer
+    Format: source code
+    Location: components/rtos-apps
+    Name: rtos-apps
+    Origin: NXP (BSD-3-Clause)
+    Version: 1.0.0
+    license:
+    - license.bsd-3
+  section-type: scr
+set.component.rtos_apps:
+  belong_to: set.component.rtos_apps
+  section-type: set
+  section_info:
+    component_taxonomy:
+      component_rtos_apps:
+        cclass: NXP Component
+        cgroup: RTOS Application Layer
+    description: rtos_apps
+    display_name: rtos_apps
+    fixed_id: nxp_rtos_apps
+    full_name: rtos_apps
+    product:
+      cmsis_pack:
+        pack_root:
+          pack_name: Component_rtos_apps
+          pack_type: SWP
+          pack_version: 1.0.0
+        scr:
+        - scr.component.rtos_apps
+        vendor: NXP
+      kex_package:
+        always_exist: true
+        kex_web_ui:
+          ui_category: component
+          ui_control: false
+          ui_control_default: false
+          ui_release_specific: true
+    set_location:
+      repo_base_path: components/rtos-apps
+    type: component
+    vendor: NXP
+    version: 1.0.0
