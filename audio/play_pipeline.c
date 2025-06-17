@@ -458,15 +458,19 @@ void *play_pipeline_init(void *parameters)
     struct audio_pipeline_config *pipeline_cfg;
     struct pipeline_ctx *ctx;
 
-    ctx = rtos_malloc(sizeof(struct pipeline_ctx) + sizeof(struct audio_pipeline_config));
+    ctx = rtos_malloc(sizeof(struct pipeline_ctx));
     if (!ctx) {
-        log_err("rtos_malloc() failed\n");
-        goto err_alloc;
+        log_err("rtos_malloc(pipeline) failed\n");
+        goto err_alloc_ctx;
     }
 
     memset(ctx, 0, sizeof(struct pipeline_ctx));
 
-    pipeline_cfg = (struct audio_pipeline_config *)(ctx + 1);
+    pipeline_cfg = rtos_malloc(sizeof(struct audio_pipeline_config));
+    if (!pipeline_cfg) {
+        log_err("rtos_malloc(config) failed\n");
+        goto err_alloc_cfg;
+    }
 
     memcpy(pipeline_cfg, cfg->data, sizeof(struct audio_pipeline_config));
 
@@ -485,12 +489,17 @@ void *play_pipeline_init(void *parameters)
     log_info("Starting %s (Sample Rate: %d Hz, Period: %u frames)\n", pipeline_cfg->name, pipeline_cfg->sample_rate,
              (uint32_t)pipeline_cfg->period);
 
+    rtos_free(pipeline_cfg);
+
     return ctx;
 
 err_init:
+    rtos_free(pipeline_cfg);
+
+err_alloc_cfg:
     rtos_free(ctx);
 
-err_alloc:
+err_alloc_ctx:
     return NULL;
 }
 
