@@ -1,3 +1,4 @@
 menu "RTOS Application components"
   rsource "./log/Kconfig"
+  rsource "./stats/Kconfig"
 endmenu

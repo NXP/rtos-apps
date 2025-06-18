@@ -1,0 +1,6 @@
+config MCUX_COMPONENT_component.rtos_apps.stats
+    bool "Statistics component"
+    default n
+
+    if MCUX_COMPONENT_component.rtos_apps.stats
+    endif
