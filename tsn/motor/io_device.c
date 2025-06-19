@@ -263,10 +263,10 @@ static void io_device_loop(void *data, int timer_status)
                                    (NSECS_PER_SEC / ctx->c_task->task->params->task_period_ns);
     unsigned int num_sched_monitoring = MONITORING_STAT_PERIOD_MS *
                                         (NSECS_PER_MSEC / ctx->c_task->task->params->task_period_ns);
-    enum event evt;
+    enum event_motor evt;
     bool current_loop = true;
 
-    if (xQueueReceive(ctx->event_queue, &evt, 0) == pdTRUE) {
+    if (!rtos_mqueue_receive(ctx->event_queue, &evt, RTOS_NO_WAIT)) {
         if (evt == BUTTON_PRESSED) {
             log_info("BUTTON_PRESSED event received\n");
             // Start initializing motors
@@ -411,13 +411,13 @@ int io_device_init(struct io_device_ctx *ctx, struct cyclic_task *c_task, uint16
     }
 
     /* Initialize queue that handles button events */
-    ctx->event_queue = xQueueCreate(1, sizeof(enum event));
+    ctx->event_queue = rtos_mqueue_alloc_init(1, sizeof(enum event_motor));
     if (!ctx->event_queue) {
         log_err("Unable to create queue\n");
         goto err;
     }
 
-    if (user_button_add_event_queue(&ctx->event_queue) < 0) {
+    if (user_button_add_event_queue(ctx->event_queue) < 0) {
         log_err("Unable to add event queue for user button events\n");
         goto err_del_queue;
     }
@@ -436,7 +436,7 @@ int io_device_init(struct io_device_ctx *ctx, struct cyclic_task *c_task, uint16
     return 0;
 
 err_del_queue:
-    vQueueDelete(ctx->event_queue);
+    rtos_mqueue_destroy(ctx->event_queue);
 err:
     return -1;
 }
