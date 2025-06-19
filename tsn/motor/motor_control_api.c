@@ -4,9 +4,9 @@
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
+#include "rtos_abstraction_layer.h"
+
 #include "motor_control_api.h"
-#include "FreeRTOS.h"
-#include "task.h"
 #include "m1_sm_snsless_enc.h"
 #include "mcdrv.h"
 #include "mlib_types.h"
@@ -38,7 +38,7 @@ int mcapi_init(uint16_t id, struct tsn_motor **motor)
 {
     switch (id) {
     case 0:
-        *motor = pvPortMalloc(sizeof(struct tsn_motor));
+        *motor = rtos_malloc(sizeof(struct tsn_motor));
         if (!*motor)
             goto err;
 
@@ -50,7 +50,7 @@ int mcapi_init(uint16_t id, struct tsn_motor **motor)
 
         log_info("MC Drivers init\n");
 
-        vTaskDelay(pdMS_TO_TICKS(3000));
+        rtos_sleep(RTOS_MS_TO_TICKS(3000));
 
         (*motor)->sm_motor_controller = &g_sM1Ctrl;
         (*motor)->motor_drive = &g_sM1Drive;
