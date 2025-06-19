@@ -4,11 +4,11 @@
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
+#include "rtos_apps/log.h"
+
 #include "traj_planner.h"
 #include "math.h"
-#include "fsl_debug_console.h"
 #include "motor_params.h"
-#include "rtos_apps/log.h"
 #include "types.h"
 
 void check_trap_traj(struct traj_trapez *traj)

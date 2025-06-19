@@ -48,7 +48,7 @@ static void controller_stats_dump(struct controller_ctx *ctx)
     ctx->stats_snap.pending = true;
 
     // Print controller data
-    if (STATS_Async(controller_stats_print, &ctx->stats_snap) != pdTRUE)
+    if (STATS_Async(controller_stats_print, &ctx->stats_snap) != true)
         ctx->stats_snap.pending = false;
 }
 
@@ -93,7 +93,7 @@ static void controller_monitoring_send(struct controller_ctx *ctx)
     cyclic_task_get_monitoring(ctx->c_task, &ctx->msg.cyclic_task_stats, MONITOR_MAX_SOCKET);
     ctx->msg_pending = true;
 
-    if (STATS_Async(__controller_monitoring_send, ctx) != pdTRUE)
+    if (STATS_Async(__controller_monitoring_send, ctx) != true)
         ctx->msg_pending = false;
 }
 
@@ -123,11 +123,11 @@ static bool check_all_io_devices_connected(struct controller_ctx *ctx)
 
 static bool button_press_event_check(struct controller_ctx *ctx)
 {
-    enum event evt;
+    enum event_motor evt;
     bool ret = false;
 
     // Handle events coming from user button
-    while (xQueueReceive(ctx->event_queue, &evt, 0) == pdTRUE) {
+    while (!rtos_mqueue_receive(ctx->event_queue, &evt, RTOS_NO_WAIT)) {
         if (evt == BUTTON_PRESSED)
             ret = true;
     }
@@ -295,7 +295,12 @@ void controller_net_receive(void *data, int msg_id, int src_id, void *buf, int l
     if (msg_id == MSG_FEEDBACK) {
         // Check size of data received
         if (len != sizeof(struct msg_feedback)) {
-            ctx->stats.err_invalid_len_received++;
+            if (ctx->stats.err_invalid_len_received == INT32_MAX) {
+                log_err("Overflow on ctx->stats.err_invalid_len_received var!\n");
+            } else {
+                ctx->stats.err_invalid_len_received++;
+            }
+
             return;
         }
 
@@ -324,6 +329,22 @@ void controller_net_receive(void *data, int msg_id, int src_id, void *buf, int l
         ctx->stats.err_msg_id++;
 }
 
+void controller_exit(struct controller_ctx *ctx)
+{
+    int i, j;
+
+    rtos_mqueue_destroy(ctx->event_queue);
+
+    control_strategy_context_exit();
+
+    // Delete io_devices
+    for (i = 0; i < ctx->num_io_device; i++) {
+        for (j = 0; j < ctx->io_devices[i].num_motors; j++) {
+            control_strategy_unregister_motor(ctx->strategy, ctx->io_devices[i].motors[j]);
+        }
+    }
+}
+
 int controller_init(struct controller_ctx *ctx, struct cyclic_task *c_task, bool motor_local,
                     control_strategies_t first_strategy, bool cmd_client)
 {
@@ -339,13 +360,13 @@ int controller_init(struct controller_ctx *ctx, struct cyclic_task *c_task, bool
     }
 
     /* Initialize queue that handles button events */
-    ctx->event_queue = xQueueCreate(1, sizeof(enum event));
+    ctx->event_queue = rtos_mqueue_alloc_init(1, sizeof(enum event_motor));
     if (!ctx->event_queue) {
         log_err("Unable to create queue\n");
         goto err;
     }
 
-    if (user_button_add_event_queue(&ctx->event_queue) < 0) {
+    if (user_button_add_event_queue(ctx->event_queue) < 0) {
         log_err("Unable to add event queue for user button events\n");
         goto err_del_queue;
     }
@@ -369,8 +390,13 @@ int controller_init(struct controller_ctx *ctx, struct cyclic_task *c_task, bool
         ctx->io_devices[i].connected = 0;
         ctx->io_devices[i].num_motors = 1;
         for (j = 0; j < ctx->io_devices[i].num_motors; j++) {
-            genavb_clock_gettime64(c_task->params.clk_id, &now);
-            ctx->io_devices[i].motors[j] = control_strategy_register_motor(ctx->strategy, ctx->io_devices[i].id, j, now);
+            if (genavb_clock_gettime64(c_task->params.clk_id, &now) == GENAVB_SUCCESS) {
+                ctx->io_devices[i].motors[j] = control_strategy_register_motor(ctx->strategy, ctx->io_devices[i].id, j, now);
+            } else {
+                log_err("Get genavb clock failed!\n");
+                goto err;
+            }
+
         }
     }
 
@@ -397,7 +423,7 @@ int controller_init(struct controller_ctx *ctx, struct cyclic_task *c_task, bool
     return 0;
 
 err_del_queue:
-    vQueueDelete(ctx->event_queue);
+    rtos_mqueue_destroy(ctx->event_queue);
 err:
     return -1;
 }

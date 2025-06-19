@@ -6,10 +6,10 @@
 
 #include <string.h>
 
+#include "rtos_apps/log.h"
+
 #include "alarm_task.h"
 #include "tsn_tasks_config.h"
-
-#include "log.h"
 #include "types.h"
 
 static void net_callback(void *data)
@@ -18,7 +18,7 @@ static void net_callback(void *data)
     struct tsn_task *task = container_of(sock, struct tsn_task, sock_rx[sock->id]);
     struct alarm_task *a_task = task->ctx;
 
-    if (xQueueSend(a_task->queue.handle, &sock, 0) != pdTRUE) {
+    if (rtos_mqueue_send(a_task->queue.handle, &sock, RTOS_NO_WAIT) < 0) {
         log_err("xQueueSendFromISR() failed\n\r");
     }
 }
@@ -30,7 +30,7 @@ static void main_alarm_monitor(void *data)
     while (true) {
         struct net_socket *sock;
 
-        if (xQueueReceive(a_task->queue.handle, &sock, pdMS_TO_TICKS(10000)) != pdTRUE)
+        if (rtos_mqueue_receive(a_task->queue.handle, &sock, RTOS_MS_TO_TICKS(10000)) < 0)
             continue;
 
         while (tsn_net_receive_sock(sock) == NET_OK) {
@@ -56,7 +56,7 @@ int alarm_net_transmit(struct alarm_task *a_task, int msg_id, void *buf, int len
     struct tsn_common_hdr *hdr;
     int payload_len;
     int status;
-    uint64_t now;
+    uint64_t now = 0;
 
     payload_len = len + sizeof(*hdr);
     if (payload_len >= task->params->tx_buf_size)
@@ -108,10 +108,10 @@ int alarm_task_monitor_init(struct alarm_task *a_task,
     params->rx_params[0].addr.port = 0;
     params->num_rx_socket = 1;
 
-    a_task->queue.handle = xQueueCreate(a_task->queue.length,
+    a_task->queue.handle = rtos_mqueue_alloc_init(a_task->queue.length,
                                         sizeof(struct net_socket *));
     if (!a_task->queue.handle) {
-        log_err("xQueueCreate failed\n");
+        log_err("rtos_mqueue_alloc_init failed\n");
         goto err;
     }
 
@@ -133,9 +133,27 @@ int alarm_task_monitor_init(struct alarm_task *a_task,
 
 err:
     if (a_task->queue.handle)
-        vQueueDelete(a_task->queue.handle);
+        rtos_mqueue_destroy(a_task->queue.handle);
 
     return -1;
+}
+
+void alarm_task_monitor_exit(struct alarm_task *a_task)
+{
+    tsn_task_unregister(&a_task->task);
+
+    if (a_task->queue.handle)
+        rtos_mqueue_destroy(a_task->queue.handle);
+}
+
+static void main_alarm_io(void *data)
+{
+    struct alarm_task *a_task = data;
+
+    while (true) {
+        rtos_sleep(RTOS_MS_TO_TICKS(10000));
+        alarm_net_transmit(a_task, 0, NULL, 0);
+    }
 }
 
 int alarm_task_io_init(struct alarm_task *a_task)
@@ -153,7 +171,7 @@ int alarm_task_io_init(struct alarm_task *a_task)
     params->tx_params[0].addr.port = 0;
     params->num_tx_socket = 1;
 
-    rc = tsn_task_register(&a_task->task, params, a_task->id, NULL, NULL, NULL);
+    rc = tsn_task_register(&a_task->task, params, a_task->id, main_alarm_io, a_task, NULL);
     if (rc < 0) {
         log_err("tsn_task_register rc = %d\n", __func__, rc);
         goto err;
@@ -163,4 +181,9 @@ int alarm_task_io_init(struct alarm_task *a_task)
 
 err:
     return -1;
+}
+
+void alarm_task_io_exit(struct alarm_task *a_task)
+{
+    tsn_task_unregister(&a_task->task);
 }

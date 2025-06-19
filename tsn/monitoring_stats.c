@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
-#include "FreeRTOS.h"
+#include "rtos_abstraction_layer.h"
 #include "monitoring_stats.h"
 #include "lwip/opt.h"
 #include "lwip/sys.h"
@@ -22,7 +22,7 @@ struct monitoring_stats_ctx {
 
 int monitoring_stats_open(struct monitoring_stats_ctx **ctx)
 {
-    *ctx = pvPortMalloc(sizeof(struct monitoring_stats_ctx));
+    *ctx = rtos_malloc(sizeof(struct monitoring_stats_ctx));
     if (!*ctx)
         goto err;
 
@@ -40,7 +40,7 @@ int monitoring_stats_open(struct monitoring_stats_ctx **ctx)
     return 0;
 
 err_free:
-    vPortFree(*ctx);
+    rtos_free(*ctx);
 err:
     return -1;
 }

@@ -6,16 +6,17 @@
 
 #include <stdint.h>
 #include <stdio.h>
-#include <getopt.h>
+
+#include "rtos_apps/log.h"
 
 #include "tsn_task.h"
 
 #include "stats_task.h"
-#include "log.h"
 #include "types.h"
 
 #include "genavb.h"
 #include "genavb/helpers.h"
+#include "genavb/qos.h"
 #include "genavb/ether.h"
 #include "tsn_tasks_config.h"
 
@@ -35,7 +36,7 @@ void tsn_task_stats_init(struct tsn_task *task)
 
 int tsn_task_stats_start(struct tsn_task *task)
 {
-    uint64_t now;
+    uint64_t now = 0;
     int32_t sched_err;
     int rc = 0;
 
@@ -69,7 +70,7 @@ int tsn_task_stats_start(struct tsn_task *task)
 
 void tsn_task_stats_end(struct tsn_task *task)
 {
-    uint64_t now;
+    uint64_t now = 0;
     int32_t proc_time;
     int32_t total_time;
 
@@ -125,7 +126,7 @@ static void tsn_task_stats_dump(struct tsn_task *task)
     stats_reset(&task->stats.total_time);
     task->stats_snap.pending = true;
 
-    if (STATS_Async(tsn_task_stats_print, task) != pdTRUE)
+    if (STATS_Async(tsn_task_stats_print, task) < 0)
         task->stats_snap.pending = false;
 }
 
@@ -140,7 +141,7 @@ static void net_socket_stats_print(void *data)
     sock->stats_snap.pending = false;
 }
 
-void net_socket_stats_dump(struct net_socket *sock)
+static void net_socket_stats_dump(struct net_socket *sock)
 {
     if (sock->stats_snap.pending)
         return;
@@ -148,7 +149,7 @@ void net_socket_stats_dump(struct net_socket *sock)
     memcpy(&sock->stats_snap, &sock->stats, sizeof(struct net_socket_stats));
     sock->stats_snap.pending = true;
 
-    if (STATS_Async(net_socket_stats_print, sock) != pdTRUE)
+    if (STATS_Async(net_socket_stats_print, sock) < 0)
         sock->stats_snap.pending = false;
 }
 
@@ -400,7 +401,6 @@ void tsn_task_stop(struct tsn_task *task)
     }
 }
 
-
 static int tsn_task_net_init(struct tsn_task *task)
 {
     int i, j, k, l, rc;
@@ -436,7 +436,7 @@ static int tsn_task_net_init(struct tsn_task *task)
         sock->zero_copy = task->params->zero_copy;
         sock->n = task->params->num_packets;
 
-        sock->iovec = pvPortMalloc(rx_alloc_size);
+        sock->iovec = rtos_malloc(rx_alloc_size);
         if (!sock->iovec) {
             genavb_socket_rx_close(sock->genavb_rx);
             log_err("error allocating iovec rx buffer array\n");
@@ -470,7 +470,7 @@ static int tsn_task_net_init(struct tsn_task *task)
         sock->n = task->params->num_packets;
         sock->tx_pending = false;
 
-        sock->iovec = pvPortMalloc(tx_alloc_size);
+        sock->iovec = rtos_malloc(tx_alloc_size);
         if (!sock->iovec) {
             genavb_socket_tx_close(sock->genavb_tx);
             log_err("error allocating iovec tx buffer array\n");
@@ -489,7 +489,6 @@ static int tsn_task_net_init(struct tsn_task *task)
                 goto close_sock_tx;
             }
         }
-
     }
 
     return 0;
@@ -498,7 +497,7 @@ close_sock_tx:
     for (k = 0; k < j; k++) {
         sock = &task->sock_tx[k];
 
-        vPortFree(sock->iovec);
+        rtos_free(sock->iovec);
         genavb_socket_tx_close(sock->genavb_tx);
     }
 
@@ -506,7 +505,7 @@ close_sock_rx:
     for (k = 0; k < i; k++) {
         sock = &task->sock_rx[k];
 
-        vPortFree(sock->iovec);
+        rtos_free(sock->iovec);
         genavb_socket_rx_close(sock->genavb_rx);
     }
 
@@ -521,14 +520,14 @@ static void tsn_task_net_exit(struct tsn_task *task)
     for (i = 0; i < task->params->num_rx_socket; i++) {
         sock = &task->sock_rx[i];
 
-        vPortFree(sock->iovec);
+        rtos_free(sock->iovec);
         genavb_socket_rx_close(sock->genavb_rx);
     }
 
     for (i = 0; i < task->params->num_tx_socket; i++) {
         sock = &task->sock_tx[i];
 
-        vPortFree(sock->iovec);
+        rtos_free(sock->iovec);
         genavb_socket_tx_close(sock->genavb_tx);
     }
 }
@@ -537,10 +536,9 @@ int tsn_task_register(struct tsn_task **task, struct tsn_task_params *params,
                       int id, void (*main_loop)(void *), void *ctx,
                       void (*timer_callback)(void *, int))
 {
-    char task_name[16];
-    char timer_name[16];
+    char task_name[20] = {0, };
 
-    *task = pvPortMalloc(sizeof(struct tsn_task));
+    *task = rtos_malloc(sizeof(struct tsn_task));
     if (!(*task))
         goto err;
 
@@ -550,8 +548,8 @@ int tsn_task_register(struct tsn_task **task, struct tsn_task_params *params,
     (*task)->params = params;
     (*task)->ctx = ctx;
 
-    sprintf(task_name, "tsn task%1d", (*task)->id);
-    sprintf(timer_name, "task%1d timer", (*task)->id);
+    snprintf(task_name, 19, "tsn task%1d", (*task)->id);
+    task_name[19] = '\0';
 
     if (tsn_task_net_init(*task) < 0) {
         log_err("tsn_task_net_init error\n");
@@ -561,15 +559,14 @@ int tsn_task_register(struct tsn_task **task, struct tsn_task_params *params,
     tsn_task_stats_init(*task);
 
     if (main_loop) {
-        if (xTaskCreate(main_loop, task_name, params->stack_depth,
-                        ctx, params->priority, &(*task)->handle) != pdPASS) {
+        if (rtos_thread_create(&(*task)->thread, params->priority, 0, params->stack_depth, task_name, main_loop, ctx) < 0) {
             log_err("xTaskCreate failed\n\r");
             goto net_exit;
         }
     }
 
     if (timer_callback) {
-        if (genavb_timer_create(&(*task)->timer, params->clk_id, (genavb_timer_f_t)0) != GENAVB_SUCCESS) {
+        if (genavb_timer_create(&(*task)->timer, params->clk_id, 0) != GENAVB_SUCCESS) {
             log_err("genavb_timer_create() error\n");
             goto task_delete;
         }
@@ -590,14 +587,30 @@ timer_destroy:
 
 task_delete:
     if (main_loop)
-        vTaskDelete((*task)->handle);
+        rtos_thread_abort(&(*task)->thread);
 
 net_exit:
     tsn_task_net_exit(*task);
 
 err_free:
-    vPortFree(*task);
+    rtos_free(*task);
 
 err:
     return -1;
+}
+
+void tsn_task_unregister(struct tsn_task **task)
+{
+    /* timer_destroy */
+    if ((*task)->timer)
+        genavb_timer_destroy((*task)->timer);
+
+    /* task_delete */
+    rtos_thread_abort(&(*task)->thread);
+
+    /* net_exit */
+    tsn_task_net_exit(*task);
+
+    /* err_free */
+    rtos_free(*task);
 }

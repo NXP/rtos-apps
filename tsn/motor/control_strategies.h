@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2021, 2023 NXP
+ * Copyright 2019-2021, 2023-2025 NXP
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -22,8 +22,10 @@ struct controlled_motor_ctx;
 struct control_strategy_ctx;
 
 int control_strategy_context_init(struct control_strategy_ctx **ctx, control_strategies_t first_strategy, unsigned int app_period_ns);
+int control_strategy_context_exit(void);
 void control_strategy_stats_dump(struct control_strategy_ctx *ctx);
 struct controlled_motor_ctx *control_strategy_register_motor(struct control_strategy_ctx *ctx, uint16_t io_device_id, uint16_t motor_id, uint64_t time);
+int control_strategy_unregister_motor(struct control_strategy_ctx *ctx, struct controlled_motor_ctx *ctrl_ctx);
 int control_strategy_set_feedback(struct controlled_motor_ctx *motor, struct motor_feedback *feedback);
 float control_strategy_get_iq(struct controlled_motor_ctx *motor);
 void control_strategy_reset_iq(struct control_strategy_ctx *ctx);

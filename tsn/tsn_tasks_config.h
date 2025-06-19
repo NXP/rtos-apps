@@ -7,8 +7,7 @@
 #ifndef _TSN_TASKS_CONFIG_H_
 #define _TSN_TASKS_CONFIG_H_
 
-#include "FreeRTOS.h"
-#include "task.h"
+#include "rtos_abstraction_layer.h"
 
 #include "genavb/tsn.h"
 #include "genavb/qos.h"
@@ -22,8 +21,8 @@
 
 #define SCHED_TRAFFIC_OFFSET 35000
 
-#define TASK_DEFAULT_STACK_SIZE   (configMINIMAL_STACK_SIZE + 256)
-#define TASK_DEFAULT_PRIORITY     (configMAX_PRIORITIES - 1)
+#define TASK_DEFAULT_STACK_SIZE   (RTOS_MINIMAL_STACK_SIZE + 256)
+#define TASK_DEFAULT_PRIORITY     (RTOS_MAX_PRIORITY - 1)
 #define TASK_DEFAULT_QUEUE_LENGTH (8)
 
 #define APP_PERIOD_DEFAULT              100000

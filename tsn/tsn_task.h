@@ -7,11 +7,7 @@
 #ifndef _TSN_TASK_H_
 #define _TSN_TASK_H_
 
-#include <stdint.h>
-
-#include "FreeRTOS.h"
-#include "task.h"
-#include "timers.h"
+#include "rtos_abstraction_layer.h"
 
 #include "rtos_apps/stats.h"
 #include "genavb/clock.h"
@@ -31,7 +27,7 @@ enum net_flags {
 };
 
 struct tsn_task_params {
-    UBaseType_t priority;
+    unsigned int priority;
     unsigned short stack_depth;
 
     genavb_clock_id_t clk_id;
@@ -98,7 +94,7 @@ struct net_socket {
 
 struct tsn_task {
     int id;
-    TaskHandle_t handle;
+    rtos_thread_t thread;
     struct genavb_timer *timer;
     struct tsn_task_params *params;
     void *ctx;
@@ -156,6 +152,7 @@ static inline unsigned int *tsn_net_sock_buf_size(struct net_socket *socket, int
 int tsn_task_register(struct tsn_task **task, struct tsn_task_params *params,
                       int id, void (*main_loop)(void *), void *ctx,
                       void (*timer_callback)(void *, int));
+void tsn_task_unregister(struct tsn_task **task);
 int tsn_task_start(struct tsn_task *task);
 void tsn_task_stop(struct tsn_task *task);
 int tsn_net_receive_set_cb(struct net_socket *sock,
@@ -171,6 +168,5 @@ int tsn_net_transmit_sock(struct net_socket *sock, bool tx_time, uint64_t ts);
 void tsn_stats_dump(struct tsn_task *task);
 int tsn_task_stats_start(struct tsn_task *task);
 void tsn_task_stats_end(struct tsn_task *task);
-void tsn_task_stats_get_monitoring(struct tsn_task *task, uint32_t *sched_err_max, uint32_t *transmit_time_max, uint32_t nb_socket_rx);
 
 #endif /* _TSN_TASK_H_ */
