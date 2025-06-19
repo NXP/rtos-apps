@@ -4,18 +4,19 @@
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
+#include "rtos_abstraction_layer.h"
+
 #include "command_client.h"
 #include "lwip/sockets.h"
 #include "log.h"
-#include "FreeRTOS.h"
 
-#define COMMAND_CLIENT_TASK_STACK_SIZE (configMINIMAL_STACK_SIZE + 512)
-#define COMMAND_CLIENT_TASK_PRIO       (configMAX_PRIORITIES - 1)
+#define COMMAND_CLIENT_TASK_STACK_SIZE (RTOS_MINIMAL_STACK_SIZE + 512)
+#define COMMAND_CLIENT_TASK_PRIO       (RTOS_MAX_PRIORITY - 1)
 
 #define COMMAND_CLIENT_PORT 8000
 
 struct command_client_ctx {
-    TaskHandle_t command_client_task;
+    rtos_thread_t command_client_task;
     int socket_fd;
     struct command_msg_type buf;
     struct sockaddr_in client_address;
@@ -84,7 +85,7 @@ static void command_client_task(void *pvParameters)
     }
 
 exit:
-    vTaskDelete(NULL);
+    rtos_thread_abort(NULL);
 }
 
 int command_client_start(struct command_client_ctx **ctx)
@@ -97,9 +98,9 @@ int command_client_start(struct command_client_ctx **ctx)
         // By default, the command is set to start
         command_client_context_h->state = CMD_STATE_GO;
 
-        if (xTaskCreate(command_client_task, "command client task", COMMAND_CLIENT_TASK_STACK_SIZE,
-                        command_client_context_h, COMMAND_CLIENT_TASK_PRIO, &command_client_context_h->command_client_task) != pdPASS) {
-            log_err("xTaskCreate() failed\n");
+        if (rtos_thread_create(&command_client_context_h->command_client_task, COMMAND_CLIENT_TASK_PRIO, 0, COMMAND_CLIENT_TASK_STACK_SIZE,
+            "command client task", command_client_task, command_client_context_h) < 0) {
+            log_err("rtos_thread_create() failed\n");
             rc = -1;
         }
     } else {
