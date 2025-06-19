@@ -16,12 +16,8 @@
 
 #include "genavb.h"
 #include "genavb/helpers.h"
-#include "genavb/srp.h"
-#include "genavb/qos.h"
 #include "genavb/ether.h"
 #include "tsn_tasks_config.h"
-
-//#define SRP_RESERVATION
 
 void tsn_task_stats_init(struct tsn_task *task)
 {
@@ -404,145 +400,6 @@ void tsn_task_stop(struct tsn_task *task)
     }
 }
 
-#ifdef SRP_RESERVATION
-static struct genavb_control_handle *s_msrp_handle = NULL;
-
-static uint8_t tsn_stream_id[8] = {0xaa, 0xaa, 0xaa, 0xaa, 0xbb, 0xbb, 0xbb, 0x00};
-
-static int msrp_init(struct genavb_handle *s_avb_handle)
-{
-    int genavb_result;
-    int rc;
-
-    genavb_result = genavb_control_open(s_avb_handle, &s_msrp_handle, GENAVB_CTRL_MSRP);
-    if (genavb_result != GENAVB_SUCCESS) {
-        log_err("avb_control_open() failed: %s\n", genavb_strerror(genavb_result));
-        rc = -1;
-        goto err_control_open;
-    }
-
-    return 0;
-
-err_control_open:
-    return rc;
-}
-
-static int msrp_exit(void)
-{
-    genavb_control_close(s_msrp_handle);
-
-    s_msrp_handle = NULL;
-
-    return 0;
-}
-
-static int tsn_net_rx_srp_register(struct genavb_socket_rx_params *params)
-{
-    struct genavb_msg_listener_register listener_register;
-    struct genavb_msg_listener_response listener_response;
-    struct net_address *addr = &params->addr;
-    unsigned int msg_type, msg_len;
-    int rc;
-
-    listener_register.port = addr->port;
-    memcpy(listener_register.stream_id, tsn_stream_id, 8);
-    listener_register.stream_id[7] = addr->u.l2.dst_mac[5];
-
-    log_info("stream_params: %p\n", listener_register.stream_id);
-
-    msg_type = GENAVB_MSG_LISTENER_REGISTER;
-    msg_len = sizeof(listener_response);
-    rc = genavb_control_send_sync(s_msrp_handle, (genavb_msg_type_t *)&msg_type, &listener_register, sizeof(listener_register), &listener_response, &msg_len, 1000);
-    if ((rc != GENAVB_SUCCESS) || (msg_type != GENAVB_MSG_LISTENER_RESPONSE) || (listener_response.status != GENAVB_SUCCESS)) {
-        log_err(STREAM_STR_FMT " failed: %s\n", STREAM_STR(listener_register.stream_id), genavb_strerror(rc));
-        return -1;
-    }
-
-    return 0;
-}
-
-static int tsn_net_rx_srp_deregister(struct genavb_socket_rx_params *params)
-{
-    struct genavb_msg_listener_deregister listener_deregister;
-    struct genavb_msg_listener_response listener_response;
-    struct net_address *addr = &params->addr;
-    unsigned int msg_type, msg_len;
-    int rc;
-
-    listener_deregister.port = addr->port;
-    memcpy(listener_deregister.stream_id, tsn_stream_id, 8);
-    listener_deregister.stream_id[7] = addr->u.l2.dst_mac[5];
-
-    log_info("stream_params: %p\n", listener_deregister.stream_id);
-
-    msg_type = GENAVB_MSG_LISTENER_DEREGISTER;
-    msg_len = sizeof(listener_response);
-    rc = genavb_control_send_sync(s_msrp_handle, (genavb_msg_type_t *)&msg_type, &listener_deregister, sizeof(listener_deregister), &listener_response, &msg_len, 1000);
-    if ((rc != GENAVB_SUCCESS) || (msg_type != GENAVB_MSG_LISTENER_RESPONSE) || (listener_response.status != GENAVB_SUCCESS)) {
-        log_err(STREAM_STR_FMT " failed: %s\n", STREAM_STR(listener_deregister.stream_id), genavb_strerror(rc));
-        return -1;
-    }
-
-    return 0;
-}
-
-static int tsn_net_tx_srp_register(struct genavb_socket_tx_params *params)
-{
-    struct genavb_msg_talker_register talker_register;
-    struct genavb_msg_talker_response talker_response;
-    struct net_address *addr = &params->addr;
-    unsigned int msg_type, msg_len;
-    int rc;
-
-    talker_register.port = addr->port;
-    memcpy(talker_register.stream_id, tsn_stream_id, 8);
-    talker_register.stream_id[7] = addr->u.l2.dst_mac[5];
-
-    talker_register.params.stream_class = SR_CLASS_A;
-    memcpy(talker_register.params.destination_address, addr->u.l2.dst_mac, 6);
-    talker_register.params.vlan_id = ntohs(addr->vlan_id);
-
-    talker_register.params.max_frame_size = 200;
-    talker_register.params.max_interval_frames = 1;
-    talker_register.params.accumulated_latency = 0;
-    talker_register.params.rank = NORMAL;
-
-    msg_type = GENAVB_MSG_TALKER_REGISTER;
-    msg_len = sizeof(talker_response);
-
-    rc = genavb_control_send_sync(s_msrp_handle, (genavb_msg_type_t *)&msg_type, &talker_register, sizeof(talker_register), &talker_response, &msg_len, 1000);
-    if ((rc != GENAVB_SUCCESS) || (msg_type != GENAVB_MSG_TALKER_RESPONSE) || (talker_response.status != GENAVB_SUCCESS)) {
-        log_err(STREAM_STR_FMT " failed: %s\n", STREAM_STR(talker_register.stream_id), genavb_strerror(rc));
-        return -1;
-    }
-
-    return 0;
-}
-
-static int tsn_net_tx_srp_deregister(struct genavb_socket_tx_params *params)
-{
-    struct genavb_msg_talker_deregister talker_deregister;
-    struct genavb_msg_talker_response talker_response;
-    struct net_address *addr = &params->addr;
-    unsigned int msg_type, msg_len;
-    int rc;
-
-    talker_deregister.port = addr->port;
-    memcpy(talker_deregister.stream_id, tsn_stream_id, 8);
-    talker_deregister.stream_id[7] = addr->u.l2.dst_mac[5];
-
-    msg_type = GENAVB_MSG_TALKER_DEREGISTER;
-    msg_len = sizeof(talker_response);
-    rc = genavb_control_send_sync(s_msrp_handle, (genavb_msg_type_t *)&msg_type, &talker_deregister, sizeof(talker_deregister), &talker_response, &msg_len, 1000);
-    if ((rc != GENAVB_SUCCESS) || (msg_type != GENAVB_MSG_TALKER_RESPONSE) || (talker_response.status != GENAVB_SUCCESS)) {
-        log_err(STREAM_STR_FMT " failed: %s\n", STREAM_STR(talker_deregister.stream_id), genavb_strerror(rc));
-
-        return -1;
-    }
-
-    return 0;
-}
-#endif
 
 static int tsn_task_net_init(struct tsn_task *task)
 {
@@ -556,11 +413,6 @@ static int tsn_task_net_init(struct tsn_task *task)
     rx_alloc_size = task->params->num_packets * sizeof(struct genavb_iovec);
     tx_flags = 0;
     tx_alloc_size = task->params->num_packets * sizeof(struct genavb_iovec);
-
-#ifdef SRP_RESERVATION
-    if (msrp_init(get_genavb_handle()) < 0)
-        return -1;
-#endif
 
     if (task->params->zero_copy) {
         rx_flags |= GENAVB_SOCKF_ZEROCOPY | GENAVB_SOCKF_RAW;
@@ -602,10 +454,6 @@ static int tsn_task_net_init(struct tsn_task *task)
         rc = genavb_socket_rx_set_option(sock->genavb_rx, GENAVB_SOCKET_RX_OPTION_TC_MASK, task->params->rx_tc_mask);
         if (rc < 0)
             log_err("genavb_socket_rx_set_option() failed: %s\n", genavb_strerror(rc));
-
-#ifdef SRP_RESERVATION
-        tsn_net_rx_srp_register(&task->params->rx_params[i]);
-#endif
     }
 
     for (j = 0; j < task->params->num_tx_socket; j++) {
@@ -642,23 +490,13 @@ static int tsn_task_net_init(struct tsn_task *task)
             }
         }
 
-#ifdef SRP_RESERVATION
-        tsn_net_tx_srp_register(&task->params->tx_params[j]);
-#endif
     }
-
-#ifdef SRP_RESERVATION
-    msrp_exit();
-#endif
 
     return 0;
 
 close_sock_tx:
     for (k = 0; k < j; k++) {
         sock = &task->sock_tx[k];
-#ifdef SRP_RESERVATION
-        tsn_net_tx_srp_deregister(&task->params->tx_params[k]);
-#endif
 
         vPortFree(sock->iovec);
         genavb_socket_tx_close(sock->genavb_tx);
@@ -667,9 +505,6 @@ close_sock_tx:
 close_sock_rx:
     for (k = 0; k < i; k++) {
         sock = &task->sock_rx[k];
-#ifdef SRP_RESERVATION
-        tsn_net_rx_srp_deregister(&task->params->rx_params[k]);
-#endif
 
         vPortFree(sock->iovec);
         genavb_socket_rx_close(sock->genavb_rx);
@@ -685,9 +520,6 @@ static void tsn_task_net_exit(struct tsn_task *task)
 
     for (i = 0; i < task->params->num_rx_socket; i++) {
         sock = &task->sock_rx[i];
-#ifdef SRP_RESERVATION
-        tsn_net_rx_srp_deregister(&task->params->rx_params[i]);
-#endif
 
         vPortFree(sock->iovec);
         genavb_socket_rx_close(sock->genavb_rx);
@@ -695,9 +527,6 @@ static void tsn_task_net_exit(struct tsn_task *task)
 
     for (i = 0; i < task->params->num_tx_socket; i++) {
         sock = &task->sock_tx[i];
-#ifdef SRP_RESERVATION
-        tsn_net_tx_srp_deregister(&task->params->tx_params[i]);
-#endif
 
         vPortFree(sock->iovec);
         genavb_socket_tx_close(sock->genavb_tx);
