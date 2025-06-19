@@ -1,0 +1,22 @@
+config MCUX_COMPONENT_component.rtos_apps.audio
+    bool "Audio Pipeline component"
+    default n
+    select MCUX_COMPONENT_driver.sai
+    select MCUX_COMPONENT_component.rtos_apps.log
+    select MCUX_COMPONENT_component.rtos_apps.stats
+
+    if MCUX_COMPONENT_component.rtos_apps.audio
+
+      config MCUX_COMPONENT_component.rtos_apps.audio.genavb
+          bool "Audio AVB support"
+          default n
+
+      config MCUX_COMPONENT_component.rtos_apps.audio.pll
+          bool "Audio PLL support"
+          default n
+
+      config RTOS_APPS_AUDIO_GENAVB_ENABLE
+          bool
+          default y if MCUX_COMPONENT_component.rtos_apps.audio.genavb
+
+    endif
