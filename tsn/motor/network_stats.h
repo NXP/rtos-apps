@@ -1,11 +1,13 @@
 /*
- * Copyright 2019, 2023 NXP
+ * Copyright 2019, 2023, 2025 NXP
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
 #ifndef _NETWORK_STATS_H_
 #define _NETWORK_STATS_H_
+
+#include <stdint.h>
 
 #define NUM_MSG_PER_FRAME 4
 #define NUM_MOTORS        2
