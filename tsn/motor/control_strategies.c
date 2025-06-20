@@ -8,11 +8,11 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "rtos_apps/slist.h"
 #include "rtos_apps/stats.h"
 #include "rtos_apps/log.h"
 
 #include "control_strategies.h"
-#include "slist.h"
 #include "types.h"
 #include "stats_task.h"
 #include "network_stats.h"
