@@ -4,6 +4,7 @@
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
+#include <math.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -15,7 +16,6 @@
 #include "types.h"
 #include "stats_task.h"
 #include "network_stats.h"
-#include "math.h"
 #include "motor_params.h"
 #include "traj_planner.h"
 

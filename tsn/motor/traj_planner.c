@@ -4,10 +4,11 @@
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
+#include <math.h>
+
 #include "rtos_apps/log.h"
 
 #include "traj_planner.h"
-#include "math.h"
 #include "motor_params.h"
 #include "types.h"
 

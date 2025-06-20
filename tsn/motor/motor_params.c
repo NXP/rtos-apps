@@ -9,7 +9,6 @@
 #include "rtos_apps/log.h"
 
 #include "m1_pmsm_appconfig.h"
-#include "math.h"
 #include "motor_params.h"
 #include "storage.h"
 

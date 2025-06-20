@@ -4,6 +4,7 @@
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
+#include <math.h>
 #include <string.h>
 
 #include "rtos_apps/log.h"
@@ -13,7 +14,6 @@
 #include "local_network.h"
 #include "stats_task.h"
 #include "types.h"
-#include "math.h"
 #include "user_button.h"
 
 #define IO_DEVICE_STAT_PERIOD_SEC 2
