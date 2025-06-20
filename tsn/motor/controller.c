@@ -49,7 +49,7 @@ static void controller_stats_dump(struct controller_ctx *ctx)
     ctx->stats_snap.pending = true;
 
     // Print controller data
-    if (STATS_Async(controller_stats_print, &ctx->stats_snap) != true)
+    if (STATS_Async(controller_stats_print, &ctx->stats_snap) < 0)
         ctx->stats_snap.pending = false;
 }
 
@@ -94,7 +94,7 @@ static void controller_monitoring_send(struct controller_ctx *ctx)
     cyclic_task_get_monitoring(ctx->c_task, &ctx->msg.cyclic_task_stats, MONITOR_MAX_SOCKET);
     ctx->msg_pending = true;
 
-    if (STATS_Async(__controller_monitoring_send, ctx) != true)
+    if (STATS_Async(__controller_monitoring_send, ctx) < 0)
         ctx->msg_pending = false;
 }
 

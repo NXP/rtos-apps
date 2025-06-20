@@ -48,7 +48,7 @@ static void io_device_stats_dump(struct io_device_ctx *ctx)
     memcpy(&ctx->stats_snap, &ctx->stats, sizeof(struct stats_io_device));
     ctx->stats_snap.pending = true;
 
-    if (STATS_Async(io_device_stats_print, &ctx->stats_snap) != pdTRUE)
+    if (STATS_Async(io_device_stats_print, &ctx->stats_snap) < 0)
         ctx->stats_snap.pending = false;
 }
 
@@ -72,7 +72,7 @@ void io_device_monitoring_send(struct io_device_ctx *ctx)
     cyclic_task_get_monitoring(ctx->c_task, &ctx->msg.cyclic_task_stats, MONITOR_MAX_SOCKET);
     ctx->msg_pending = true;
 
-    if (STATS_Async(__io_device_monitoring_send, ctx) != pdTRUE)
+    if (STATS_Async(__io_device_monitoring_send, ctx) < 0)
         ctx->msg_pending = false;
 }
 
@@ -116,7 +116,7 @@ static void motor_stats_dump(struct motor_controlled *ctx)
     memcpy(&ctx->stats_snap, &ctx->stats, sizeof(struct stats_motor));
     ctx->stats_snap.pending = true;
 
-    if (STATS_Async(motor_stats_print, &ctx->stats_snap) != pdTRUE)
+    if (STATS_Async(motor_stats_print, &ctx->stats_snap) < 0)
         ctx->stats_snap.pending = false;
 }
 
