@@ -4,26 +4,13 @@
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
-/* FreeRTOS kernel includes. */
-#include "FreeRTOS.h"
-#include "task.h"
-
 #include "rtos_apps/log.h"
+#include "rtos_apps/tsn/tsn_entry.h"
 
-#include "stats_task.h"
-#include "fp.h"
-#include "lwip.h"
-#include "lwip_iperf.h"
-#include "tsn_app/shell.h"
-#include "storage.h"
-#include "qbv.h"
-
-#include "cyclic_task.h"
 #include "alarm_task.h"
+#include "cyclic_task.h"
+#include "serial_iodevice.h"
 #include "tsn_tasks_config.h"
-#include "system_config.h"
-
-#include "tsn_app.h"
 
 #if BUILD_MOTOR_CONTROLLER == 1
 #include "controller.h"
@@ -34,30 +21,24 @@
 #include "local_network.h"
 #endif
 
-#include "user_button.h"
-#include "serial_iodevice.h"
 /*******************************************************************************
  * Definitions
  ******************************************************************************/
-#define MAIN_TASK_STACK_SIZE (configMINIMAL_STACK_SIZE + 512)
-#define MAIN_TASK_PRIORITY   1
 
-#define STATS_PERIOD_MS 2000
-
+struct tsn_app_ctx {
 #if BUILD_MOTOR_CONTROLLER == 1
-static struct controller_ctx ctrl1;
-static struct controller_ctx *ctrl_h = NULL;
+    struct controller_ctx ctrl;
 #endif
-
 #if BUILD_MOTOR_IO_DEVICE == 1
-static struct io_device_ctx io_device1;
-static struct io_device_ctx *io_device_h = NULL;
+    struct io_device_ctx io_device;
 #endif
 
-static struct cyclic_task *opt_io_device_task;
-static char *task_id_names[] = {"CONTROLLER_0", "IO_DEVICE_0", "IO_DEVICE_1", "MAX_TASK_ID"};
-static char *app_mode_names[] = {"MOTOR_NETWORK", "MOTOR_LOCAL", "NETWORK_ONLY", "SERIAL"};
-static struct gavb_pps pps;
+    struct cyclic_task *c_task;
+    struct alarm_task *a_task;
+    struct cyclic_task *opt_io_device_task;
+};
+
+static const char *app_mode_names[] = {"MOTOR_NETWORK", "MOTOR_LOCAL", "NETWORK_ONLY", "SERIAL"};
 
 /*******************************************************************************
  * Code
@@ -70,83 +51,22 @@ static void null_loop(void *data, int timer_status)
     cyclic_net_transmit(c_task, 0, NULL, 0);
 }
 
-extern struct system_config system_cfg;
-
-static struct tsn_app_config *system_config_get_tsn_app(void)
+int tsn_app_init(struct tsn_app_config *config)
 {
-    struct tsn_app_config *config = &system_cfg.app.tsn_app_config;
+    struct tsn_app_ctx *ctx;
 
-    if (storage_cd("/tsn_app", true) == 0) {
-        storage_read_uint("mode", &config->mode);
-        storage_read_uint("role", &config->role);
-        storage_read_uint("num_io_devices", &config->num_io_devices);
-        storage_read_float("motor_offset", &config->motor_offset);
-        storage_read_uint("control_strategy", &config->control_strategy);
-        storage_read_uint("cmd_client", &config->cmd_client);
-        storage_read_bool("zero_copy", &config->zero_copy);
-
-        if (config->mode == SERIAL)
-            config->period_ns = APP_PERIOD_SERIAL_DEFAULT;
-
-        storage_read_uint("period_ns", &config->period_ns);
-        storage_read_uint("priority", &config->priority);
-        storage_read_uint("port_id", &config->port_id);
-        storage_read_uint("packets", &config->packets);
-        storage_read_uint("rx_tc_mask", &config->rx_tc_mask);
-
-        storage_cd("/", true);
+    ctx = rtos_malloc(sizeof(struct tsn_app_ctx));
+    if (!ctx) {
+        log_err("rtos_malloc() failed\n");
+        goto err_malloc;
     }
 
-    return config;
-}
+    memset(ctx, 0, sizeof(struct tsn_app_ctx));
 
-static void init(shell_handle_t shell)
-{
-    default_qos_init(shell);
-    fp_init(shell);
-    qbv_init(shell);
-    lwip_stack_init();
-    lwip_iperf_start(shell);
-}
-
-static void main_task(void *data)
-{
-    struct cyclic_task *c_task = NULL;
-    struct alarm_task *a_task;
-    struct tsn_app_config *config;
-    int conf_task_id;
-    shell_handle_t shell;
-
-    if (STATS_TaskInit(NULL, NULL, STATS_PERIOD_MS) < 0)
-        log_err("STATS_TaskInit() failed\n");
-
-    storage_init();
-
-    config = system_config_get_tsn_app();
-    if (!config) {
-        log_err("system_config_get_tsn_app() failed\n");
-        goto exit;
-    }
-
-    conf_task_id = config->role;
-
-    shell = tsn_init_shell(task_id_names[conf_task_id]);
-    if (shell == NULL) {
-        log_err("tsn_init_shell() failed\n");
-        goto exit;
-    }
-
-    if (gavb_stack_init()) {
-        log_err("gavb_stack_init() failed\n");
-        goto exit;
-    }
-
-    shell_start(init);
-
-    a_task = tsn_conf_get_alarm_task(config->role);
-    if (!a_task) {
+    ctx->a_task = tsn_conf_get_alarm_task(config->role);
+    if (!ctx->a_task) {
         log_err("tsn_conf_get_alarm_task() failed\n");
-        goto exit;
+        goto err_init;
     }
 
     log_info("tsn_app config\n");
@@ -165,12 +85,7 @@ static void main_task(void *data)
 
     if (config->period_ns < APP_PERIOD_MIN) {
         log_err("invalid application period, minimum is %u ns\n", APP_PERIOD_MIN);
-        goto exit;
-    }
-
-    if (init_gpio_handling_task() < 0) {
-        log_err("init_gpio_handling_task() failed\n");
-        goto exit;
+        goto err_init;
     }
 
 #if ((BUILD_MOTOR_CONTROLLER == 0) && (BUILD_MOTOR_IO_DEVICE == 0))
@@ -181,7 +96,7 @@ static void main_task(void *data)
     if (config->mode == MOTOR_NETWORK) {
         if ((config->period_ns != 100000) && (config->period_ns != 250000)) {
             log_err("invalid application period, only 100000 us and 250000 us are supported\n");
-            goto exit;
+            goto err_init;
         }
     }
 #endif
@@ -190,65 +105,63 @@ static void main_task(void *data)
     if (config->mode == MOTOR_LOCAL) {
         if ((config->period_ns != 100000) && (config->period_ns != 250000)) {
             log_err("invalid application period, only 100000 us and 250000 us are supported\n");
-            goto exit;
+            goto err_init;
         }
 
-        c_task = tsn_conf_get_cyclic_task(0);
-        if (!c_task) {
+        ctx->c_task = tsn_conf_get_cyclic_task(0);
+        if (!ctx->c_task) {
             log_err("tsn_conf_get_cyclic_task() failed\n");
-            goto exit;
+            goto err_init;
         }
 
-        cyclic_task_set_period(c_task, config->period_ns);
+        cyclic_task_set_period(ctx->c_task, config->period_ns);
 
-        c_task->num_peers = 0;
-        c_task->params.clk_id = GENAVB_CLOCK_MONOTONIC;
+        ctx->c_task->num_peers = 0;
+        ctx->c_task->params.clk_id = GENAVB_CLOCK_MONOTONIC;
 
-        opt_io_device_task = tsn_conf_get_cyclic_task(1);
-        if (!opt_io_device_task) {
+        ctx->opt_io_device_task = tsn_conf_get_cyclic_task(1);
+        if (!ctx->opt_io_device_task) {
             log_err("tsn_conf_get_cyclic_task() failed\n");
-            goto exit;
+            goto err_init;
         }
-        opt_io_device_task->num_peers = 0;
-        opt_io_device_task->params.clk_id = GENAVB_CLOCK_MONOTONIC;
 
-        cyclic_task_set_period(opt_io_device_task, config->period_ns);
+        ctx->opt_io_device_task->num_peers = 0;
+        ctx->opt_io_device_task->params.clk_id = GENAVB_CLOCK_MONOTONIC;
 
-        if (io_device_init(&io_device1, opt_io_device_task, 1, true) < 0) {
+        cyclic_task_set_period(ctx->opt_io_device_task, config->period_ns);
+
+        if (io_device_init(&ctx->io_device, ctx->opt_io_device_task, 1, true) < 0) {
             log_err("io_device_init() failed\n");
-            goto exit;
+            goto err_init;
         }
 
-        local_bind_controller_io_device(&ctrl1, &io_device1);
+        local_bind_controller_io_device(&ctx->ctrl, &ctx->io_device);
     } else
 #endif
     {
-        c_task = tsn_conf_get_cyclic_task(config->role);
-        if (!c_task) {
+        ctx->c_task = tsn_conf_get_cyclic_task(config->role);
+        if (!ctx->c_task) {
             log_err("tsn_conf_get_cyclic_task() failed\n");
-            goto exit;
+            goto err_init;
         }
 
-        cyclic_task_set_period(c_task, config->period_ns);
+        cyclic_task_set_period(ctx->c_task, config->period_ns);
     }
 
-    if (gavb_pps_init(&pps, c_task->params.clk_id) < 0)
-        log_err("gavb_pps_init() failed: pps timer could not be started\n");
-
-    if (c_task->type == CYCLIC_CONTROLLER) {
-        c_task->num_peers = config->num_io_devices;
-        a_task->num_peers = config->num_io_devices;
+    if (ctx->c_task->type == CYCLIC_CONTROLLER) {
+        ctx->c_task->num_peers = config->num_io_devices;
+        ctx->a_task->num_peers = config->num_io_devices;
     }
 
-    c_task->params.stream_priority = config->priority;
-    c_task->params.port_id = config->port_id;
-    c_task->params.zero_copy = config->zero_copy;
-    a_task->params.zero_copy = config->zero_copy;
+    ctx->c_task->params.stream_priority = config->priority;
+    ctx->c_task->params.port_id = config->port_id;
+    ctx->c_task->params.zero_copy = config->zero_copy;
+    ctx->a_task->params.zero_copy = config->zero_copy;
 
     if (config->rx_tc_mask > 0xFF)
         config->rx_tc_mask &= 0xFF;
 
-    c_task->params.rx_tc_mask = config->rx_tc_mask;
+    ctx->c_task->params.rx_tc_mask = config->rx_tc_mask;
 
     if (config->packets < 1)
         config->packets = 1;
@@ -256,88 +169,76 @@ static void main_task(void *data)
     if (config->packets > NET_RX_BATCH)
         config->packets = NET_RX_BATCH;
 
-    c_task->params.num_packets = config->packets;
+    ctx->c_task->params.num_packets = config->packets;
 
-    cyclic_task_set_tx_time(c_task, config->tx_time_offset_ns, config->tx_time_enabled);
+    cyclic_task_set_tx_time(ctx->c_task, config->tx_time_offset_ns, config->tx_time_enabled);
 
 #if (BUILD_MOTOR_CONTROLLER == 1) || (BUILD_MOTOR_IO_DEVICE == 1)
     if (config->mode == MOTOR_NETWORK || config->mode == MOTOR_LOCAL) {
 #if BUILD_MOTOR_CONTROLLER == 1
-        if (c_task->type == CYCLIC_CONTROLLER) {
-            if (controller_init(&ctrl1, c_task, config->mode == MOTOR_LOCAL,
+        if (ctx->c_task->type == CYCLIC_CONTROLLER) {
+            if (controller_init(&ctx->ctrl, ctx->c_task, config->mode == MOTOR_LOCAL,
                             (control_strategies_t)config->control_strategy, (bool)config->cmd_client) < 0) {
                 log_err("controller_init() failed\n");
-                goto exit;
+                goto err_init;
             }
-            ctrl_h = &ctrl1;
         }
 #endif
 #if BUILD_MOTOR_IO_DEVICE == 1
-        if (c_task->type == CYCLIC_IO_DEVICE) {
-            if (io_device_init(&io_device1, c_task, 1, false) < 0) {
+        if (ctx->c_task->type == CYCLIC_IO_DEVICE) {
+            if (io_device_init(&ctx->io_device, ctx->c_task, 1, false) < 0) {
                 log_err("io_device_init() failed\n");
-                goto exit;
+                goto err_init;
             }
-            io_device_h = &io_device1;
-            io_device_set_motor_offset(io_device_h, 0, config->motor_offset);
+
+            io_device_set_motor_offset(&ctx->io_device, 0, config->motor_offset);
         }
 #endif
-        if (c_task->type != CYCLIC_CONTROLLER && c_task->type != CYCLIC_IO_DEVICE) {
+        if (ctx->c_task->type != CYCLIC_CONTROLLER && ctx->c_task->type != CYCLIC_IO_DEVICE) {
             log_err("Unknown cyclic task type\n");
-            goto exit;
+            goto err_init;
         }
     } else
 #endif
     {
         if (config->mode == SERIAL) {
-            c_task->params.task_period_ns = APP_PERIOD_SERIAL_DEFAULT;
-            c_task->params.task_period_offset_ns = NET_DELAY_OFFSET_SERIAL_DEFAULT;
-            c_task->params.transfer_time_ns = NET_DELAY_OFFSET_SERIAL_DEFAULT;
+            ctx->c_task->params.task_period_ns = APP_PERIOD_SERIAL_DEFAULT;
+            ctx->c_task->params.task_period_offset_ns = NET_DELAY_OFFSET_SERIAL_DEFAULT;
+            ctx->c_task->params.transfer_time_ns = NET_DELAY_OFFSET_SERIAL_DEFAULT;
 
-            if (serial_iodevice_init(c_task) < 0) {
+            if (serial_iodevice_init(ctx->c_task) < 0) {
                 log_err("serial_iodevice_init() failed\n");
-                goto exit;
+                goto err_init;
             }
         } else {
-            if (cyclic_task_init(c_task, NULL, null_loop, c_task) < 0) {
+            if (cyclic_task_init(ctx->c_task, NULL, null_loop, ctx->c_task) < 0) {
                 log_err("cyclic_task_init() failed\n");
-                goto exit;
+                goto err_init;
             }
         }
     }
 
-    cyclic_task_start(c_task);
+    cyclic_task_start(ctx->c_task);
 
-    if (opt_io_device_task)
-        cyclic_task_start(opt_io_device_task);
+    if (ctx->opt_io_device_task)
+        cyclic_task_start(ctx->opt_io_device_task);
 
-    if (a_task->type == ALARM_MONITOR)
-        alarm_task_monitor_init(a_task, NULL, NULL);
-    else if (a_task->type == ALARM_IO_DEVICE) {
-        alarm_task_io_init(a_task);
+    if (ctx->a_task->type == ALARM_MONITOR)
+        alarm_task_monitor_init(ctx->a_task, NULL, NULL);
+    else if (ctx->a_task->type == ALARM_IO_DEVICE) {
+        alarm_task_io_init(ctx->a_task);
 
         while (true) {
             vTaskDelay(pdMS_TO_TICKS(10000));
-            alarm_net_transmit(a_task, 0, NULL, 0);
+            alarm_net_transmit(ctx->a_task, 0, NULL, 0);
         }
     }
 
-exit:
-    /*
-     * For now nothing more to do, delete task.
-     */
-    vTaskDelete(NULL);
-}
-
-/*!
- * @brief TSN Main function
- */
-int tsn_app_main(void)
-{
-    (void)xTaskCreate(main_task, "main task", MAIN_TASK_STACK_SIZE,
-                    NULL, MAIN_TASK_PRIORITY, NULL);
-
-    vTaskStartScheduler();
-
     return 0;
+
+err_init:
+    rtos_free(ctx);
+
+err_malloc:
+    return -1;
 }
