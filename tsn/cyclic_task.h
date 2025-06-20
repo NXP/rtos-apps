@@ -7,9 +7,11 @@
 #ifndef _CYCLIC_TASK_H_
 #define _CYCLIC_TASK_H_
 
+#include "rtos_abstraction_layer.h"
+
+#include "monitoring_stats.h"
 #include "tsn_task.h"
 #include "tsn_tasks_config.h"
-#include "monitoring_stats.h"
 
 struct socket_stats {
     bool pending;

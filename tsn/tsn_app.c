@@ -4,6 +4,10 @@
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
+#include <string.h>
+
+#include "genavb/timer.h"
+
 #include "rtos_apps/log.h"
 #include "rtos_apps/tsn/tsn_entry.h"
 
@@ -13,11 +17,11 @@
 #include "tsn_tasks_config.h"
 
 #if BUILD_MOTOR_CONTROLLER == 1
-#include "controller.h"
+#include "motor/controller.h"
 #endif
 
 #if BUILD_MOTOR_IO_DEVICE == 1
-#include "io_device.h"
+#include "motor/io_device.h"
 #endif
 
 /*******************************************************************************

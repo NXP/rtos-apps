@@ -10,9 +10,9 @@
 #include "rtos_apps/log.h"
 #include "rtos_apps/types.h"
 
+#include "../cyclic_task.h"
 #include "../user_button.h"
 #include "io_device.h"
-#include "cyclic_task.h"
 #include "stats_task.h"
 
 

@@ -11,9 +11,9 @@
 
 #include "rtos_apps/tsn/tsn_tasks_config.h"
 
+#include "../monitoring_stats.h"
 #include "motor_control_api.h"
 #include "motor_control.h"
-#include "monitoring_stats.h"
 
 typedef enum {
     WAIT_FOR_INPUT,

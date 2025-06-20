@@ -7,8 +7,9 @@
 #ifndef _MOTOR_CONTROL_API_H_
 #define _MOTOR_CONTROL_API_H_
 
-#include <stdint.h>
 #include <stdbool.h>
+#include <stdint.h>
+
 #include "motor_control.h"
 
 struct tsn_motor;

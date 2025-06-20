@@ -7,14 +7,14 @@
 #ifndef _CONTROLLER_H_
 #define _CONTROLLER_H_
 
+#include "../cyclic_task.h"
+#include "../monitoring_stats.h"
+#include "command_client.h"
+#include "control_strategies.h"
+#include "current_control.h"
 #include "motor_control.h"
 #include "scenarios.h"
 #include "traj_planner.h"
-#include "cyclic_task.h"
-#include "current_control.h"
-#include "control_strategies.h"
-#include "monitoring_stats.h"
-#include "command_client.h"
 
 typedef enum {
     CONTROL,

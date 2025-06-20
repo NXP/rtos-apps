@@ -7,13 +7,14 @@
 #include <stdint.h>
 #include <stdio.h>
 
-#include "rtos_apps/log.h"
-#include "rtos_apps/types.h"
-
-#include "genavb.h"
+#include "genavb/genavb.h"
 #include "genavb/ether.h"
 #include "genavb/helpers.h"
 #include "genavb/qos.h"
+#include "genavb/timer.h"
+
+#include "rtos_apps/log.h"
+#include "rtos_apps/types.h"
 
 #include "stats_task.h"
 #include "tsn_task.h"

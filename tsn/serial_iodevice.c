@@ -9,10 +9,10 @@
 #include "rtos_apps/log.h"
 #include "rtos_apps/types.h"
 
-#include "serial_iodevice.h"
 #include "board.h"
-#include "stats_task.h"
 #include "fsl_lpuart.h"
+#include "serial_iodevice.h"
+#include "stats_task.h"
 
 // UART RX Task parameters
 #define UART_RX_TASK_STACK_SIZE (RTOS_MINIMAL_STACK_SIZE + 256)

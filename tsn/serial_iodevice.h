@@ -8,7 +8,6 @@
 #define _SERIAL_IODEVICE_H_
 
 #include "cyclic_task.h"
-#include "board.h"
 
 #if BUILD_SERIAL == 1
 int serial_iodevice_init(struct cyclic_task *c_task, struct cyclic_task_config *cfg);

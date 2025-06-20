@@ -9,7 +9,8 @@
 
 #include "rtos_abstraction_layer.h"
 
-#include "genavb/timer.h"
+#include "genavb/clock.h"
+#include "genavb/socket.h"
 
 #include "rtos_apps/stats.h"
 #include "rtos_apps/tsn/tsn_tasks_config.h"

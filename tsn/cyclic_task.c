@@ -10,9 +10,9 @@
 #include "rtos_apps/types.h"
 
 #include "cyclic_task.h"
-#include "tsn_tasks_config.h"
-#include "stats_task.h"
 #include "log.h"
+#include "stats_task.h"
+#include "tsn_tasks_config.h"
 
 #define CYCLIC_STAT_PERIOD_SEC 5
 #define CYCLIC_EVENT_QUEUE_LENGTH 1

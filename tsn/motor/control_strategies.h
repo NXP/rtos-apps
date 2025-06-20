@@ -7,13 +7,15 @@
 #ifndef _CONTROL_STRATEGIES_H_
 #define _CONTROL_STRATEGIES_H_
 
-#include <stdint.h>
 #include <stdbool.h>
+#include <stdint.h>
+
+#include "rtos_apps/tsn/tsn_tasks_config.h"
+
+#include "../monitoring_stats.h"
 #include "current_control.h"
-#include "scenarios.h"
 #include "motor_control.h"
-#include "monitoring_stats.h"
-#include "tsn_tasks_config.h"
+#include "scenarios.h"
 
 #define MAX_NUM_CONTROL_STRATEGIES 6
 

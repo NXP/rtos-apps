@@ -9,12 +9,10 @@
 
 #include "rtos_abstraction_layer.h"
 
-#include "genavb/tsn.h"
-#include "genavb/qos.h"
+#include "genavb/net_types.h"
 
 #define ETHERTYPE_MOTOROLA 0x818D
 #define VLAN_ID            2
-#define PACKET_SIZE        80
 
 #define SCHED_TRAFFIC_OFFSET 35000
 
@@ -22,19 +20,9 @@
 #define TASK_DEFAULT_PRIORITY     (RTOS_MAX_PRIORITY - 1)
 #define TASK_DEFAULT_QUEUE_LENGTH (8)
 
-#define APP_PERIOD_DEFAULT              100000
-#define APP_PERIOD_MIN                  100000
 #define NET_DELAY_OFFSET_DEFAULT        (APP_PERIOD_DEFAULT / 2)
 
-#define APP_PERIOD_SERIAL_DEFAULT       2000000
 #define NET_DELAY_OFFSET_SERIAL_DEFAULT (APP_PERIOD_SERIAL_DEFAULT / 2)
-
-enum task_id {
-    CONTROLLER_0,
-    IO_DEVICE_0,
-    IO_DEVICE_1,
-    MAX_TASKS_ID
-};
 
 enum task_type {
     CYCLIC_CONTROLLER,
@@ -43,27 +31,11 @@ enum task_type {
     ALARM_IO_DEVICE,
 };
 
-// Supported APP_MODEs
-#define MOTOR_NETWORK 0 /* Enables the controller to control 1 or 2 motors remotely */
-#define MOTOR_LOCAL   1 /* Not supported */
-#define NETWORK_ONLY  2 /* Enables to observe time-sensitive traffic between controller and 1 or 2 IO devices */
-#define SERIAL        3
-
-typedef enum control_strategies {
-    SYNCHRONIZED,
-    FOLLOW,
-    HOLD_INDEX,
-    INTERLACED,
-    STOP,
-    IDENTIFICATION
-} control_strategies_t;
-
 struct tsn_stream {
     struct net_address address;
 };
 
 const struct tsn_stream *tsn_conf_get_stream(int index);
-struct cyclic_task_config *tsn_conf_get_cyclic_task(int index);
 struct alarm_task_config *tsn_conf_get_alarm_task(int index);
 
 #endif /* _TSN_TASKS_CONFIG_H_ */

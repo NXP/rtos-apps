@@ -6,14 +6,17 @@
 
 #include <string.h>
 
+#include "genavb/genavb.h"
+
 #include "rtos_apps/log.h"
 #include "rtos_apps/types.h"
 
+#include "../user_button.h"
 #include "controller.h"
-#include "motor_control_api.h"
 #include "io_device.h"
+#include "motor_control_api.h"
 #include "stats_task.h"
-#include "user_button.h"
+
 
 #define RESTART_DELAY_MS           (2000)
 #define STRATEGY_CHANGE_DELAY      5000

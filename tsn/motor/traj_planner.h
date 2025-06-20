@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2021, 2023 NXP
+ * Copyright 2019-2021, 2023, 2025 NXP
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -7,8 +7,8 @@
 #ifndef _TRAJ_PLANNER_H_
 #define _TRAJ_PLANNER_H_
 
-#include <stdint.h>
 #include <stdbool.h>
+#include <stdint.h>
 
 struct traj_trapez {
     uint32_t cycles_accel;

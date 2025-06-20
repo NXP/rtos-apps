@@ -15,6 +15,34 @@
 #define MAX_RX_SOCKET 2
 #define MAX_TX_SOCKET 1
 
+#define PACKET_SIZE        80
+#define APP_PERIOD_DEFAULT 100000
+#define APP_PERIOD_MIN     100000
+
+#define APP_PERIOD_SERIAL_DEFAULT       2000000
+
+/* Supported APP_MODEs */
+#define MOTOR_NETWORK 0 /* Enables the controller to control 1 or 2 motors remotely */
+#define MOTOR_LOCAL   1 /* Not supported */
+#define NETWORK_ONLY  2 /* Enables to observe time-sensitive traffic between controller and 1 or 2 IO devices */
+#define SERIAL        3
+
+typedef enum control_strategies {
+    SYNCHRONIZED,
+    FOLLOW,
+    HOLD_INDEX,
+    INTERLACED,
+    STOP,
+    IDENTIFICATION
+} control_strategies_t;
+
+enum task_id {
+    CONTROLLER_0,
+    IO_DEVICE_0,
+    IO_DEVICE_1,
+    MAX_TASKS_ID
+};
+
 struct tsn_task_params {
     unsigned int priority;
     unsigned short stack_depth;
@@ -62,5 +90,7 @@ struct cyclic_task_config {
     struct socket_config rx_socket[MAX_PEERS];
     struct socket_config tx_socket;
 };
+
+struct cyclic_task_config *tsn_conf_get_cyclic_task(int index);
 
 #endif /* _RTOS_APPS_TSN_TASKS_CONFIG_H_ */

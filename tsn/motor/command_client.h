@@ -1,5 +1,5 @@
 /*
- * Copyright 2020-2021, 2024 NXP
+ * Copyright 2020-2021, 2024-2025 NXP
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -7,8 +7,8 @@
 #ifndef _COMMAND_SERVER_H_
 #define _COMMAND_SERVER_H_
 
-#include <stdint.h>
 #include <stdbool.h>
+#include <stdint.h>
 
 #define STOP_EVENT 255
 

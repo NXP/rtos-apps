@@ -4,6 +4,8 @@
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
+#include "genavb/qos.h"
+
 #include "rtos_apps/tsn/tsn_tasks_config.h"
 
 #include "tsn_tasks_config.h"

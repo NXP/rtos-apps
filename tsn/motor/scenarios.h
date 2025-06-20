@@ -1,5 +1,5 @@
 /*
- * Copyright 2019, 2021 NXP
+ * Copyright 2019, 2021, 2025 NXP
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -7,8 +7,8 @@
 #ifndef _MOTOR_SCENARIO_H_
 #define _MOTOR_SCENARIO_H_
 
-#include <stdint.h>
 #include <stdbool.h>
+#include <stdint.h>
 
 struct scenario_block {
     float pos_target;       // in rev

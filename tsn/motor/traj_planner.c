@@ -9,8 +9,8 @@
 #include "rtos_apps/log.h"
 #include "rtos_apps/types.h"
 
-#include "traj_planner.h"
 #include "motor_params.h"
+#include "traj_planner.h"
 
 void check_trap_traj(struct traj_trapez *traj)
 {

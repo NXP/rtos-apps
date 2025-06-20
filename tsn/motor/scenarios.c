@@ -6,8 +6,8 @@
 
 #include "rtos_apps/log.h"
 
+#include "../tsn_tasks_config.h"
 #include "scenarios.h"
-#include "tsn_tasks_config.h"
 
 #define APP_PERIOD_250_US 250000
 

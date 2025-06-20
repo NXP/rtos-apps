@@ -8,15 +8,15 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "rtos_apps/log.h"
 #include "rtos_apps/slist.h"
 #include "rtos_apps/stats.h"
-#include "rtos_apps/log.h"
 #include "rtos_apps/types.h"
 
 #include "control_strategies.h"
-#include "stats_task.h"
-#include "network_stats.h"
 #include "motor_params.h"
+#include "network_stats.h"
+#include "stats_task.h"
 #include "traj_planner.h"
 
 /* ----- Definitions ----- */
