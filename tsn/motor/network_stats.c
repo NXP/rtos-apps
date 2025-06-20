@@ -31,7 +31,7 @@ int network_stats_open(struct network_stats_ctx **ctx)
 
     (*ctx)->socket_fd = socket(AF_INET, SOCK_DGRAM, 0);
     if ((*ctx)->socket_fd < 0) {
-        log_err("socket call failed\n");
+        log_err("socket() failed\n");
         goto err_free;
     }
 
@@ -60,7 +60,7 @@ int network_stats_send(struct network_stats_ctx *ctx, struct net_stat_msg *dg)
         rc = sendto(ctx->socket_fd, &ctx->buffer_tx, sizeof(ctx->buffer_tx), MSG_DONTWAIT,
                     (struct sockaddr *)&ctx->server_address, sizeof(ctx->server_address));
         if (rc < 0) {
-            log_err("sendto() call failed, err: %d\n", rc);
+            log_err("sendto() failed: rc = %d\n", rc);
             goto err;
         }
     }

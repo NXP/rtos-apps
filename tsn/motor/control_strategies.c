@@ -299,7 +299,7 @@ static ctrl_strategy_return_codes_t strategy_synchronized_init(struct control_st
     slist_for_each (&ctx->motor_list, entry) {
         motor = container_of(entry, struct controlled_motor_ctx, node);
         if (scenario_init(&motor->scenario, SCENARIO_SYNCHRONIZED, ctx->app_period_ns) < 0) {
-            log_err("Error when initializing scenario %u\n", 0);
+            log_err("scenario_init(%u) failed\n", SCENARIO_SYNCHRONIZED);
             goto err;
         }
 
@@ -743,12 +743,12 @@ static ctrl_strategy_return_codes_t strategy_interlaced_init(struct control_stra
     struct controlled_motor_ctx *motor_dynamic = ctx->interlaced_context.motor_dynamic;
 
     if (scenario_init(&motor_static->scenario, SCENARIO_INTERLACED, ctx->app_period_ns) < 0) {
-        log_err("Error when initializing scenario %u\n", 0);
+        log_err("scenario_init(%u) failed\n", SCENARIO_INTERLACED);
         goto err;
     }
 
     if (scenario_init(&motor_dynamic->scenario, SCENARIO_INTERLACED, ctx->app_period_ns) < 0) {
-        log_err("Error when initializing scenario %u\n", 0);
+        log_err("scenario_init(%u) failed\n", SCENARIO_INTERLACED);
         goto err;
     }
 
@@ -1400,7 +1400,7 @@ int control_strategy_context_init(struct control_strategy_ctx **ctx, control_str
     control_strategy_h->state = RESET;
 
     if (network_stats_open(&control_strategy_h->net_stats_ctx) < 0) {
-        log_err("Failed to open network stats socket\n");
+        log_err("network_stats_open() failed\n");
         goto err;
     }
 
@@ -1468,7 +1468,7 @@ struct controlled_motor_ctx *control_strategy_register_motor(struct control_stra
 {
     struct controlled_motor_ctx *new_motor = rtos_malloc(sizeof(struct controlled_motor_ctx));
     if (!new_motor) {
-        log_err("Unable to allocate controlled motor context\n");
+        log_err("rtos_malloc(controlled motor context) failed\n");
         goto err;
     }
 

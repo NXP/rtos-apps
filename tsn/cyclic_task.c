@@ -347,7 +347,7 @@ int cyclic_task_init(struct cyclic_task *c_task,
 
     c_task->queue_h = rtos_mqueue_alloc_init(CYCLIC_EVENT_QUEUE_LENGTH, sizeof(struct cyclic_event));
     if (!c_task->queue_h) {
-        log_err("rtos_mqueue_alloc_init failed\n");
+        log_err("rtos_mqueue_alloc_init() failed\n");
         goto err_mqueue;
     }
 
@@ -357,7 +357,7 @@ int cyclic_task_init(struct cyclic_task *c_task,
 
     rc = tsn_task_register(&c_task->task, params, c_task->id, main_cyclic, c_task, timer_callback);
     if (rc < 0) {
-        log_err("tsn_task_register rc = %d\n", __func__, rc);
+        log_err("tsn_task_register() failed: rc = %d\n", rc);
         goto err_task_register;
     }
 

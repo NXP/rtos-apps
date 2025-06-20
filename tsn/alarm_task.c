@@ -19,7 +19,7 @@ static void net_callback(void *data)
     struct alarm_task *a_task = task->ctx;
 
     if (rtos_mqueue_send(a_task->queue.handle, &sock, RTOS_NO_WAIT) < 0) {
-        log_err("xQueueSendFromISR() failed\n\r");
+        log_err("rtos_mqueue_send() failed\n");
     }
 }
 
@@ -111,19 +111,19 @@ int alarm_task_monitor_init(struct alarm_task *a_task,
     a_task->queue.handle = rtos_mqueue_alloc_init(a_task->queue.length,
                                         sizeof(struct net_socket *));
     if (!a_task->queue.handle) {
-        log_err("rtos_mqueue_alloc_init failed\n");
+        log_err("rtos_mqueue_alloc_init() failed\n");
         goto err;
     }
 
     rc = tsn_task_register(&a_task->task, params, a_task->id, main_alarm_monitor, a_task, NULL);
     if (rc < 0) {
-        log_err("tsn_task_register rc = %d\n", __func__, rc);
+        log_err("tsn_task_register() failed: rc = %d\n", rc);
         goto err;
     }
 
     rc = tsn_net_receive_set_cb(&a_task->task->sock_rx[0], net_callback);
     if (rc < 0) {
-        log_err("tsn_net_receive_set_cb rc = %d\n", __func__, rc);
+        log_err("tsn_net_receive_set_cb() failed: rc = %d\n", rc);
         goto err;
     }
 
@@ -173,7 +173,7 @@ int alarm_task_io_init(struct alarm_task *a_task)
 
     rc = tsn_task_register(&a_task->task, params, a_task->id, main_alarm_io, a_task, NULL);
     if (rc < 0) {
-        log_err("tsn_task_register rc = %d\n", __func__, rc);
+        log_err("tsn_task_register() failed: rc = %d\n", rc);
         goto err;
     }
 

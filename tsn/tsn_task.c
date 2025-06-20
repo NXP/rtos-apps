@@ -370,7 +370,7 @@ int tsn_task_start(struct tsn_task *task)
         goto err;
 
     if (genavb_clock_gettime64(task->params->clk_id, &now) != GENAVB_SUCCESS) {
-        log_err("genavb_clock_gettime64() error\n");
+        log_err("genavb_clock_gettime64() failed\n");
         goto err;
     }
 
@@ -382,7 +382,7 @@ int tsn_task_start(struct tsn_task *task)
 
     if (genavb_timer_start(task->timer, start_time,
                            task->params->task_period_ns, GENAVB_TIMERF_ABS) != GENAVB_SUCCESS) {
-        log_err("genavb_timer_start() error\n");
+        log_err("genavb_timer_start() failed\n");
         goto err;
     }
 
@@ -429,7 +429,7 @@ static int tsn_task_net_init(struct tsn_task *task)
 
         if (genavb_socket_rx_open(&sock->genavb_rx, rx_flags,
                                   &task->params->rx_params[i]) != GENAVB_SUCCESS) {
-            log_err("genavb_socket_rx_open error\n");
+            log_err("genavb_socket_rx_open() failed\n");
             goto close_sock_rx;
         }
 
@@ -439,7 +439,7 @@ static int tsn_task_net_init(struct tsn_task *task)
         sock->iovec = rtos_malloc(rx_alloc_size);
         if (!sock->iovec) {
             genavb_socket_rx_close(sock->genavb_rx);
-            log_err("error allocating iovec rx buffer array\n");
+            log_err("rtos_malloc(iovec rx buffer array) failed\n");
             goto close_sock_rx;
         }
 
@@ -462,7 +462,7 @@ static int tsn_task_net_init(struct tsn_task *task)
         sock->dir = SOCKET_DIR_TX;
 
         if (genavb_socket_tx_open(&sock->genavb_tx, tx_flags, &task->params->tx_params[j]) != GENAVB_SUCCESS) {
-            log_err("genavb_socket_tx_open error\n");
+            log_err("genavb_socket_tx_open() failed\n");
             goto close_sock_tx;
         }
 
@@ -473,7 +473,7 @@ static int tsn_task_net_init(struct tsn_task *task)
         sock->iovec = rtos_malloc(tx_alloc_size);
         if (!sock->iovec) {
             genavb_socket_tx_close(sock->genavb_tx);
-            log_err("error allocating iovec tx buffer array\n");
+            log_err("rtos_malloc(iovec tx buffer array) failed\n");
             goto close_sock_tx;
         }
 
@@ -485,7 +485,7 @@ static int tsn_task_net_init(struct tsn_task *task)
                 sock->iovec[l].iov_base = (unsigned char *)buf_tx + (l * task->params->tx_buf_size);
         } else {
             if (tsn_net_transmit_init(sock, task->params->tx_buf_size) != NET_OK) {
-                log_err("error initializing iovec tx buffer array zero copy\n");
+                log_err("tsn_net_transmit_init() failed\n");
                 goto close_sock_tx;
             }
         }
@@ -552,7 +552,7 @@ int tsn_task_register(struct tsn_task **task, struct tsn_task_params *params,
     task_name[19] = '\0';
 
     if (tsn_task_net_init(*task) < 0) {
-        log_err("tsn_task_net_init error\n");
+        log_err("tsn_task_net_init() failed\n");
         goto err_free;
     }
 
@@ -560,19 +560,19 @@ int tsn_task_register(struct tsn_task **task, struct tsn_task_params *params,
 
     if (main_loop) {
         if (rtos_thread_create(&(*task)->thread, params->priority, 0, params->stack_depth, task_name, main_loop, ctx) < 0) {
-            log_err("xTaskCreate failed\n\r");
+            log_err("rtos_thread_create() failed\n");
             goto net_exit;
         }
     }
 
     if (timer_callback) {
         if (genavb_timer_create(&(*task)->timer, params->clk_id, 0) != GENAVB_SUCCESS) {
-            log_err("genavb_timer_create() error\n");
+            log_err("genavb_timer_create() failed\n");
             goto task_delete;
         }
 
         if (genavb_timer_set_callback((*task)->timer, timer_callback, *task) != GENAVB_SUCCESS) {
-            log_err("genavb_timer_create() error\n");
+            log_err("genavb_timer_set_callback() failed\n");
             goto timer_destroy;
         }
     } else {

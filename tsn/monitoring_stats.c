@@ -28,7 +28,7 @@ int monitoring_stats_open(struct monitoring_stats_ctx **ctx)
 
     (*ctx)->socket_fd = socket(AF_INET, SOCK_DGRAM, 0);
     if ((*ctx)->socket_fd < 0) {
-        log_err("socket call failed\n");
+        log_err("socket() failed\n");
         goto err_free;
     }
 
@@ -53,7 +53,7 @@ int monitoring_stats_send(struct monitoring_stats_ctx *ctx, struct monitoring_ms
                 (struct sockaddr *)&ctx->server_address, sizeof(ctx->server_address));
 
     if (rc < 0) {
-        log_err("sendto() call failed, err: %d\n", rc);
+        log_err("sendto() failed: rc = %d\n", rc);
         goto err;
     }
     return 0;

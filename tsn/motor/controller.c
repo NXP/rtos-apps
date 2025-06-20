@@ -362,12 +362,12 @@ int controller_init(struct controller_ctx *ctx, struct cyclic_task *c_task, bool
     /* Initialize queue that handles button events */
     ctx->event_queue = rtos_mqueue_alloc_init(1, sizeof(enum event_motor));
     if (!ctx->event_queue) {
-        log_err("Unable to create queue\n");
+        log_err("rtos_mqueue_alloc_init() failed\n");
         goto err;
     }
 
     if (user_button_add_event_queue(ctx->event_queue) < 0) {
-        log_err("Unable to add event queue for user button events\n");
+        log_err("user_button_add_event_queue() failed\n");
         goto err_del_queue;
     }
 
@@ -380,7 +380,7 @@ int controller_init(struct controller_ctx *ctx, struct cyclic_task *c_task, bool
 
     // Initialize control strategy
     if (control_strategy_context_init(&ctx->strategy, first_strategy, c_task->params.task_period_ns) < 0) {
-        log_err("Unable to initialize control strategy\n");
+        log_err("control_strategy_context_init() failed\n");
         goto err_del_queue;
     }
 
@@ -393,7 +393,7 @@ int controller_init(struct controller_ctx *ctx, struct cyclic_task *c_task, bool
             if (genavb_clock_gettime64(c_task->params.clk_id, &now) == GENAVB_SUCCESS) {
                 ctx->io_devices[i].motors[j] = control_strategy_register_motor(ctx->strategy, ctx->io_devices[i].id, j, now);
             } else {
-                log_err("Get genavb clock failed!\n");
+                log_err("genavb_clock_gettime64() failed\n");
                 goto err;
             }
 
@@ -405,12 +405,12 @@ int controller_init(struct controller_ctx *ctx, struct cyclic_task *c_task, bool
 
     if (cmd_client) {
         if (command_client_start(&ctx->cmd_client_ctx) < 0) {
-            log_err("Unable to start command client\n");
+            log_err("command_client_start() failed\n");
         }
     }
 
     if (monitoring_stats_open(&ctx->monitoring_stats_ctx) < 0) {
-        log_err("Failed to open monitoring stats socket\n");
+        log_err("monitoring_stats_open() failed\n");
         goto err_del_queue;
     }
 

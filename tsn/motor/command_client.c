@@ -36,7 +36,7 @@ static void command_client_task(void *pvParameters)
 
     ctx->socket_fd = socket(AF_INET, SOCK_DGRAM, 0);
     if (ctx->socket_fd < 0) {
-        log_err("socket call failed\n");
+        log_err("socket() failed\n");
         goto exit;
     }
 
@@ -45,7 +45,7 @@ static void command_client_task(void *pvParameters)
     ctx->client_address.sin_port = htons(COMMAND_CLIENT_PORT);
 
     if (bind(ctx->socket_fd, (struct sockaddr *)&ctx->client_address, sizeof(ctx->client_address)) == -1) {
-        log_err("bind call failed\n");
+        log_err("bind() failed\n");
     }
 
     log_info("Command server initialized succesfully\n");

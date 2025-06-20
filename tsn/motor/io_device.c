@@ -402,7 +402,7 @@ int io_device_init(struct io_device_ctx *ctx, struct cyclic_task *c_task, uint16
         ctx->motors_controlled[i].motor_id = i;
 
         if (mcapi_init(i, &ctx->motors_controlled[i].motor) < 0) {
-            log_err("Unable to initialize pmsm api\n");
+            log_err("mcapi_init() failed\n");
             goto err;
         }
 
@@ -413,17 +413,17 @@ int io_device_init(struct io_device_ctx *ctx, struct cyclic_task *c_task, uint16
     /* Initialize queue that handles button events */
     ctx->event_queue = rtos_mqueue_alloc_init(1, sizeof(enum event_motor));
     if (!ctx->event_queue) {
-        log_err("Unable to create queue\n");
+        log_err("rtos_mqueue_alloc_init() failed\n");
         goto err;
     }
 
     if (user_button_add_event_queue(ctx->event_queue) < 0) {
-        log_err("Unable to add event queue for user button events\n");
+        log_err("user_button_add_event_queue() failed\n");
         goto err_del_queue;
     }
 
     if (monitoring_stats_open(&ctx->monitoring_stats_ctx) < 0) {
-        log_err("Failed to open monitoring stats socket\n");
+        log_err("monitoring_stats_open() failed\n");
         goto err_del_queue;
     }
 

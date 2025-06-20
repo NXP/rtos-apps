@@ -214,7 +214,7 @@ static void main_task(void *data)
         cyclic_task_set_period(opt_io_device_task, config->period_ns);
 
         if (io_device_init(&io_device1, opt_io_device_task, 1, true) < 0) {
-            log_err("Local io_device initialization failed\n");
+            log_err("io_device_init() failed\n");
             goto exit;
         }
 
@@ -232,7 +232,7 @@ static void main_task(void *data)
     }
 
     if (gavb_pps_init(&pps, c_task->params.clk_id) < 0)
-        log_err("gavb_pps_init() error,pps timer could not be started\n");
+        log_err("gavb_pps_init() failed: pps timer could not be started\n");
 
     if (c_task->type == CYCLIC_CONTROLLER) {
         c_task->num_peers = config->num_io_devices;
@@ -265,7 +265,7 @@ static void main_task(void *data)
         if (c_task->type == CYCLIC_CONTROLLER) {
             if (controller_init(&ctrl1, c_task, config->mode == MOTOR_LOCAL,
                             (control_strategies_t)config->control_strategy, (bool)config->cmd_client) < 0) {
-                log_err("Controller initialization failed\n");
+                log_err("controller_init() failed\n");
                 goto exit;
             }
             ctrl_h = &ctrl1;
@@ -274,7 +274,7 @@ static void main_task(void *data)
 #if BUILD_MOTOR_IO_DEVICE == 1
         if (c_task->type == CYCLIC_IO_DEVICE) {
             if (io_device_init(&io_device1, c_task, 1, false) < 0) {
-                log_err("io_device initialization failed\n");
+                log_err("io_device_init() failed\n");
                 goto exit;
             }
             io_device_h = &io_device1;
