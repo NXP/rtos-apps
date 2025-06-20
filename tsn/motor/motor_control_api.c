@@ -6,11 +6,12 @@
 
 #include "rtos_abstraction_layer.h"
 
+#include "rtos_apps/log.h"
+
 #include "motor_control_api.h"
 #include "m1_sm_snsless_enc.h"
 #include "mcdrv.h"
 #include "mlib_types.h"
-#include "log.h"
 
 extern mcdef_pmsm_t g_sM1Drive;
 

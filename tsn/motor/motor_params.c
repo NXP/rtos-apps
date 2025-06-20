@@ -6,7 +6,8 @@
 
 #include "genavb/helpers.h"
 
-#include "log.h"
+#include "rtos_apps/log.h"
+
 #include "m1_pmsm_appconfig.h"
 #include "math.h"
 #include "motor_params.h"

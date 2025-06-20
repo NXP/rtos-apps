@@ -6,12 +6,13 @@
 
 #include "rtos_abstraction_layer.h"
 
+#include "rtos_apps/log.h"
+
 #include "network_stats.h"
 #include "lwip/opt.h"
 #include "lwip/sys.h"
 #include "lwip/api.h"
 #include "lwip/sockets.h"
-#include "log.h"
 
 #define UDP_SERVER_IP   "192.168.1.1"
 #define UDP_SERVER_PORT 6000

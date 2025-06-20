@@ -8,11 +8,12 @@
 #include "FreeRTOS.h"
 #include "task.h"
 
+#include "rtos_apps/log.h"
+
 #include "stats_task.h"
 #include "fp.h"
 #include "lwip.h"
 #include "lwip_iperf.h"
-#include "log.h"
 #include "tsn_app/shell.h"
 #include "storage.h"
 #include "qbv.h"

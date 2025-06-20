@@ -6,9 +6,10 @@
 
 #include "rtos_abstraction_layer.h"
 
+#include "rtos_apps/log.h"
+
 #include "command_client.h"
 #include "lwip/sockets.h"
-#include "log.h"
 
 #define COMMAND_CLIENT_TASK_STACK_SIZE (RTOS_MINIMAL_STACK_SIZE + 512)
 #define COMMAND_CLIENT_TASK_PRIO       (RTOS_MAX_PRIORITY - 1)

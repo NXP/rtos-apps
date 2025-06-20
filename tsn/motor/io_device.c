@@ -6,8 +6,9 @@
 
 #include <string.h>
 
+#include "rtos_apps/log.h"
+
 #include "io_device.h"
-#include "log.h"
 #include "cyclic_task.h"
 #include "local_network.h"
 #include "stats_task.h"

@@ -6,8 +6,9 @@
 
 #include <string.h>
 
+#include "rtos_apps/log.h"
+
 #include "controller.h"
-#include "log.h"
 #include "motor_control_api.h"
 #include "io_device.h"
 #include "local_network.h"

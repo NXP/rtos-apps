@@ -4,9 +4,10 @@
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
+#include "rtos_apps/log.h"
+
 #include "scenarios.h"
 #include "tsn_tasks_config.h"
-#include "log.h"
 
 #define APP_PERIOD_250_US 250000
 

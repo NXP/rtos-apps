@@ -6,9 +6,10 @@
 
 #include "rtos_abstraction_layer.h"
 
+#include "rtos_apps/log.h"
+
 #include "serial_iodevice.h"
 #include "board.h"
-#include "log.h"
 #include "stats_task.h"
 #include "fsl_lpuart.h"
 #include "types.h"
