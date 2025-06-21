@@ -4,16 +4,17 @@
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
+#include "rtos_abstraction_layer.h"
+
 #include "serial_iodevice.h"
 #include "board.h"
 #include "log.h"
 #include "stats_task.h"
-#include "semphr.h"
 #include "fsl_lpuart.h"
 #include "types.h"
 
 // UART RX Task parameters
-#define UART_RX_TASK_STACK_SIZE (configMINIMAL_STACK_SIZE + 256)
+#define UART_RX_TASK_STACK_SIZE (RTOS_MINIMAL_STACK_SIZE + 256)
 #define UART_RX_TASK_PRIORITY   1
 #define UART_RX_QUEUE_SIZE      5
 #define UART_RX_MAX_SEM_COUNT   10
@@ -43,8 +44,9 @@ struct serial_iodevice_stats {
 struct serial_iodevice_ctx {
     struct cyclic_task *c_task;
     LPUART_Type *uart_base;
-    SemaphoreHandle_t sem_uart_rx;
-    QueueHandle_t feedback_rx_queue;
+    rtos_sem_t sem_uart_rx;
+    rtos_mqueue_t *feedback_rx_queue;
+    rtos_thread_t thread;
     lpuart_handle_t lpuart_handler;
     uint8_t drv_rx_ring_buffer[BOARD_IODEV_UART_RING_BUFFER_LEN];
     uint8_t uart_rx_buf[MAX_SERIAL_COMMAND_LEN];
@@ -66,11 +68,11 @@ struct uart_rx_msg {
 static void lpuart_cb(LPUART_Type *base, lpuart_handle_t *handle, status_t status, void *userData)
 {
     struct serial_iodevice_ctx *ctx = userData;
-    BaseType_t xHigherPriorityTaskWoken = pdFALSE;
+    bool yield = false;
 
     if (status == kStatus_LPUART_IdleLineDetected) {
-        xSemaphoreGiveFromISR(ctx->sem_uart_rx, &xHigherPriorityTaskWoken);
-        portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
+        rtos_sem_give_from_isr(&ctx->sem_uart_rx, &yield);
+        rtos_yield_from_isr(yield);
     }
 }
 
@@ -137,7 +139,7 @@ static void uart_rx_task(void *pvParameters)
     struct uart_rx_msg *feedback;
 
     while (true) {
-        xSemaphoreTake(ctx->sem_uart_rx, portMAX_DELAY);
+        rtos_sem_take(&ctx->sem_uart_rx, RTOS_WAIT_FOREVER);
 
         num_bytes_to_read = LPUART_TransferGetRxRingBufferLength(ctx->uart_base, &ctx->lpuart_handler);
         num_bytes_to_read = MIN(num_bytes_to_read, MAX_SERIAL_COMMAND_LEN - ctx->uart_rx_index);
@@ -163,12 +165,12 @@ static void uart_rx_task(void *pvParameters)
                 len = i + 1;
 
                 // Enqueue received message
-                feedback = pvPortMalloc(sizeof(struct uart_rx_msg));
+                feedback = rtos_malloc(sizeof(struct uart_rx_msg));
                 if (feedback) {
                     memcpy(feedback->cmd_buffer, ctx->uart_rx_buf, len);
                     feedback->cmd_len = len;
 
-                    if (xQueueSend(ctx->feedback_rx_queue, &feedback, 0) != pdPASS) {
+                    if (rtos_mqueue_send(ctx->feedback_rx_queue, &feedback, RTOS_NO_WAIT) < 0) {
                         log_err("Feeback RX queue is already full\n");
                     }
 
@@ -253,19 +255,19 @@ static void serial_iodevice_loop(void *data, int timer_status)
         ctx->new_cmd = false;
     }
 
-    queue_len = uxQueueMessagesWaiting(ctx->feedback_rx_queue);
+    queue_len = rtos_mqueue_pending(ctx->feedback_rx_queue);
     if (queue_len > ctx->stats.max_feedback_queue_len)
         ctx->stats.max_feedback_queue_len = queue_len;
 
     // Check if a feedback has been received on uart
-    if (xQueueReceive(ctx->feedback_rx_queue, &feedback, 0) == pdTRUE) {
+    if (!rtos_mqueue_receive(ctx->feedback_rx_queue, &feedback, RTOS_NO_WAIT)) {
         if (feedback) {
             ctx->stats.uart_rx++;
 
             msg_to_send.cmd_len = feedback->cmd_len;
             memcpy(msg_to_send.cmd, feedback->cmd_buffer, feedback->cmd_len);
 
-            vPortFree(feedback);
+            rtos_free(feedback);
         }
     } else {
         msg_to_send.cmd_len = 0;
@@ -310,15 +312,14 @@ int serial_iodevice_init(struct cyclic_task *c_task)
 
     memset(ctx, 0, sizeof(struct serial_iodevice_ctx));
 
-    ctx->feedback_rx_queue = xQueueCreate(UART_RX_QUEUE_SIZE, sizeof(struct uart_rx_msg *));
+    ctx->feedback_rx_queue = rtos_mqueue_alloc_init(UART_RX_QUEUE_SIZE, sizeof(struct uart_rx_msg *));
     if (!ctx->feedback_rx_queue) {
-        log_err("xQueueCreate() failed\n");
+        log_err("rtos_mqueue_alloc_init() failed\n");
         goto err;
     }
 
-    ctx->sem_uart_rx = xSemaphoreCreateCounting(UART_RX_MAX_SEM_COUNT, 0);
-    if (!ctx->sem_uart_rx) {
-        log_err("xSemaphoreCreateBinary() failed\n");
+    if (rtos_sem_init(&ctx->sem_uart_rx, 0) < 0) {
+        log_err("rtos_sem_init() failed\n");
         goto err;
     }
 
@@ -327,9 +328,8 @@ int serial_iodevice_init(struct cyclic_task *c_task)
         goto err;
     }
 
-    if (xTaskCreate(uart_rx_task, "uart rx task", UART_RX_TASK_STACK_SIZE,
-                    ctx, UART_RX_TASK_PRIORITY, NULL) != pdPASS) {
-        log_err("xTaskCreate() failed\n");
+    if (rtos_thread_create(&ctx->thread, UART_RX_TASK_PRIORITY, 0, UART_RX_TASK_STACK_SIZE, "uart rx task", uart_rx_task, ctx) < 0) {
+        log_err("rtos_thread_create() failed\n");
         goto err;
     }
 
