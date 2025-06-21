@@ -146,17 +146,7 @@ void alarm_task_monitor_exit(struct alarm_task *a_task)
         rtos_mqueue_destroy(a_task->queue.handle);
 }
 
-static void main_alarm_io(void *data)
-{
-    struct alarm_task *a_task = data;
-
-    while (true) {
-        rtos_sleep(RTOS_MS_TO_TICKS(10000));
-        alarm_net_transmit(a_task, 0, NULL, 0);
-    }
-}
-
-int alarm_task_io_init(struct alarm_task *a_task)
+int alarm_task_io_init(struct alarm_task *a_task, void (*main_loop)(void *data), void *data)
 {
     struct tsn_task_params *params = &a_task->params;
     struct tsn_stream *tx_stream;
@@ -171,7 +161,7 @@ int alarm_task_io_init(struct alarm_task *a_task)
     params->tx_params[0].addr.port = 0;
     params->num_tx_socket = 1;
 
-    rc = tsn_task_register(&a_task->task, params, a_task->id, main_alarm_io, a_task, NULL);
+    rc = tsn_task_register(&a_task->task, params, a_task->id, main_loop, data, NULL);
     if (rc < 0) {
         log_err("tsn_task_register() failed: rc = %d\n", rc);
         goto err;

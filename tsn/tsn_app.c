@@ -44,6 +44,16 @@ static const char *app_mode_names[] = {"MOTOR_NETWORK", "MOTOR_LOCAL", "NETWORK_
  * Code
  ******************************************************************************/
 
+static void main_alarm_io(void *data)
+{
+    struct alarm_task *a_task = data;
+
+    while (true) {
+        rtos_sleep(RTOS_MS_TO_TICKS(10000));
+        alarm_net_transmit(a_task, 0, NULL, 0);
+    }
+}
+
 static void null_loop(void *data, int timer_status)
 {
     struct cyclic_task *c_task = data;
@@ -225,14 +235,8 @@ int tsn_app_init(struct tsn_app_config *config)
 
     if (ctx->a_task->type == ALARM_MONITOR)
         alarm_task_monitor_init(ctx->a_task, NULL, NULL);
-    else if (ctx->a_task->type == ALARM_IO_DEVICE) {
-        alarm_task_io_init(ctx->a_task);
-
-        while (true) {
-            vTaskDelay(pdMS_TO_TICKS(10000));
-            alarm_net_transmit(ctx->a_task, 0, NULL, 0);
-        }
-    }
+    else if (ctx->a_task->type == ALARM_IO_DEVICE)
+        alarm_task_io_init(ctx->a_task, main_alarm_io, ctx->a_task);
 
     return 0;
 
