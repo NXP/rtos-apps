@@ -11,9 +11,9 @@
 #include "rtos_apps/slist.h"
 #include "rtos_apps/stats.h"
 #include "rtos_apps/log.h"
+#include "rtos_apps/types.h"
 
 #include "control_strategies.h"
-#include "types.h"
 #include "stats_task.h"
 #include "network_stats.h"
 #include "motor_params.h"

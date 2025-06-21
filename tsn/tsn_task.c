@@ -8,11 +8,11 @@
 #include <stdio.h>
 
 #include "rtos_apps/log.h"
+#include "rtos_apps/types.h"
 
 #include "tsn_task.h"
 
 #include "stats_task.h"
-#include "types.h"
 
 #include "genavb.h"
 #include "genavb/helpers.h"

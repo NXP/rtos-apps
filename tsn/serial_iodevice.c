@@ -7,12 +7,12 @@
 #include "rtos_abstraction_layer.h"
 
 #include "rtos_apps/log.h"
+#include "rtos_apps/types.h"
 
 #include "serial_iodevice.h"
 #include "board.h"
 #include "stats_task.h"
 #include "fsl_lpuart.h"
-#include "types.h"
 
 // UART RX Task parameters
 #define UART_RX_TASK_STACK_SIZE (RTOS_MINIMAL_STACK_SIZE + 256)

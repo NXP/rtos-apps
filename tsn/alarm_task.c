@@ -7,10 +7,10 @@
 #include <string.h>
 
 #include "rtos_apps/log.h"
+#include "rtos_apps/types.h"
 
 #include "alarm_task.h"
 #include "tsn_tasks_config.h"
-#include "types.h"
 
 static void net_callback(void *data)
 {

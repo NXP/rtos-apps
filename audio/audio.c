@@ -10,13 +10,11 @@
 #include "rtos_apps/audio/audio_ctrl.h"
 #include "rtos_apps/audio/audio_entry.h"
 #include "rtos_apps/log.h"
+#include "rtos_apps/types.h"
 
 #include "audio.h"
 #include "audio_pipeline.h"
 #include "sai_drv.h"
-
-#define offset_of(type, member)           ((unsigned long)&(((type *)0)->member))
-#define container_of(entry, type, member) ((type *)((unsigned char *)(entry)-offset_of(type, member)))
 
 struct mode_handler {
     void *(*init)(void *);

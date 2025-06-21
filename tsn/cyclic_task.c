@@ -7,12 +7,12 @@
 #include <string.h>
 
 #include "rtos_apps/log.h"
+#include "rtos_apps/types.h"
 
 #include "cyclic_task.h"
 #include "tsn_tasks_config.h"
 #include "stats_task.h"
 #include "log.h"
-#include "types.h"
 
 static void socket_stats_print(void *data)
 {

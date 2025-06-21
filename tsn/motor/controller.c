@@ -7,6 +7,7 @@
 #include <string.h>
 
 #include "rtos_apps/log.h"
+#include "rtos_apps/types.h"
 
 #include "controller.h"
 #include "motor_control_api.h"
@@ -14,7 +15,6 @@
 #include "local_network.h"
 #include "stats_task.h"
 #include "user_button.h"
-#include "types.h"
 
 #define STRATEGY_CHANGE_DELAY      5000
 #define CONTROLLER_STAT_PERIOD_SEC 2

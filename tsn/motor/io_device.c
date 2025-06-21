@@ -8,12 +8,12 @@
 #include <string.h>
 
 #include "rtos_apps/log.h"
+#include "rtos_apps/types.h"
 
 #include "io_device.h"
 #include "cyclic_task.h"
 #include "local_network.h"
 #include "stats_task.h"
-#include "types.h"
 #include "user_button.h"
 
 #define IO_DEVICE_STAT_PERIOD_SEC 2
