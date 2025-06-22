@@ -1,11 +1,11 @@
 /*
- * Copyright 2019, 2023 NXP
+ * Copyright 2019, 2023, 2025 NXP
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
-#ifndef _CONTROL_ALGOS_H_
-#define _CONTROL_ALGOS_H_
+#ifndef _CURRENT_CONTROL_H_
+#define _CURRENT_CONTROL_H_
 
 enum control_mode {
     CTRL_MODE_TRAJECTORY,
@@ -39,4 +39,4 @@ void iq_controller_init(struct iq_control *iq_ctrl, enum control_mode ctrl_mode,
 float get_iq_command(struct iq_control *iq_ctrl, float pos_real, float speed_real,
                      float pos_cmd, float speed_cmd, float accel_cmd);
 
-#endif /* _CONTROL_ALGOS_H_ */
+#endif /* _CURRENT_CONTROL_H_ */

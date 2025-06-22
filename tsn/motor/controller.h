@@ -16,8 +16,6 @@
 #include "monitoring_stats.h"
 #include "command_client.h"
 
-#define RESTART_DELAY_MS (2000)
-
 typedef enum {
     CONTROL,
     IO_DEVICE_MISSING,

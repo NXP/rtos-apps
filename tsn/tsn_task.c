@@ -10,15 +10,17 @@
 #include "rtos_apps/log.h"
 #include "rtos_apps/types.h"
 
-#include "tsn_task.h"
-
-#include "stats_task.h"
-
 #include "genavb.h"
+#include "genavb/ether.h"
 #include "genavb/helpers.h"
 #include "genavb/qos.h"
-#include "genavb/ether.h"
+
+#include "stats_task.h"
+#include "tsn_task.h"
 #include "tsn_tasks_config.h"
+
+#define SOCKET_DIR_RX 0
+#define SOCKET_DIR_TX 1
 
 void tsn_task_stats_init(struct tsn_task *task)
 {

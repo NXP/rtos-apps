@@ -16,6 +16,13 @@
 
 #define COMMAND_CLIENT_PORT 8000
 
+struct command_msg_type {
+    uint32_t seq_id;
+    int32_t left_param;
+    int32_t right_param;
+    uint8_t go;
+} __attribute__((packed));
+
 struct command_client_ctx {
     rtos_thread_t command_client_task;
     int socket_fd;

@@ -20,8 +20,31 @@
 #define STAY_INDEX_DELAY_MS       2000
 #define MONITORING_STAT_PERIOD_MS 1000
 
-char *state_io_device_names[] = {"WAIT_FOR_INPUT", "INIT", "STAY_INDEX", "REMOTE_CONTROL", "FREERUNNING", "MOTOR_FAULT"};
-char *state_motor_control_names[] = {"FAULT", "INIT", "STOP", "RUN"};
+#define IO_DEVICE_STATUS_ERR_FAULT   (1 << 0)
+#define IO_DEVICE_STATUS_ERR_NETWORK (1 << 1)
+
+static const char *state_io_device_names[] = {"WAIT_FOR_INPUT", "INIT", "STAY_INDEX", "REMOTE_CONTROL", "FREERUNNING", "MOTOR_FAULT"};
+static const char *state_motor_control_names[] = {"FAULT", "INIT", "STOP", "RUN"};
+
+static inline void io_device_status_set_error_network(uint16_t *status)
+{
+    *status |= IO_DEVICE_STATUS_ERR_NETWORK;
+}
+
+static inline void io_device_status_set_error_fault(uint16_t *status)
+{
+    *status |= IO_DEVICE_STATUS_ERR_FAULT;
+}
+
+static inline void io_device_status_clear_error_network(uint16_t *status)
+{
+    *status &= ~IO_DEVICE_STATUS_ERR_NETWORK;
+}
+
+static inline void io_device_status_clear_error_fault(uint16_t *status)
+{
+    *status &= ~IO_DEVICE_STATUS_ERR_FAULT;
+}
 
 static void io_device_stats_print(void *data)
 {

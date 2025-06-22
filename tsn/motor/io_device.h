@@ -7,10 +7,11 @@
 #ifndef _IO_DEVICE_H_
 #define _IO_DEVICE_H_
 
+#include "rtos_abstraction_layer.h"
+
 #include "motor_control_api.h"
 #include "motor_control.h"
 #include "monitoring_stats.h"
-#include "rtos_abstraction_layer.h"
 
 typedef enum {
     WAIT_FOR_INPUT,

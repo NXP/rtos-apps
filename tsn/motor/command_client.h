@@ -17,13 +17,6 @@ enum command_client_state {
     CMD_STATE_STOP,
 };
 
-struct command_msg_type {
-    uint32_t seq_id;
-    int32_t left_param;
-    int32_t right_param;
-    uint8_t go;
-} __attribute__((packed));
-
 struct command_client_ctx;
 
 #if ENABLE_LWIP == 1

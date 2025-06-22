@@ -17,9 +17,6 @@
 #define MAX_RX_SOCKET 2
 #define MAX_TX_SOCKET 1
 
-#define SOCKET_DIR_RX 0
-#define SOCKET_DIR_TX 1
-
 enum net_flags {
     NET_OK,
     NET_NO_FRAME,

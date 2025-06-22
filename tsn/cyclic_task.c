@@ -14,6 +14,18 @@
 #include "stats_task.h"
 #include "log.h"
 
+#define CYCLIC_STAT_PERIOD_SEC 5
+#define CYCLIC_EVENT_QUEUE_LENGTH 1
+
+struct cyclic_event {
+    unsigned int type;
+    void *data;
+};
+
+enum cyclic_event_type {
+    CYCLIC_EVENT_TYPE_TIMER = 0,
+};
+
 static void socket_stats_print(void *data)
 {
     struct socket *sock = data;

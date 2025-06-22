@@ -13,7 +13,7 @@
 
 // --------------BLOCKS-----------------
 
-struct scenario_block blocks_0[] = {
+static struct scenario_block blocks_0[] = {
     [0] = {
         .pos_target = -0.125,
         .after_delay = 1000,
@@ -111,7 +111,7 @@ struct scenario_block blocks_0[] = {
     },
 };
 
-struct scenario_block blocks_0_rev[] = {
+static struct scenario_block blocks_0_rev[] = {
     [0] = {
         .pos_target = 0.125,
         .after_delay = 1000,
@@ -209,7 +209,8 @@ struct scenario_block blocks_0_rev[] = {
     },
 };
 
-struct scenario_block blocks_1[] = {
+#if 0
+static struct scenario_block blocks_1[] = {
     [0] = {
         .pos_target = 0.250,
         .after_delay = 1000,
@@ -306,8 +307,9 @@ struct scenario_block blocks_1[] = {
         .speed_max = 2000.0,
     },
 };
+#endif
 
-struct scenario_block blocks_2[] = {
+static struct scenario_block blocks_2[] = {
     [0] = {
         .pos_target = 0.125,
         .after_delay = 0,
@@ -1270,7 +1272,7 @@ struct scenario_block blocks_2[] = {
     },
 };
 
-struct scenario_block blocks_test[] = {
+static struct scenario_block blocks_test[] = {
     // Short moves at slow speed
     [0] = {
         .pos_target = 0.125,

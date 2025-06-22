@@ -7,7 +7,6 @@
 #include "rtos_apps/types.h"
 
 #include "current_control.h"
-
 #include "motor_params.h"
 
 /** Position P Controller

@@ -17,6 +17,12 @@
 #define UDP_SERVER_IP   "192.168.1.1"
 #define UDP_SERVER_PORT 6000
 
+#define NUM_MSG_PER_FRAME 4
+
+struct net_stat_frame {
+    struct net_stat_msg stats[NUM_MSG_PER_FRAME];
+};
+
 struct network_stats_ctx {
     int socket_fd;
     struct sockaddr_in server_address;

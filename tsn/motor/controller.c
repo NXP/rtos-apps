@@ -15,11 +15,12 @@
 #include "stats_task.h"
 #include "user_button.h"
 
+#define RESTART_DELAY_MS           (2000)
 #define STRATEGY_CHANGE_DELAY      5000
 #define CONTROLLER_STAT_PERIOD_SEC 2
 #define MONITORING_STAT_PERIOD_MS  1000
 
-char *state_names[] = {"CONTROL", "IO_DEVICE_MISSING", "STANDBY"};
+static const char *state_names[] = {"CONTROL", "IO_DEVICE_MISSING", "STANDBY"};
 
 static void controller_stats_print(void *data)
 {

@@ -36,8 +36,8 @@
 #define IDENTIFICATION_MAX_MOTOR             2
 #define IDENTIFICATION_MAX_STEPS             6
 
-char *strategy_names[] = {"SYNCHRONIZED", "FOLLOW", "HOLD_INDEX", "INTERLACED", "STOP", "IDENTIFICATION"};
-char *strategy_states_names[] = {"PREPARE", "STARTUP", "INIT", "STRATEGY", "RESET"};
+static const char *strategy_names[] = {"SYNCHRONIZED", "FOLLOW", "HOLD_INDEX", "INTERLACED", "STOP", "IDENTIFICATION"};
+static const char *strategy_states_names[] = {"PREPARE", "STARTUP", "INIT", "STRATEGY", "RESET"};
 
 typedef enum control_strategy_state {
     PREPARE,

@@ -12,29 +12,6 @@
 #define NB_IO_DEVICE_MAX  2
 #define NB_MOTORS_MAX 1
 
-#define IO_DEVICE_STATUS_ERR_FAULT   (1 << 0)
-#define IO_DEVICE_STATUS_ERR_NETWORK (1 << 1)
-
-static inline void io_device_status_set_error_network(uint16_t *status)
-{
-    *status |= IO_DEVICE_STATUS_ERR_NETWORK;
-}
-
-static inline void io_device_status_set_error_fault(uint16_t *status)
-{
-    *status |= IO_DEVICE_STATUS_ERR_FAULT;
-}
-
-static inline void io_device_status_clear_error_network(uint16_t *status)
-{
-    *status &= ~IO_DEVICE_STATUS_ERR_NETWORK;
-}
-
-static inline void io_device_status_clear_error_fault(uint16_t *status)
-{
-    *status &= ~IO_DEVICE_STATUS_ERR_FAULT;
-}
-
 enum event_motor {
     BUTTON_PRESSED,
 };

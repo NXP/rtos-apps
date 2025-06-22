@@ -9,9 +9,6 @@
 
 #include <stdint.h>
 
-#define NUM_MSG_PER_FRAME 4
-#define NUM_MOTORS        2
-
 struct net_stat_msg {
     uint16_t id;
     uint32_t seqid;
@@ -27,10 +24,6 @@ struct net_stat_msg {
     float uq_applied_fb;
     float dc_bus_fb;
 } __attribute__((packed));
-
-struct net_stat_frame {
-    struct net_stat_msg stats[NUM_MSG_PER_FRAME];
-};
 
 struct network_stats_ctx;
 
