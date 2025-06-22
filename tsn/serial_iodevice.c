@@ -82,12 +82,6 @@ static int lpuart_init(struct serial_iodevice_ctx *ctx)
     lpuart_config_t config;
     status_t status;
 
-    status = BOARD_InitLPUARTPins();
-    if (status != kStatus_Success) {
-        log_err("BOARD_InitLPUARTPins() failed\n");
-        goto err;
-    }
-
     ctx->uart_base = BOARD_IODEV_UART_BASEADDR;
 
     /*
