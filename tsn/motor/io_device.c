@@ -12,7 +12,6 @@
 
 #include "io_device.h"
 #include "cyclic_task.h"
-#include "local_network.h"
 #include "stats_task.h"
 #include "user_button.h"
 
@@ -137,14 +136,7 @@ static void io_device_send(struct io_device_ctx *ctx)
         msg_to_send.msg_array[i].motor_id = ctx->motors_controlled[i].motor_id;
     }
 
-#if BUILD_MOTOR_CONTROLLER == 1
-    if (ctx->controller_local) {
-        local_io_device_transmit(ctx, &msg_to_send);
-    } else
-#endif
-    {
-        cyclic_net_transmit(ctx->c_task, MSG_FEEDBACK, &msg_to_send, sizeof(msg_to_send));
-    }
+    cyclic_net_transmit(ctx->c_task, MSG_FEEDBACK, &msg_to_send, sizeof(msg_to_send));
 }
 
 static void io_device_set_state(struct io_device_ctx *ctx, sm_io_device_state_t new_state)
@@ -383,18 +375,13 @@ void io_device_set_motor_offset(struct io_device_ctx *ctx, uint16_t motor_id, fl
     ctx->motors_controlled[motor_id].motor_offset = offset;
 }
 
-int io_device_init(struct io_device_ctx *ctx, struct cyclic_task *c_task, uint16_t nb_motors, bool controller_local)
+int io_device_init(struct io_device_ctx *ctx, struct cyclic_task *c_task, uint16_t nb_motors)
 {
     unsigned int i = 0;
 
     ctx->num_motors = nb_motors;
-    ctx->controller_local = controller_local;
 
-    if (controller_local) {
-        ctx->state = INIT;
-    } else {
-        ctx->state = WAIT_FOR_INPUT;
-    }
+    ctx->state = WAIT_FOR_INPUT;
 
     ctx->status = 0;
     ctx->offset_reached = false;

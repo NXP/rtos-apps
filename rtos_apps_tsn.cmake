@@ -49,7 +49,6 @@ endif()
 if(build_motor_io_device)
     target_sources(${RTOS_APPS_TARGET} PRIVATE
         ${CMAKE_CURRENT_LIST_DIR}/tsn/motor/io_device.c
-        ${CMAKE_CURRENT_LIST_DIR}/tsn/motor/local_network.c
         ${CMAKE_CURRENT_LIST_DIR}/tsn/motor/motor_control_api.c
     )
 

@@ -12,7 +12,6 @@
 #include "controller.h"
 #include "motor_control_api.h"
 #include "io_device.h"
-#include "local_network.h"
 #include "stats_task.h"
 #include "user_button.h"
 
@@ -164,10 +163,7 @@ static void controller_send(struct controller_ctx *ctx)
         }
     }
 
-    if (ctx->motor_local)
-        local_controller_transmit(ctx, &msg_to_send);
-    else
-        cyclic_net_transmit(ctx->c_task, MSG_SET_IQ, &msg_to_send, sizeof(msg_to_send));
+    cyclic_net_transmit(ctx->c_task, MSG_SET_IQ, &msg_to_send, sizeof(msg_to_send));
 }
 
 static void controller_state_control(struct controller_ctx *ctx)
@@ -346,19 +342,13 @@ void controller_exit(struct controller_ctx *ctx)
     }
 }
 
-int controller_init(struct controller_ctx *ctx, struct cyclic_task *c_task, bool motor_local,
+int controller_init(struct controller_ctx *ctx, struct cyclic_task *c_task,
                     control_strategies_t first_strategy, bool cmd_client)
 {
     unsigned int i, j;
     uint64_t now;
 
-    ctx->motor_local = motor_local;
-
-    if (ctx->motor_local) {
-        ctx->num_io_device = 1;
-    } else {
-        ctx->num_io_device = c_task->num_peers;
-    }
+    ctx->num_io_device = c_task->num_peers;
 
     /* Initialize queue that handles button events */
     ctx->event_queue = rtos_mqueue_alloc_init(1, sizeof(enum event_motor));

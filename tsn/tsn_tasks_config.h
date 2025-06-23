@@ -48,7 +48,7 @@ enum task_type {
 
 // Supported APP_MODEs
 #define MOTOR_NETWORK 0 /* Enables the controller to control 1 or 2 motors remotely */
-#define MOTOR_LOCAL   1 /* Enables the controller to control 1 motor locally */
+#define MOTOR_LOCAL   1 /* Not supported */
 #define NETWORK_ONLY  2 /* Enables to observe time-sensitive traffic between controller and 1 or 2 IO devices */
 #define SERIAL        3
 
