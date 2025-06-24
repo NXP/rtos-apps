@@ -8,7 +8,7 @@
 #include "cyclic_task.h"
 #include "tsn_tasks_config.h"
 
-struct tsn_stream tsn_streams[MAX_TSN_STREAMS] = {
+static const struct tsn_stream tsn_streams[] = {
     [0] = {
         .address = {
             .ptype = PTYPE_L2,
@@ -170,7 +170,7 @@ static struct alarm_task_config alarm_tasks[] = {
     },
 };
 
-struct tsn_stream *tsn_conf_get_stream(int index)
+const struct tsn_stream *tsn_conf_get_stream(int index)
 {
     if (index >= (sizeof(tsn_streams) / sizeof(struct tsn_stream)))
         return NULL;

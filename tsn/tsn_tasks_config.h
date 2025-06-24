@@ -14,7 +14,6 @@
 
 #define MAX_PEERS          2
 #define MAX_TASK_CONFIGS   3
-#define MAX_TSN_STREAMS    8
 #define ETHERTYPE_MOTOROLA 0x818D
 #define VLAN_ID            2
 #define PACKET_SIZE        80
@@ -65,7 +64,7 @@ struct tsn_stream {
     struct net_address address;
 };
 
-struct tsn_stream *tsn_conf_get_stream(int index);
+const struct tsn_stream *tsn_conf_get_stream(int index);
 struct cyclic_task *tsn_conf_get_cyclic_task(int index);
 struct alarm_task_config *tsn_conf_get_alarm_task(int index);
 

@@ -319,7 +319,7 @@ int cyclic_task_init(struct cyclic_task *c_task,
                      void (*loop_func)(void *ctx, int timer_status), void *ctx)
 {
     struct tsn_task_params *params = &c_task->params;
-    struct tsn_stream *rx_stream, *tx_stream;
+    const struct tsn_stream *rx_stream, *tx_stream;
     int i;
     int rc;
 

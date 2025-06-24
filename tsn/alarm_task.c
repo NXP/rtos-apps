@@ -96,7 +96,7 @@ int alarm_task_monitor_init(struct alarm_task *a_task, struct alarm_task_config 
                             void *ctx)
 {
     struct tsn_task_params *params = &a_task->params;
-    struct tsn_stream *rx_stream;
+    const struct tsn_stream *rx_stream;
     int rc;
 
     memcpy(params, &cfg->params, sizeof(struct tsn_task_params));
@@ -152,7 +152,7 @@ void alarm_task_monitor_exit(struct alarm_task *a_task)
 int alarm_task_io_init(struct alarm_task *a_task, struct alarm_task_config *cfg, void (*main_loop)(void *data), void *data)
 {
     struct tsn_task_params *params = &a_task->params;
-    struct tsn_stream *tx_stream;
+    const struct tsn_stream *tx_stream;
     int rc;
 
     memcpy(params, &cfg->params, sizeof(struct tsn_task_params));
