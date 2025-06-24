@@ -32,7 +32,7 @@ struct tsn_app_ctx {
     struct io_device_ctx io_device;
 #endif
 
-    struct cyclic_task *c_task;
+    struct cyclic_task c_task;
     struct alarm_task a_task;
 };
 
@@ -63,6 +63,7 @@ int tsn_app_init(struct tsn_app_config *config)
 {
     struct tsn_app_ctx *ctx;
     struct alarm_task_config *a_cfg;
+    struct cyclic_task_config *c_cfg;
 
     ctx = rtos_malloc(sizeof(struct tsn_app_ctx));
     if (!ctx) {
@@ -110,27 +111,27 @@ int tsn_app_init(struct tsn_app_config *config)
     }
 #endif
 
-    ctx->c_task = tsn_conf_get_cyclic_task(config->role);
-    if (!ctx->c_task) {
+    c_cfg = tsn_conf_get_cyclic_task(config->role);
+    if (!c_cfg) {
         log_err("tsn_conf_get_cyclic_task() failed\n");
         goto err_init;
     }
 
-    cyclic_task_set_period(ctx->c_task, config->period_ns);
+    cyclic_task_set_period(c_cfg, config->period_ns);
 
-    if (ctx->c_task->type == CYCLIC_CONTROLLER) {
-        ctx->c_task->num_peers = config->num_io_devices;
+    if (c_cfg->type == CYCLIC_CONTROLLER) {
+        c_cfg->num_peers = config->num_io_devices;
     }
 
-    ctx->c_task->params.stream_priority = config->priority;
-    ctx->c_task->params.port_id = config->port_id;
-    ctx->c_task->params.zero_copy = config->zero_copy;
+    c_cfg->params.stream_priority = config->priority;
+    c_cfg->params.port_id = config->port_id;
+    c_cfg->params.zero_copy = config->zero_copy;
     a_cfg->params.zero_copy = config->zero_copy;
 
     if (config->rx_tc_mask > 0xFF)
         config->rx_tc_mask &= 0xFF;
 
-    ctx->c_task->params.rx_tc_mask = config->rx_tc_mask;
+    c_cfg->params.rx_tc_mask = config->rx_tc_mask;
 
     if (config->packets < 1)
         config->packets = 1;
@@ -138,15 +139,15 @@ int tsn_app_init(struct tsn_app_config *config)
     if (config->packets > NET_RX_BATCH)
         config->packets = NET_RX_BATCH;
 
-    ctx->c_task->params.num_packets = config->packets;
+    c_cfg->params.num_packets = config->packets;
 
-    cyclic_task_set_tx_time(ctx->c_task, config->tx_time_offset_ns, config->tx_time_enabled);
+    cyclic_task_set_tx_time(c_cfg, config->tx_time_offset_ns, config->tx_time_enabled);
 
 #if (BUILD_MOTOR_CONTROLLER == 1) || (BUILD_MOTOR_IO_DEVICE == 1)
     if (config->mode == MOTOR_NETWORK) {
 #if BUILD_MOTOR_CONTROLLER == 1
-        if (ctx->c_task->type == CYCLIC_CONTROLLER) {
-            if (controller_init(&ctx->ctrl, ctx->c_task,
+        if (c_cfg->type == CYCLIC_CONTROLLER) {
+            if (controller_init(&ctx->ctrl, &ctx->c_task, c_cfg,
                             (control_strategies_t)config->control_strategy, (bool)config->cmd_client) < 0) {
                 log_err("controller_init() failed\n");
                 goto err_init;
@@ -154,8 +155,8 @@ int tsn_app_init(struct tsn_app_config *config)
         }
 #endif
 #if BUILD_MOTOR_IO_DEVICE == 1
-        if (ctx->c_task->type == CYCLIC_IO_DEVICE) {
-            if (io_device_init(&ctx->io_device, ctx->c_task, 1) < 0) {
+        if (c_cfg->type == CYCLIC_IO_DEVICE) {
+            if (io_device_init(&ctx->io_device, &ctx->c_task, c_cfg, 1) < 0) {
                 log_err("io_device_init() failed\n");
                 goto err_init;
             }
@@ -163,7 +164,7 @@ int tsn_app_init(struct tsn_app_config *config)
             io_device_set_motor_offset(&ctx->io_device, 0, config->motor_offset);
         }
 #endif
-        if (ctx->c_task->type != CYCLIC_CONTROLLER && ctx->c_task->type != CYCLIC_IO_DEVICE) {
+        if (c_cfg->type != CYCLIC_CONTROLLER && c_cfg->type != CYCLIC_IO_DEVICE) {
             log_err("Unknown cyclic task type\n");
             goto err_init;
         }
@@ -171,11 +172,11 @@ int tsn_app_init(struct tsn_app_config *config)
 #endif
     {
         if (config->mode == SERIAL) {
-            ctx->c_task->params.task_period_ns = APP_PERIOD_SERIAL_DEFAULT;
-            ctx->c_task->params.task_period_offset_ns = NET_DELAY_OFFSET_SERIAL_DEFAULT;
-            ctx->c_task->params.transfer_time_ns = NET_DELAY_OFFSET_SERIAL_DEFAULT;
+            c_cfg->params.task_period_ns = APP_PERIOD_SERIAL_DEFAULT;
+            c_cfg->params.task_period_offset_ns = NET_DELAY_OFFSET_SERIAL_DEFAULT;
+            c_cfg->params.transfer_time_ns = NET_DELAY_OFFSET_SERIAL_DEFAULT;
 
-            if (serial_iodevice_init(ctx->c_task) < 0) {
+            if (serial_iodevice_init(&ctx->c_task, c_cfg) < 0) {
                 log_err("serial_iodevice_init() failed\n");
                 goto err_init;
             }
@@ -183,14 +184,14 @@ int tsn_app_init(struct tsn_app_config *config)
             log_err("mode not supported\n");
             goto err_init;
         } else {
-            if (cyclic_task_init(ctx->c_task, NULL, null_loop, ctx->c_task) < 0) {
+            if (cyclic_task_init(&ctx->c_task, c_cfg, NULL, null_loop, &ctx->c_task) < 0) {
                 log_err("cyclic_task_init() failed\n");
                 goto err_init;
             }
         }
     }
 
-    cyclic_task_start(ctx->c_task);
+    cyclic_task_start(&ctx->c_task);
 
     if (a_cfg->type == ALARM_MONITOR)
         alarm_task_monitor_init(&ctx->a_task, a_cfg, NULL, NULL);

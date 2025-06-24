@@ -10,6 +10,8 @@
 #include "genavb/clock.h"
 #include "genavb/socket.h"
 
+#define MAX_PEERS     2
+
 #define MAX_RX_SOCKET 2
 #define MAX_TX_SOCKET 1
 
@@ -45,6 +47,20 @@ struct alarm_task_config {
     int id;
     int stream_id;
     unsigned int length;
+};
+
+struct socket_config {
+    int peer_id;
+    int stream_id;
+};
+
+struct cyclic_task_config {
+    struct tsn_task_params params;
+    int type;
+    int id;
+    int num_peers;
+    struct socket_config rx_socket[MAX_PEERS];
+    struct socket_config tx_socket;
 };
 
 #endif /* _RTOS_APPS_TSN_TASKS_CONFIG_H_ */

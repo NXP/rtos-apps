@@ -12,8 +12,6 @@
 #include "genavb/tsn.h"
 #include "genavb/qos.h"
 
-#define MAX_PEERS          2
-#define MAX_TASK_CONFIGS   3
 #define ETHERTYPE_MOTOROLA 0x818D
 #define VLAN_ID            2
 #define PACKET_SIZE        80
@@ -65,7 +63,7 @@ struct tsn_stream {
 };
 
 const struct tsn_stream *tsn_conf_get_stream(int index);
-struct cyclic_task *tsn_conf_get_cyclic_task(int index);
+struct cyclic_task_config *tsn_conf_get_cyclic_task(int index);
 struct alarm_task_config *tsn_conf_get_alarm_task(int index);
 
 #endif /* _TSN_TASKS_CONFIG_H_ */

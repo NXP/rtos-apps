@@ -9,6 +9,8 @@
 
 #include "rtos_abstraction_layer.h"
 
+#include "rtos_apps/tsn/tsn_tasks_config.h"
+
 #include "motor_control_api.h"
 #include "motor_control.h"
 #include "monitoring_stats.h"
@@ -69,7 +71,7 @@ struct io_device_ctx {
     bool msg_pending;
 };
 
-int io_device_init(struct io_device_ctx *ctx, struct cyclic_task *c_task, uint16_t nb_motors);
+int io_device_init(struct io_device_ctx *ctx, struct cyclic_task *c_task, struct cyclic_task_config *cfg, uint16_t nb_motors);
 void io_device_set_motor_offset(struct io_device_ctx *ctx, uint16_t motor_id, float offset);
 void io_device_net_receive(void *data, int msg_id, int src_id, void *buf, int len);
 

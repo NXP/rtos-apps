@@ -343,13 +343,13 @@ void controller_exit(struct controller_ctx *ctx)
     }
 }
 
-int controller_init(struct controller_ctx *ctx, struct cyclic_task *c_task,
+int controller_init(struct controller_ctx *ctx, struct cyclic_task *c_task, struct cyclic_task_config *cfg,
                     control_strategies_t first_strategy, bool cmd_client)
 {
     unsigned int i, j;
     uint64_t now;
 
-    ctx->num_io_device = c_task->num_peers;
+    ctx->num_io_device = cfg->num_peers;
 
     /* Initialize queue that handles button events */
     ctx->event_queue = rtos_mqueue_alloc_init(1, sizeof(enum event_motor));
@@ -371,18 +371,18 @@ int controller_init(struct controller_ctx *ctx, struct cyclic_task *c_task,
     ctx->cmd_client_ctx = NULL;
 
     // Initialize control strategy
-    if (control_strategy_context_init(&ctx->strategy, first_strategy, c_task->params.task_period_ns) < 0) {
+    if (control_strategy_context_init(&ctx->strategy, first_strategy, cfg->params.task_period_ns) < 0) {
         log_err("control_strategy_context_init() failed\n");
         goto err_del_queue;
     }
 
     // Init io_devices
     for (i = 0; i < ctx->num_io_device; i++) {
-        ctx->io_devices[i].id = c_task->rx_socket[i].peer_id;
+        ctx->io_devices[i].id = cfg->rx_socket[i].peer_id;
         ctx->io_devices[i].connected = 0;
         ctx->io_devices[i].num_motors = 1;
         for (j = 0; j < ctx->io_devices[i].num_motors; j++) {
-            if (genavb_clock_gettime64(c_task->params.clk_id, &now) == GENAVB_SUCCESS) {
+            if (genavb_clock_gettime64(cfg->params.clk_id, &now) == GENAVB_SUCCESS) {
                 ctx->io_devices[i].motors[j] = control_strategy_register_motor(ctx->strategy, ctx->io_devices[i].id, j, now);
             } else {
                 log_err("genavb_clock_gettime64() failed\n");
@@ -407,7 +407,7 @@ int controller_init(struct controller_ctx *ctx, struct cyclic_task *c_task,
     }
 
     ctx->c_task = c_task;
-    if (cyclic_task_init(c_task, controller_net_receive, controller_loop, ctx) < 0)
+    if (cyclic_task_init(c_task, cfg, controller_net_receive, controller_loop, ctx) < 0)
         goto err_del_queue;
 
     log_info("Controller Init Successful\n");

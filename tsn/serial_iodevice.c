@@ -301,7 +301,7 @@ static void serial_iodevice_net_receive(void *data, int msg_id, int src_id, void
     }
 }
 
-int serial_iodevice_init(struct cyclic_task *c_task)
+int serial_iodevice_init(struct cyclic_task *c_task, struct cyclic_task_config *cfg)
 {
     struct serial_iodevice_ctx *ctx = &serial_iodev;
 
@@ -329,7 +329,7 @@ int serial_iodevice_init(struct cyclic_task *c_task)
     }
 
     ctx->c_task = c_task;
-    if (cyclic_task_init(c_task, serial_iodevice_net_receive, serial_iodevice_loop, ctx) < 0)
+    if (cyclic_task_init(c_task, cfg, serial_iodevice_net_receive, serial_iodevice_loop, ctx) < 0)
         goto err;
 
     log_info("Serial iodevice init successfully\n");

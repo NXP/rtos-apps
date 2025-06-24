@@ -65,7 +65,7 @@ struct controller_ctx {
     control_strategies_t last_control_strategy;
 };
 
-int controller_init(struct controller_ctx *ctx, struct cyclic_task *c_task,
+int controller_init(struct controller_ctx *ctx, struct cyclic_task *c_task, struct cyclic_task_config *cfg,
                     control_strategies_t first_strategy, bool cmd_client);
 void controller_exit(struct controller_ctx *ctx);
 void controller_net_receive(void *data, int msg_id, int src_id, void *buf, int len);

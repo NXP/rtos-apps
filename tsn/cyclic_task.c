@@ -257,22 +257,22 @@ static void main_cyclic(void *data)
     }
 }
 
-void cyclic_task_set_period(struct cyclic_task *c_task, unsigned int period_ns)
+void cyclic_task_set_period(struct cyclic_task_config *cfg, unsigned int period_ns)
 {
-    struct tsn_task_params *params = &c_task->params;
+    struct tsn_task_params *params = &cfg->params;
 
     params->task_period_ns = period_ns;
     params->transfer_time_ns = period_ns / 2;
 
-    if (c_task->type == CYCLIC_CONTROLLER)
+    if (cfg->type == CYCLIC_CONTROLLER)
         params->task_period_offset_ns = 0;
     else
         params->task_period_offset_ns = period_ns / 2;
 }
 
-void cyclic_task_set_tx_time(struct cyclic_task *c_task, unsigned int tx_time_offset_ns, bool tx_time_enabled)
+void cyclic_task_set_tx_time(struct cyclic_task_config *cfg, unsigned int tx_time_offset_ns, bool tx_time_enabled)
 {
-    struct tsn_task_params *params = &c_task->params;
+    struct tsn_task_params *params = &cfg->params;
 
     params->tx_time_enabled = tx_time_enabled;
     params->tx_time_offset_ns = tx_time_offset_ns;
@@ -314,7 +314,7 @@ void cyclic_task_stop(struct cyclic_task *c_task)
     tsn_task_stop(c_task->task);
 }
 
-int cyclic_task_init(struct cyclic_task *c_task,
+int cyclic_task_init(struct cyclic_task *c_task, struct cyclic_task_config *cfg,
                      void (*net_rx_func)(void *ctx, int msg_id, int src_id, void *buf, int len),
                      void (*loop_func)(void *ctx, int timer_status), void *ctx)
 {
@@ -323,7 +323,11 @@ int cyclic_task_init(struct cyclic_task *c_task,
     int i;
     int rc;
 
-    log_info("cyclic task type: %d, id: %u\n\n", c_task->type, c_task->id);
+    memcpy(params, &cfg->params, sizeof(struct tsn_task_params));
+    c_task->id = cfg->id;
+    c_task->num_peers = cfg->num_peers;
+
+    log_info("cyclic task type: %d, id: %u\n\n", cfg->type, c_task->id);
     log_info("task params\n");
     log_info("task_period_ns        : %u\n", params->task_period_ns);
     log_info("task_period_offset_ns : %u\n", params->task_period_offset_ns);
@@ -335,7 +339,7 @@ int cyclic_task_init(struct cyclic_task *c_task,
     log_info("zero copy             : %s\n", params->zero_copy ? "enabled" : "disabled");
     log_info("rx tc mask            : 0x%02x\n", params->rx_tc_mask);
 
-    tx_stream = tsn_conf_get_stream(c_task->tx_socket.stream_id);
+    tx_stream = tsn_conf_get_stream(cfg->tx_socket.stream_id);
     if (!tx_stream)
         goto err_get_config;
 
@@ -346,8 +350,10 @@ int cyclic_task_init(struct cyclic_task *c_task,
 
     params->tx_params[0].addr.priority = params->stream_priority;
 
+    c_task->tx_socket.peer_id = cfg->tx_socket.peer_id;
+
     for (i = 0; i < c_task->num_peers; i++) {
-        rx_stream = tsn_conf_get_stream(c_task->rx_socket[i].stream_id);
+        rx_stream = tsn_conf_get_stream(cfg->rx_socket[i].stream_id);
         if (!rx_stream)
             goto err_get_config;
 
@@ -355,6 +361,8 @@ int cyclic_task_init(struct cyclic_task *c_task,
                sizeof(struct net_address));
         params->rx_params[i].addr.port = params->port_id;
         params->num_rx_socket++;
+
+        c_task->rx_socket[i].peer_id = cfg->rx_socket[i].peer_id;
     }
 
     c_task->queue_h = rtos_mqueue_alloc_init(CYCLIC_EVENT_QUEUE_LENGTH, sizeof(struct cyclic_event));

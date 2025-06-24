@@ -4,8 +4,8 @@
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
-#include "alarm_task.h"
-#include "cyclic_task.h"
+#include "rtos_apps/tsn/tsn_tasks_config.h"
+
 #include "tsn_tasks_config.h"
 
 static const struct tsn_stream tsn_streams[] = {
@@ -83,7 +83,7 @@ static const struct tsn_stream tsn_streams[] = {
         .rx_tc_mask = 0,                              \
     }
 
-struct cyclic_task cyclic_tasks[MAX_TASK_CONFIGS] = {
+static struct cyclic_task_config cyclic_tasks[] = {
     [0] = {
         .type = CYCLIC_CONTROLLER,
         .id = CONTROLLER_0,
@@ -178,16 +178,12 @@ const struct tsn_stream *tsn_conf_get_stream(int index)
     return &tsn_streams[index];
 }
 
-struct cyclic_task *tsn_conf_get_cyclic_task(int index)
+struct cyclic_task_config *tsn_conf_get_cyclic_task(int index)
 {
-    struct cyclic_task *c_task;
-
-    if (index >= (sizeof(cyclic_tasks) / sizeof(struct cyclic_task)))
+    if (index >= (sizeof(cyclic_tasks) / sizeof(struct cyclic_task_config)))
         return NULL;
 
-    c_task = &cyclic_tasks[index];
-
-    return c_task;
+    return &cyclic_tasks[index];
 }
 
 struct alarm_task_config *tsn_conf_get_alarm_task(int index)
