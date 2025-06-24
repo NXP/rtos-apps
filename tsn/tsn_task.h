@@ -9,44 +9,15 @@
 
 #include "rtos_abstraction_layer.h"
 
-#include "rtos_apps/stats.h"
-#include "genavb/clock.h"
 #include "genavb/timer.h"
-#include "genavb/tsn.h"
 
-#define MAX_RX_SOCKET 2
-#define MAX_TX_SOCKET 1
+#include "rtos_apps/stats.h"
+#include "rtos_apps/tsn/tsn_tasks_config.h"
 
 enum net_flags {
     NET_OK,
     NET_NO_FRAME,
     NET_ERR,
-};
-
-struct tsn_task_params {
-    unsigned int priority;
-    unsigned short stack_depth;
-
-    genavb_clock_id_t clk_id;
-    unsigned int task_period_ns;
-    unsigned int task_period_offset_ns; //modulo 1 second
-    unsigned int transfer_time_ns;
-    unsigned int sched_traffic_offset;
-    uint8_t stream_priority;
-    unsigned int tx_time_offset_ns;
-    bool tx_time_enabled;
-    unsigned int port_id;
-    unsigned int num_packets;
-    bool zero_copy;
-    unsigned int rx_tc_mask;
-
-    int num_rx_socket;
-    int rx_buf_size;
-    struct genavb_socket_rx_params rx_params[MAX_RX_SOCKET];
-
-    int num_tx_socket;
-    int tx_buf_size;
-    struct genavb_socket_tx_params tx_params[MAX_TX_SOCKET];
 };
 
 struct net_socket_stats {

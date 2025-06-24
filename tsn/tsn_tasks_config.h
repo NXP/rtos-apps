@@ -67,6 +67,6 @@ struct tsn_stream {
 
 struct tsn_stream *tsn_conf_get_stream(int index);
 struct cyclic_task *tsn_conf_get_cyclic_task(int index);
-struct alarm_task *tsn_conf_get_alarm_task(int index);
+struct alarm_task_config *tsn_conf_get_alarm_task(int index);
 
 #endif /* _TSN_TASKS_CONFIG_H_ */

@@ -142,34 +142,30 @@ struct cyclic_task cyclic_tasks[MAX_TASK_CONFIGS] = {
         .stack_depth = TASK_DEFAULT_STACK_SIZE, \
         .rx_buf_size = PACKET_SIZE,             \
         .tx_buf_size = PACKET_SIZE,             \
+        .port_id = 0,                           \
         .num_packets = 1,                       \
         .zero_copy = 1,                         \
         .rx_tc_mask = 0,                        \
     }
 
-struct alarm_task alarm_tasks[MAX_TASK_CONFIGS] = {
+static struct alarm_task_config alarm_tasks[] = {
     [0] = {
         .type = ALARM_MONITOR,
         .id = CONTROLLER_0,
         .params = ALARM_TASK_DEFAULT_PARAMS,
-        .num_peers = 2,
         .stream_id = 4,
-        .queue = {
-            .length = TASK_DEFAULT_QUEUE_LENGTH,
-        },
+        .length = TASK_DEFAULT_QUEUE_LENGTH,
     },
     [1] = {
         .type = ALARM_IO_DEVICE,
         .id = IO_DEVICE_0,
         .params = ALARM_TASK_DEFAULT_PARAMS,
-        .num_peers = 1,
         .stream_id = 4,
     },
     [2] = {
         .type = ALARM_IO_DEVICE,
         .id = IO_DEVICE_1,
         .params = ALARM_TASK_DEFAULT_PARAMS,
-        .num_peers = 1,
         .stream_id = 4,
     },
 };
@@ -194,9 +190,9 @@ struct cyclic_task *tsn_conf_get_cyclic_task(int index)
     return c_task;
 }
 
-struct alarm_task *tsn_conf_get_alarm_task(int index)
+struct alarm_task_config *tsn_conf_get_alarm_task(int index)
 {
-    if (index >= (sizeof(alarm_tasks) / sizeof(struct alarm_task)))
+    if (index >= (sizeof(alarm_tasks) / sizeof(struct alarm_task_config)))
         return NULL;
 
     return &alarm_tasks[index];

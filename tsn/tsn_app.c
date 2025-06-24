@@ -33,7 +33,7 @@ struct tsn_app_ctx {
 #endif
 
     struct cyclic_task *c_task;
-    struct alarm_task *a_task;
+    struct alarm_task a_task;
 };
 
 static const char *app_mode_names[] = {"MOTOR_NETWORK", "Not Supported", "NETWORK_ONLY", "SERIAL"};
@@ -62,6 +62,7 @@ static void null_loop(void *data, int timer_status)
 int tsn_app_init(struct tsn_app_config *config)
 {
     struct tsn_app_ctx *ctx;
+    struct alarm_task_config *a_cfg;
 
     ctx = rtos_malloc(sizeof(struct tsn_app_ctx));
     if (!ctx) {
@@ -71,8 +72,8 @@ int tsn_app_init(struct tsn_app_config *config)
 
     memset(ctx, 0, sizeof(struct tsn_app_ctx));
 
-    ctx->a_task = tsn_conf_get_alarm_task(config->role);
-    if (!ctx->a_task) {
+    a_cfg = tsn_conf_get_alarm_task(config->role);
+    if (!a_cfg) {
         log_err("tsn_conf_get_alarm_task() failed\n");
         goto err_init;
     }
@@ -119,13 +120,12 @@ int tsn_app_init(struct tsn_app_config *config)
 
     if (ctx->c_task->type == CYCLIC_CONTROLLER) {
         ctx->c_task->num_peers = config->num_io_devices;
-        ctx->a_task->num_peers = config->num_io_devices;
     }
 
     ctx->c_task->params.stream_priority = config->priority;
     ctx->c_task->params.port_id = config->port_id;
     ctx->c_task->params.zero_copy = config->zero_copy;
-    ctx->a_task->params.zero_copy = config->zero_copy;
+    a_cfg->params.zero_copy = config->zero_copy;
 
     if (config->rx_tc_mask > 0xFF)
         config->rx_tc_mask &= 0xFF;
@@ -192,10 +192,10 @@ int tsn_app_init(struct tsn_app_config *config)
 
     cyclic_task_start(ctx->c_task);
 
-    if (ctx->a_task->type == ALARM_MONITOR)
-        alarm_task_monitor_init(ctx->a_task, NULL, NULL);
-    else if (ctx->a_task->type == ALARM_IO_DEVICE)
-        alarm_task_io_init(ctx->a_task, main_alarm_io, ctx->a_task);
+    if (a_cfg->type == ALARM_MONITOR)
+        alarm_task_monitor_init(&ctx->a_task, a_cfg, NULL, NULL);
+    else if (a_cfg->type == ALARM_IO_DEVICE)
+        alarm_task_io_init(&ctx->a_task, a_cfg, main_alarm_io, &ctx->a_task);
 
     return 0;
 

@@ -18,7 +18,7 @@ static void net_callback(void *data)
     struct tsn_task *task = container_of(sock, struct tsn_task, sock_rx[sock->id]);
     struct alarm_task *a_task = task->ctx;
 
-    if (rtos_mqueue_send(a_task->queue.handle, &sock, RTOS_NO_WAIT) < 0) {
+    if (rtos_mqueue_send(a_task->queue_h, &sock, RTOS_NO_WAIT) < 0) {
         log_err("rtos_mqueue_send() failed\n");
     }
 }
@@ -30,7 +30,7 @@ static void main_alarm_monitor(void *data)
     while (true) {
         struct net_socket *sock;
 
-        if (rtos_mqueue_receive(a_task->queue.handle, &sock, RTOS_MS_TO_TICKS(10000)) < 0)
+        if (rtos_mqueue_receive(a_task->queue_h, &sock, RTOS_MS_TO_TICKS(10000)) < 0)
             continue;
 
         while (tsn_net_receive_sock(sock) == NET_OK) {
@@ -91,7 +91,7 @@ err:
     return -1;
 }
 
-int alarm_task_monitor_init(struct alarm_task *a_task,
+int alarm_task_monitor_init(struct alarm_task *a_task, struct alarm_task_config *cfg,
                             void (*net_rx_func)(void *ctx, int msg_id, int src_id, void *buf, int len),
                             void *ctx)
 {
@@ -99,18 +99,21 @@ int alarm_task_monitor_init(struct alarm_task *a_task,
     struct tsn_stream *rx_stream;
     int rc;
 
-    rx_stream = tsn_conf_get_stream(a_task->stream_id);
+    memcpy(params, &cfg->params, sizeof(struct tsn_task_params));
+    a_task->id = cfg->id;
+
+    rx_stream = tsn_conf_get_stream(cfg->stream_id);
     if (!rx_stream)
         goto err;
 
     memcpy(&params->rx_params[0].addr, &rx_stream->address,
            sizeof(struct net_address));
-    params->rx_params[0].addr.port = 0;
+    params->rx_params[0].addr.port = params->port_id;
     params->num_rx_socket = 1;
 
-    a_task->queue.handle = rtos_mqueue_alloc_init(a_task->queue.length,
+    a_task->queue_h = rtos_mqueue_alloc_init(cfg->length,
                                         sizeof(struct net_socket *));
-    if (!a_task->queue.handle) {
+    if (!a_task->queue_h) {
         log_err("rtos_mqueue_alloc_init() failed\n");
         goto err;
     }
@@ -132,8 +135,8 @@ int alarm_task_monitor_init(struct alarm_task *a_task,
     return 0;
 
 err:
-    if (a_task->queue.handle)
-        rtos_mqueue_destroy(a_task->queue.handle);
+    if (a_task->queue_h)
+        rtos_mqueue_destroy(a_task->queue_h);
 
     return -1;
 }
@@ -142,23 +145,26 @@ void alarm_task_monitor_exit(struct alarm_task *a_task)
 {
     tsn_task_unregister(&a_task->task);
 
-    if (a_task->queue.handle)
-        rtos_mqueue_destroy(a_task->queue.handle);
+    if (a_task->queue_h)
+        rtos_mqueue_destroy(a_task->queue_h);
 }
 
-int alarm_task_io_init(struct alarm_task *a_task, void (*main_loop)(void *data), void *data)
+int alarm_task_io_init(struct alarm_task *a_task, struct alarm_task_config *cfg, void (*main_loop)(void *data), void *data)
 {
     struct tsn_task_params *params = &a_task->params;
     struct tsn_stream *tx_stream;
     int rc;
 
-    tx_stream = tsn_conf_get_stream(a_task->stream_id);
+    memcpy(params, &cfg->params, sizeof(struct tsn_task_params));
+    a_task->id = cfg->id;
+
+    tx_stream = tsn_conf_get_stream(cfg->stream_id);
     if (!tx_stream)
         goto err;
 
     memcpy(&params->tx_params[0].addr, &tx_stream->address,
            sizeof(struct net_address));
-    params->tx_params[0].addr.port = 0;
+    params->tx_params[0].addr.port = params->port_id;
     params->num_tx_socket = 1;
 
     rc = tsn_task_register(&a_task->task, params, a_task->id, main_loop, data, NULL);

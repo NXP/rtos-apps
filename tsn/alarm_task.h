@@ -15,23 +15,17 @@
 struct alarm_task {
     struct tsn_task *task;
     struct tsn_task_params params;
-    int type;
     int id;
-    int num_peers;
-    int stream_id;
-    struct {
-        rtos_mqueue_t *handle;
-        unsigned int length;
-    } queue;
+    rtos_mqueue_t *queue_h;
     void (*net_rx_func)(void *ctx, int msg_id, int src_id, void *buf, int len);
     void *ctx;
 };
 
-int alarm_task_monitor_init(struct alarm_task *a_task,
+int alarm_task_monitor_init(struct alarm_task *a_task, struct alarm_task_config *cfg,
                             void (*net_rx_func)(void *ctx, int msg_id, int src_id, void *buf, int len),
                             void *ctx);
 void alarm_task_monitor_exit(struct alarm_task *a_task);
-int alarm_task_io_init(struct alarm_task *a_task, void (*main_loop)(void *data), void *data);
+int alarm_task_io_init(struct alarm_task *a_task, struct alarm_task_config *cfg, void (*main_loop)(void *data), void *data);
 void alarm_task_io_exit(struct alarm_task *a_task);
 int alarm_net_transmit(struct alarm_task *a_task, int msg_id, void *buf, int len);
 
