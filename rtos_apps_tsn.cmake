@@ -15,6 +15,7 @@ target_sources(${RTOS_APPS_TARGET} PRIVATE
     ${CMAKE_CURRENT_LIST_DIR}/tsn/cyclic_task.c
     ${CMAKE_CURRENT_LIST_DIR}/tsn/tsn_app.c
     ${CMAKE_CURRENT_LIST_DIR}/tsn/tsn_task.c
+    ${CMAKE_CURRENT_LIST_DIR}/tsn/tsn_tasks_config.c
 )
 
 if(enable_lwip)
