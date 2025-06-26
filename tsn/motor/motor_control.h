@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2021 NXP
+ * Copyright 2019-2021, 2025 NXP
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -11,10 +11,6 @@
 
 #define NB_IO_DEVICE_MAX  2
 #define NB_MOTORS_MAX 1
-
-enum event_motor {
-    BUTTON_PRESSED,
-};
 
 enum controller_action {
     HOLD = 0,

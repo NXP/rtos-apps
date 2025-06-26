@@ -124,7 +124,7 @@ static bool check_all_io_devices_connected(struct controller_ctx *ctx)
 
 static bool button_press_event_check(struct controller_ctx *ctx)
 {
-    enum event_motor evt;
+    enum event_button evt;
     bool ret = false;
 
     // Handle events coming from user button
@@ -352,7 +352,7 @@ int controller_init(struct controller_ctx *ctx, struct cyclic_task *c_task, stru
     ctx->num_io_device = cfg->num_peers;
 
     /* Initialize queue that handles button events */
-    ctx->event_queue = rtos_mqueue_alloc_init(1, sizeof(enum event_motor));
+    ctx->event_queue = rtos_mqueue_alloc_init(1, sizeof(enum event_button));
     if (!ctx->event_queue) {
         log_err("rtos_mqueue_alloc_init() failed\n");
         goto err;

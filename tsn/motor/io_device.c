@@ -10,10 +10,11 @@
 #include "rtos_apps/log.h"
 #include "rtos_apps/types.h"
 
+#include "../user_button.h"
 #include "io_device.h"
 #include "cyclic_task.h"
 #include "stats_task.h"
-#include "user_button.h"
+
 
 #define IO_DEVICE_STAT_PERIOD_SEC 2
 #define POSITION_ACCURACY         0.02
@@ -279,7 +280,7 @@ static void io_device_loop(void *data, int timer_status)
                                    (NSECS_PER_SEC / ctx->c_task->task->params->task_period_ns);
     unsigned int num_sched_monitoring = MONITORING_STAT_PERIOD_MS *
                                         (NSECS_PER_MSEC / ctx->c_task->task->params->task_period_ns);
-    enum event_motor evt;
+    enum event_button evt;
     bool current_loop = true;
 
     if (!rtos_mqueue_receive(ctx->event_queue, &evt, RTOS_NO_WAIT)) {
@@ -422,7 +423,7 @@ int io_device_init(struct io_device_ctx *ctx, struct cyclic_task *c_task, struct
     }
 
     /* Initialize queue that handles button events */
-    ctx->event_queue = rtos_mqueue_alloc_init(1, sizeof(enum event_motor));
+    ctx->event_queue = rtos_mqueue_alloc_init(1, sizeof(enum event_button));
     if (!ctx->event_queue) {
         log_err("rtos_mqueue_alloc_init() failed\n");
         goto err;
