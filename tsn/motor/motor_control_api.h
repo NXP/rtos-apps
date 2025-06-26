@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2020, 2024 NXP
+ * Copyright 2019-2020, 2024-2025 NXP
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -23,7 +23,6 @@ bool mcapi_motor_initialized(struct tsn_motor *motor);
 void mcapi_set_iq_req(struct tsn_motor *motor, float iq);
 void mcapi_set_external_control(struct tsn_motor *motor, bool state);
 void mcapi_set_closed_current_loop(struct tsn_motor *motor, bool state);
-void mcapi_adc_handler(void);
 uint32_t mcapi_get_last_index(struct tsn_motor *motor);
 uint32_t mcapi_get_missed_slow_loop(struct tsn_motor *motor);
 uint32_t mcapi_get_revolution_jumps(struct tsn_motor *motor);

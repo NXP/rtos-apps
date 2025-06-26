@@ -149,20 +149,6 @@ void mcapi_slowloop(struct tsn_motor *motor)
     motor->slow_loop_func(motor->sm_motor_controller);
 }
 
-/*!
- * @brief   ADC conversion complete ISR called with 100us period processes
- *           - motor M1 fast application machine function
- *
- * @param   void
- *
- * @return  none
- */
-void mcapi_adc_handler(void)
-{
-    /* M1 State machine */
-    SM_StateMachineFast(&g_sM1Ctrl);
-}
-
 /** Get initialization status of the motor
  *
  * \return True when initialized, false otherwise
