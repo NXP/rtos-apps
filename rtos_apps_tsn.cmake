@@ -17,6 +17,12 @@ target_sources(${RTOS_APPS_TARGET} PRIVATE
     ${CMAKE_CURRENT_LIST_DIR}/tsn/tsn_tasks_config.c
 )
 
+if(enable_user_button)
+    target_sources(${RTOS_APPS_TARGET} PRIVATE
+        ${CMAKE_CURRENT_LIST_DIR}/tsn/user_button.c
+    )
+endif()
+
 if(enable_lwip)
     target_sources(${RTOS_APPS_TARGET} PRIVATE
         ${CMAKE_CURRENT_LIST_DIR}/tsn/monitoring_stats.c

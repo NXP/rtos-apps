@@ -10,9 +10,9 @@
 
 #include "rtos_apps/async.h"
 #include "rtos_apps/log.h"
+#include "rtos_apps/tsn/user_button.h"
 #include "rtos_apps/types.h"
 
-#include "../user_button.h"
 #include "controller.h"
 #include "io_device.h"
 #include "motor_control_api.h"
@@ -361,8 +361,8 @@ int controller_init(struct controller_ctx *ctx, struct cyclic_task *c_task, stru
         goto err;
     }
 
-    if (user_button_add_event_queue(ctx->event_queue) < 0) {
-        log_err("user_button_add_event_queue() failed\n");
+    if (rtos_apps_user_button_register_queue(cfg->user_button, ctx->event_queue) < 0) {
+        log_err("rtos_apps_user_button_register_queue() failed\n");
         goto err_del_queue;
     }
 

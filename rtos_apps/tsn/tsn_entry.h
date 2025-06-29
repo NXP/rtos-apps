@@ -42,6 +42,8 @@ struct rtos_apps_tsn_config {
     struct rtos_apps_tsn_serial_iodevice_config *serial_cfg;
 
     struct rtos_apps_async *async;
+
+    struct rtos_apps_user_button *user_button;
 };
 
 int rtos_apps_tsn_init(struct rtos_apps_tsn_config *config);

@@ -158,6 +158,7 @@ int rtos_apps_tsn_init(struct rtos_apps_tsn_config *config)
                 .cyclic_cfg = c_cfg,
                 .first_strategy = (control_strategies_t)config->control_strategy,
                 .cmd_client = (bool)config->cmd_client,
+                .user_button = config->user_button,
             };
 
             if (controller_init(&ctx->ctrl, &ctx->c_task, &controller_cfg) < 0) {
@@ -171,6 +172,7 @@ int rtos_apps_tsn_init(struct rtos_apps_tsn_config *config)
              struct io_device_config io_device_cfg = {
                 .cyclic_cfg = c_cfg,
                 .nb_motors = 1,
+                .user_button = config->user_button,
             };
 
             if (io_device_init(&ctx->io_device, &ctx->c_task, &io_device_cfg) < 0) {

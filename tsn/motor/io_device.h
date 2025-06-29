@@ -58,6 +58,7 @@ struct motor_controlled {
 struct io_device_config {
     struct cyclic_task_config *cyclic_cfg;
     uint16_t nb_motors;
+    struct rtos_apps_user_button *user_button;
 };
 
 struct io_device_ctx {

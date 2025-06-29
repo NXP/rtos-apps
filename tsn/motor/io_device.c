@@ -9,10 +9,10 @@
 
 #include "rtos_apps/async.h"
 #include "rtos_apps/log.h"
+#include "rtos_apps/tsn/user_button.h"
 #include "rtos_apps/types.h"
 
 #include "../cyclic_task.h"
-#include "../user_button.h"
 #include "io_device.h"
 
 
@@ -431,8 +431,8 @@ int io_device_init(struct io_device_ctx *ctx, struct cyclic_task *c_task, struct
         goto err;
     }
 
-    if (user_button_add_event_queue(ctx->event_queue) < 0) {
-        log_err("user_button_add_event_queue() failed\n");
+    if (rtos_apps_user_button_register_queue(cfg->user_button, ctx->event_queue) < 0) {
+        log_err("rtos_apps_user_button_register_queue() failed\n");
         goto err_del_queue;
     }
 

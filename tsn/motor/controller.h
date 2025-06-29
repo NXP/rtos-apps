@@ -49,6 +49,7 @@ struct controller_config {
     struct cyclic_task_config *cyclic_cfg;
     control_strategies_t first_strategy;
     bool cmd_client;
+    struct rtos_apps_user_button *user_button;
 };
 
 struct controller_ctx {
