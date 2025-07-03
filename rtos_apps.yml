@@ -87,6 +87,125 @@ component.rtos_apps.audio.pll:
     type: software_component
     user_visible: always
     version: 1.0.0
+component.rtos_apps.tsn:
+  belong_to: set.component.rtos_apps
+  contents:
+    package_base_path: rtos-apps
+    project_base_path: rtos-apps
+    repo_base_path: components/rtos-apps
+  section-type: component
+  section_info:
+    description: Component rtos-apps tsn
+    display_name: rtos-apps_tsn
+    full_name: Component rtos-apps tsn
+    taxonomy:
+      belong_to: component_rtos_apps
+      csub: rtos_apps.tsn
+    type: software_component
+    user_visible: always
+    version: 1.0.0
+component.rtos_apps.tsn.lwip:
+  belong_to: set.component.rtos_apps
+  contents:
+    package_base_path: rtos-apps
+    project_base_path: rtos-apps
+    repo_base_path: components/rtos-apps
+  section-type: component
+  section_info:
+    description: Component rtos-apps tsn lwip
+    display_name: rtos-apps_tsn_lwip
+    full_name: Component rtos-apps tsn lwip
+    taxonomy:
+      belong_to: component_rtos_apps
+      csub: rtos_apps.tsn_lwip
+    type: software_component
+    user_visible: always
+    version: 1.0.0
+component.rtos_apps.tsn.motor.controller:
+  belong_to: set.component.rtos_apps
+  contents:
+    package_base_path: rtos-apps
+    project_base_path: rtos-apps
+    repo_base_path: components/rtos-apps
+  section-type: component
+  section_info:
+    description: Component rtos-apps tsn_motor_controller
+    display_name: rtos-apps_tsn_motor_controller
+    full_name: Component rtos-apps tsn_motor_controller
+    taxonomy:
+      belong_to: component_rtos_apps
+      csub: rtos_apps.tsn_motor_controller
+    type: software_component
+    user_visible: always
+    version: 1.0.0
+component.rtos_apps.tsn.motor.iodevice:
+  belong_to: set.component.rtos_apps
+  contents:
+    package_base_path: rtos-apps
+    project_base_path: rtos-apps
+    repo_base_path: components/rtos-apps
+  section-type: component
+  section_info:
+    description: Component rtos-apps tsn_motor_iodevice
+    display_name: rtos-apps_tsn_motor_iodevice
+    full_name: Component rtos-apps tsn_motor_iodevice
+    taxonomy:
+      belong_to: component_rtos_apps
+      csub: rtos_apps.tsn_motor_iodevice
+    type: software_component
+    user_visible: always
+    version: 1.0.0
+component.rtos_apps.tsn.serial:
+  belong_to: set.component.rtos_apps
+  contents:
+    package_base_path: rtos-apps
+    project_base_path: rtos-apps
+    repo_base_path: components/rtos-apps
+  section-type: component
+  section_info:
+    description: Component rtos-apps tsn_serial
+    display_name: rtos-apps_tsn_serial
+    full_name: Component rtos-apps tsn_serial
+    taxonomy:
+      belong_to: component_rtos_apps
+      csub: rtos_apps.tsn_serial
+    type: software_component
+    user_visible: always
+    version: 1.0.0
+component.rtos_apps.tsn.user_button:
+  belong_to: set.component.rtos_apps
+  contents:
+    package_base_path: rtos-apps
+    project_base_path: rtos-apps
+    repo_base_path: components/rtos-apps
+  section-type: component
+  section_info:
+    description: Component rtos-apps tsn_user_button
+    display_name: rtos-apps_tsn_user_button
+    full_name: Component rtos-apps tsn_user_button
+    taxonomy:
+      belong_to: component_rtos_apps
+      csub: rtos_apps.tsn_user_button
+    type: software_component
+    user_visible: always
+    version: 1.0.0
+component.rtos_apps.tsn_headers:
+  belong_to: set.component.rtos_apps
+  contents:
+    package_base_path: rtos-apps
+    project_base_path: rtos-apps
+    repo_base_path: components/rtos-apps
+  section-type: component
+  section_info:
+    description: Component rtos-apps tsn_headers
+    display_name: rtos-apps_tsn_headers
+    full_name: Component rtos-apps tsn_headers
+    taxonomy:
+      belong_to: component_rtos_apps
+      csub: rtos_apps.tsn_headers
+    type: software_component
+    user_visible: always
+    version: 1.0.0
 scr.component.rtos_apps:
   belong_to: set.component.rtos_apps
   contents:
