@@ -40,6 +40,8 @@ struct rtos_apps_tsn_config {
     void (*log_update_time)(genavb_clock_id_t clk_id);
 
     struct rtos_apps_tsn_serial_iodevice_config *serial_cfg;
+
+    struct rtos_apps_async *async;
 };
 
 int rtos_apps_tsn_init(struct rtos_apps_tsn_config *config);

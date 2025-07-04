@@ -30,6 +30,7 @@ struct socket {
     int peer_id;
     struct socket_stats stats;
     struct socket_stats stats_snap;
+    struct rtos_apps_async *async;
     struct net_socket *net_sock;
 };
 

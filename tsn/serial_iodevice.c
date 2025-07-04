@@ -6,12 +6,12 @@
 
 #include "rtos_abstraction_layer.h"
 
+#include "rtos_apps/async.h"
 #include "rtos_apps/log.h"
 #include "rtos_apps/types.h"
 
 #include "fsl_lpuart.h"
 #include "serial_iodevice.h"
-#include "stats_task.h"
 
 // UART RX Task parameters
 #define UART_RX_TASK_STACK_SIZE (RTOS_MINIMAL_STACK_SIZE + 256)
@@ -57,6 +57,7 @@ struct serial_iodevice_ctx {
     uint16_t cmd_len;
     struct serial_iodevice_stats stats;
     struct serial_iodevice_stats stats_snap;
+    struct rtos_apps_async *async;
 };
 
 static struct serial_iodevice_ctx serial_iodev;
@@ -223,7 +224,7 @@ static void serial_iodevice_stats_dump(struct serial_iodevice_ctx *ctx)
     memcpy(&ctx->stats_snap, &ctx->stats, sizeof(struct serial_iodevice_stats));
 
     // Print serial iodevice data
-    STATS_Async(serial_iodevice_stats_print, &ctx->stats_snap);
+    rtos_apps_async_call(ctx->async, serial_iodevice_stats_print, &ctx->stats_snap);
 }
 
 static void serial_iodevice_loop(void *data, int timer_status)
@@ -327,6 +328,8 @@ int serial_iodevice_init(struct cyclic_task *c_task, struct rtos_apps_tsn_serial
         log_err("rtos_thread_create() failed\n");
         goto err;
     }
+
+    ctx->async = c_task->params.async;
 
     ctx->c_task = c_task;
     if (cyclic_task_init(c_task, cfg->cyclic_cfg, serial_iodevice_net_receive, serial_iodevice_loop, ctx) < 0)

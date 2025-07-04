@@ -7,13 +7,13 @@
 #include <math.h>
 #include <string.h>
 
+#include "rtos_apps/async.h"
 #include "rtos_apps/log.h"
 #include "rtos_apps/types.h"
 
 #include "../cyclic_task.h"
 #include "../user_button.h"
 #include "io_device.h"
-#include "stats_task.h"
 
 
 #define IO_DEVICE_STAT_PERIOD_SEC 2
@@ -71,7 +71,7 @@ static void io_device_stats_dump(struct io_device_ctx *ctx)
     memcpy(&ctx->stats_snap, &ctx->stats, sizeof(struct stats_io_device));
     ctx->stats_snap.pending = true;
 
-    if (STATS_Async(io_device_stats_print, &ctx->stats_snap) < 0)
+    if (rtos_apps_async_call(ctx->async, io_device_stats_print, &ctx->stats_snap) < 0)
         ctx->stats_snap.pending = false;
 }
 
@@ -95,7 +95,7 @@ void io_device_monitoring_send(struct io_device_ctx *ctx)
     cyclic_task_get_monitoring(ctx->c_task, &ctx->msg.cyclic_task_stats, MONITOR_MAX_SOCKET);
     ctx->msg_pending = true;
 
-    if (STATS_Async(__io_device_monitoring_send, ctx) < 0)
+    if (rtos_apps_async_call(ctx->async, __io_device_monitoring_send, ctx) < 0)
         ctx->msg_pending = false;
 }
 
@@ -139,7 +139,7 @@ static void motor_stats_dump(struct motor_controlled *ctx)
     memcpy(&ctx->stats_snap, &ctx->stats, sizeof(struct stats_motor));
     ctx->stats_snap.pending = true;
 
-    if (STATS_Async(motor_stats_print, &ctx->stats_snap) < 0)
+    if (rtos_apps_async_call(ctx->async, motor_stats_print, &ctx->stats_snap) < 0)
         ctx->stats_snap.pending = false;
 }
 
@@ -409,9 +409,11 @@ int io_device_init(struct io_device_ctx *ctx, struct cyclic_task *c_task, struct
 
     ctx->status = 0;
     ctx->offset_reached = false;
+    ctx->async = c_task->params.async;
 
     for (i = 0; i < ctx->num_motors; i++) {
         ctx->motors_controlled[i].motor_id = i;
+        ctx->motors_controlled[i].async = c_task->params.async;
 
         if (mcapi_init(i, &ctx->motors_controlled[i].motor) < 0) {
             log_err("mcapi_init() failed\n");

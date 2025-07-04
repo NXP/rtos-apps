@@ -60,6 +60,7 @@ struct controller_ctx {
     struct cyclic_task *c_task;
     struct controller_stats stats;
     struct controller_stats stats_snap;
+    struct rtos_apps_async *async;
     rtos_mqueue_t *event_queue;
     int restart_delay;
     struct monitoring_stats_ctx *monitoring_stats_ctx;

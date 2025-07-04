@@ -8,6 +8,7 @@
 
 #include "genavb/genavb.h"
 
+#include "rtos_apps/async.h"
 #include "rtos_apps/log.h"
 #include "rtos_apps/types.h"
 
@@ -15,7 +16,6 @@
 #include "controller.h"
 #include "io_device.h"
 #include "motor_control_api.h"
-#include "stats_task.h"
 
 
 #define RESTART_DELAY_MS           (2000)
@@ -52,7 +52,7 @@ static void controller_stats_dump(struct controller_ctx *ctx)
     ctx->stats_snap.pending = true;
 
     // Print controller data
-    if (STATS_Async(controller_stats_print, &ctx->stats_snap) < 0)
+    if (rtos_apps_async_call(ctx->async, controller_stats_print, &ctx->stats_snap) < 0)
         ctx->stats_snap.pending = false;
 }
 
@@ -97,7 +97,7 @@ static void controller_monitoring_send(struct controller_ctx *ctx)
     cyclic_task_get_monitoring(ctx->c_task, &ctx->msg.cyclic_task_stats, MONITOR_MAX_SOCKET);
     ctx->msg_pending = true;
 
-    if (STATS_Async(__controller_monitoring_send, ctx) < 0)
+    if (rtos_apps_async_call(ctx->async, __controller_monitoring_send, ctx) < 0)
         ctx->msg_pending = false;
 }
 
@@ -372,9 +372,10 @@ int controller_init(struct controller_ctx *ctx, struct cyclic_task *c_task, stru
     ctx->stopped = false;
     ctx->control_error = false;
     ctx->cmd_client_ctx = NULL;
+    ctx->async = c_task->params.async;
 
     // Initialize control strategy
-    if (control_strategy_context_init(&ctx->strategy, cfg->first_strategy, cyclic_cfg->params.task_period_ns) < 0) {
+    if (control_strategy_context_init(&ctx->strategy, cfg->first_strategy, cyclic_cfg->params.task_period_ns, cyclic_cfg->params.async) < 0) {
         log_err("control_strategy_context_init() failed\n");
         goto err_del_queue;
     }

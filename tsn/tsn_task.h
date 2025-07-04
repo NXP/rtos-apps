@@ -59,6 +59,7 @@ struct net_socket {
 
     struct net_socket_stats stats;
     struct net_socket_stats stats_snap;
+    struct rtos_apps_async *async;
 };
 
 struct tsn_task {

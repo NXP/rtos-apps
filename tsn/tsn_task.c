@@ -13,10 +13,10 @@
 #include "genavb/qos.h"
 #include "genavb/timer.h"
 
+#include "rtos_apps/async.h"
 #include "rtos_apps/log.h"
 #include "rtos_apps/types.h"
 
-#include "stats_task.h"
 #include "tsn_task.h"
 #include "tsn_tasks_config.h"
 
@@ -129,7 +129,7 @@ static void tsn_task_stats_dump(struct tsn_task *task)
     stats_reset(&task->stats.total_time);
     task->stats_snap.pending = true;
 
-    if (STATS_Async(tsn_task_stats_print, task) < 0)
+    if (rtos_apps_async_call(task->params->async, tsn_task_stats_print, task) < 0)
         task->stats_snap.pending = false;
 }
 
@@ -152,7 +152,7 @@ static void net_socket_stats_dump(struct net_socket *sock)
     memcpy(&sock->stats_snap, &sock->stats, sizeof(struct net_socket_stats));
     sock->stats_snap.pending = true;
 
-    if (STATS_Async(net_socket_stats_print, sock) < 0)
+    if (rtos_apps_async_call(sock->async, net_socket_stats_print, sock) < 0)
         sock->stats_snap.pending = false;
 }
 
@@ -429,6 +429,7 @@ static int tsn_task_net_init(struct tsn_task *task)
         sock = &task->sock_rx[i];
         sock->id = i;
         sock->dir = SOCKET_DIR_RX;
+        sock->async = task->params->async;
 
         if (genavb_socket_rx_open(&sock->genavb_rx, rx_flags,
                                   &task->params->rx_params[i]) != GENAVB_SUCCESS) {
@@ -463,6 +464,7 @@ static int tsn_task_net_init(struct tsn_task *task)
         sock = &task->sock_tx[j];
         sock->id = j;
         sock->dir = SOCKET_DIR_TX;
+        sock->async = task->params->async;
 
         if (genavb_socket_tx_open(&sock->genavb_tx, tx_flags, &task->params->tx_params[j]) != GENAVB_SUCCESS) {
             log_err("genavb_socket_tx_open() failed\n");

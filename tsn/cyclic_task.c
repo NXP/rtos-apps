@@ -6,11 +6,11 @@
 
 #include <string.h>
 
+#include "rtos_apps/async.h"
 #include "rtos_apps/log.h"
 #include "rtos_apps/types.h"
 
 #include "cyclic_task.h"
-#include "stats_task.h"
 #include "tsn_tasks_config.h"
 
 #define CYCLIC_STAT_PERIOD_SEC 5
@@ -53,7 +53,7 @@ static void socket_stats_dump(struct socket *sock)
     stats_reset(&sock->stats.traffic_latency);
     sock->stats_snap.pending = true;
 
-    if (STATS_Async(socket_stats_print, sock) < 0)
+    if (rtos_apps_async_call(sock->async, socket_stats_print, sock) < 0)
         sock->stats_snap.pending = false;
 }
 
@@ -363,6 +363,7 @@ int cyclic_task_init(struct cyclic_task *c_task, struct cyclic_task_config *cfg,
         params->num_rx_socket++;
 
         c_task->rx_socket[i].peer_id = cfg->rx_socket[i].peer_id;
+        c_task->rx_socket[i].async = cfg->params.async;
     }
 
     c_task->queue_h = rtos_mqueue_alloc_init(CYCLIC_EVENT_QUEUE_LENGTH, sizeof(struct cyclic_event));

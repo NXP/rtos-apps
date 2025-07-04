@@ -52,6 +52,7 @@ struct motor_controlled {
     struct tsn_motor *motor;
     struct stats_motor stats;
     struct stats_motor stats_snap;
+    struct rtos_apps_async *async;
 };
 
 struct io_device_config {
@@ -67,6 +68,7 @@ struct io_device_ctx {
     uint16_t status;
     struct stats_io_device stats;
     struct stats_io_device stats_snap;
+    struct rtos_apps_async *async;
     rtos_mqueue_t *event_queue;
     uint32_t stay_index_delay;
     bool offset_reached;

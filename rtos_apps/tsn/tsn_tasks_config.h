@@ -67,6 +67,7 @@ struct tsn_task_params {
     int num_tx_socket;
     int tx_buf_size;
     struct genavb_socket_tx_params tx_params[MAX_TX_SOCKET];
+    struct rtos_apps_async *async;
 };
 
 struct alarm_task_config {

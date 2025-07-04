@@ -146,6 +146,7 @@ int rtos_apps_tsn_init(struct rtos_apps_tsn_config *config)
         config->packets = NET_RX_BATCH;
 
     c_cfg->params.num_packets = config->packets;
+    c_cfg->params.async = config->async;
 
     cyclic_task_set_tx_time(c_cfg, config->tx_time_offset_ns, config->tx_time_enabled);
 

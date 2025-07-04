@@ -8,6 +8,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "rtos_apps/async.h"
 #include "rtos_apps/log.h"
 #include "rtos_apps/slist.h"
 #include "rtos_apps/stats.h"
@@ -16,7 +17,6 @@
 #include "control_strategies.h"
 #include "motor_params.h"
 #include "network_stats.h"
-#include "stats_task.h"
 #include "traj_planner.h"
 
 /* ----- Definitions ----- */
@@ -162,6 +162,7 @@ struct control_strategy_ctx {
     control_strategy_state_t state;
     struct stats_control_strategy stats_snap;
     struct stats_control_strategy stats;
+    struct rtos_apps_async *async;
     void (*err_cb)(void *, int);
     void *err_cb_user_data;
     union {
@@ -1265,7 +1266,7 @@ static void motor_stats_send(struct control_strategy_ctx *ctx)
 
     ctx->net_stats_pending = true;
 
-    if (STATS_Async(__motor_stats_send, ctx) < 0)
+    if (rtos_apps_async_call(ctx->async, __motor_stats_send, ctx) < 0)
         ctx->net_stats_pending = false;
 }
 
@@ -1352,7 +1353,7 @@ int control_strategy_context_exit(void)
 }
 
 int control_strategy_context_init(struct control_strategy_ctx **ctx, control_strategies_t first_strategy,
-                                  unsigned int app_period_ns)
+                                  unsigned int app_period_ns, struct rtos_apps_async *async)
 {
     if (control_strategy_h != NULL) {
         log_err("Strategy context already initialized\n");
@@ -1364,6 +1365,7 @@ int control_strategy_context_init(struct control_strategy_ctx **ctx, control_str
     slist_head_init(&control_strategy_h->motor_list);
 
     control_strategy_h->app_period_ns = app_period_ns;
+    control_strategy_h->async = async;
     control_strategy_h->current_strategy = first_strategy;
     control_strategy_h->old_strategy = first_strategy;
     control_strategy_h->num_strategies = MAX_NUM_CONTROL_STRATEGIES;
@@ -1427,7 +1429,7 @@ void control_strategy_stats_dump(struct control_strategy_ctx *ctx)
         memcpy(&ctx->stats_snap, &ctx->stats, sizeof(struct stats_control_strategy));
         ctx->stats_snap.pending = true;
 
-        if (STATS_Async(control_strategy_stats_print, &ctx->stats_snap) < 0)
+        if (rtos_apps_async_call(ctx->async, control_strategy_stats_print, &ctx->stats_snap) < 0)
             ctx->stats_snap.pending = false;
     }
 
@@ -1449,7 +1451,7 @@ void control_strategy_stats_dump(struct control_strategy_ctx *ctx)
         stats_reset(&motor->stats.pos_err_deg);
 
         // Print motor data on serial interface
-        if (STATS_Async(control_strategy_motor_stats_print, &motor->stats_snap) < 0)
+        if (rtos_apps_async_call(ctx->async, control_strategy_motor_stats_print, &motor->stats_snap) < 0)
             motor->stats_snap.pending = false;
     }
 }
