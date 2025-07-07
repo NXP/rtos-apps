@@ -399,11 +399,11 @@ void io_device_set_motor_offset(struct io_device_ctx *ctx, uint16_t motor_id, fl
     ctx->motors_controlled[motor_id].motor_offset = offset;
 }
 
-int io_device_init(struct io_device_ctx *ctx, struct cyclic_task *c_task, struct cyclic_task_config *cfg, uint16_t nb_motors)
+int io_device_init(struct io_device_ctx *ctx, struct cyclic_task *c_task, struct io_device_config *cfg)
 {
     unsigned int i = 0;
 
-    ctx->num_motors = nb_motors;
+    ctx->num_motors = cfg->nb_motors;
 
     ctx->state = WAIT_FOR_INPUT;
 
@@ -440,7 +440,7 @@ int io_device_init(struct io_device_ctx *ctx, struct cyclic_task *c_task, struct
     }
 
     ctx->c_task = c_task;
-    if (cyclic_task_init(c_task, cfg, io_device_net_receive, io_device_loop, ctx) < 0)
+    if (cyclic_task_init(c_task, cfg->cyclic_cfg, io_device_net_receive, io_device_loop, ctx) < 0)
         goto err_del_queue;
 
     log_info("IO device %u initialized successfully\n", c_task->id);

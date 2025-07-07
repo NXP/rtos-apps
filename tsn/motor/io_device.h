@@ -54,6 +54,11 @@ struct motor_controlled {
     struct stats_motor stats_snap;
 };
 
+struct io_device_config {
+    struct cyclic_task_config *cyclic_cfg;
+    uint16_t nb_motors;
+};
+
 struct io_device_ctx {
     uint16_t num_motors;
     struct motor_controlled motors_controlled[NB_MOTORS_MAX];
@@ -71,7 +76,7 @@ struct io_device_ctx {
     bool msg_pending;
 };
 
-int io_device_init(struct io_device_ctx *ctx, struct cyclic_task *c_task, struct cyclic_task_config *cfg, uint16_t nb_motors);
+int io_device_init(struct io_device_ctx *ctx, struct cyclic_task *c_task, struct io_device_config *cfg);
 void io_device_set_motor_offset(struct io_device_ctx *ctx, uint16_t motor_id, float offset);
 void io_device_net_receive(void *data, int msg_id, int src_id, void *buf, int len);
 

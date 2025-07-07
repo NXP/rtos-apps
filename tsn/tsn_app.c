@@ -165,7 +165,12 @@ int rtos_apps_tsn_init(struct rtos_apps_tsn_config *config)
 #endif
 #if BUILD_MOTOR_IO_DEVICE == 1
         if (c_cfg->type == CYCLIC_IO_DEVICE) {
-            if (io_device_init(&ctx->io_device, &ctx->c_task, c_cfg, 1) < 0) {
+             struct io_device_config io_device_cfg = {
+                .cyclic_cfg = c_cfg,
+                .nb_motors = 1,
+            };
+
+            if (io_device_init(&ctx->io_device, &ctx->c_task, &io_device_cfg) < 0) {
                 log_err("io_device_init() failed\n");
                 goto err_init;
             }
