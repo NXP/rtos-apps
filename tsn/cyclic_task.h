@@ -43,6 +43,7 @@ struct cyclic_task {
     void (*net_rx_func)(void *ctx, int msg_id, int src_id, void *buf, int len);
     void (*loop_func)(void *ctx, int timer_status);
     void *ctx;
+    void (*log_update_time)(genavb_clock_id_t clk_id);
     rtos_mqueue_t *queue_h;
 };
 

@@ -9,6 +9,8 @@
 
 #include <stdbool.h>
 
+#include "genavb/clock.h"
+
 struct rtos_apps_tsn_serial_iodevice_config {
     void *baseaddr;
     unsigned int baudrate;
@@ -34,6 +36,8 @@ struct rtos_apps_tsn_config {
     unsigned int packets;
     bool zero_copy;
     unsigned int rx_tc_mask;
+
+    void (*log_update_time)(genavb_clock_id_t clk_id);
 
     struct rtos_apps_tsn_serial_iodevice_config *serial_cfg;
 };

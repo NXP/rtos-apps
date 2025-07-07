@@ -10,7 +10,6 @@
 #include "rtos_apps/types.h"
 
 #include "cyclic_task.h"
-#include "log.h"
 #include "stats_task.h"
 #include "tsn_tasks_config.h"
 
@@ -250,7 +249,7 @@ static void main_cyclic(void *data)
         tsn_task_stats_end(task);
 
         if (!(task->stats.sched % num_sched_stats)) {
-            app_log_update_time(task->params->clk_id);
+            c_task->log_update_time(task->params->clk_id);
             tsn_stats_dump(task);
             cyclic_stats_dump(c_task);
         }
@@ -326,6 +325,7 @@ int cyclic_task_init(struct cyclic_task *c_task, struct cyclic_task_config *cfg,
     memcpy(params, &cfg->params, sizeof(struct tsn_task_params));
     c_task->id = cfg->id;
     c_task->num_peers = cfg->num_peers;
+    c_task->log_update_time = cfg->log_update_time;
 
     log_info("cyclic task type: %d, id: %u\n\n", cfg->type, c_task->id);
     log_info("task params\n");

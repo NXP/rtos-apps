@@ -121,6 +121,8 @@ int rtos_apps_tsn_init(struct rtos_apps_tsn_config *config)
         goto err_init;
     }
 
+    c_cfg->log_update_time = config->log_update_time;
+
     cyclic_task_set_period(c_cfg, config->period_ns);
 
     if (c_cfg->type == CYCLIC_CONTROLLER) {

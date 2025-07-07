@@ -89,6 +89,9 @@ struct cyclic_task_config {
     int num_peers;
     struct socket_config rx_socket[MAX_PEERS];
     struct socket_config tx_socket;
+
+    /* private */
+    void (*log_update_time)(genavb_clock_id_t clk_id);
 };
 
 struct cyclic_task_config *tsn_conf_get_cyclic_task(int index);
