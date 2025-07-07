@@ -7,7 +7,24 @@
 #ifndef _RTOS_APPS_TSN_ENTRY_H_
 #define _RTOS_APPS_TSN_ENTRY_H_
 
-#include "system_config.h"
+#include <stdbool.h>
+
+struct tsn_app_config {
+    unsigned int mode;
+    unsigned int role;
+    unsigned int num_io_devices;
+    float motor_offset;
+    unsigned int control_strategy;
+    unsigned int cmd_client;
+    unsigned int period_ns;
+    unsigned int priority;
+    unsigned int tx_time_offset_ns;
+    bool tx_time_enabled;
+    unsigned int port_id;
+    unsigned int packets;
+    bool zero_copy;
+    unsigned int rx_tc_mask;
+};
 
 int tsn_app_init(struct tsn_app_config *config);
 
