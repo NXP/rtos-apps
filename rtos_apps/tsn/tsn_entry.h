@@ -9,6 +9,16 @@
 
 #include <stdbool.h>
 
+struct rtos_apps_tsn_serial_iodevice_config {
+    void *baseaddr;
+    unsigned int baudrate;
+    unsigned int clk_freq;
+    unsigned int irq_mask;
+
+    /* private */
+    struct cyclic_task_config *cyclic_cfg;
+};
+
 struct rtos_apps_tsn_config {
     unsigned int mode;
     unsigned int role;
@@ -24,6 +34,8 @@ struct rtos_apps_tsn_config {
     unsigned int packets;
     bool zero_copy;
     unsigned int rx_tc_mask;
+
+    struct rtos_apps_tsn_serial_iodevice_config *serial_cfg;
 };
 
 int rtos_apps_tsn_init(struct rtos_apps_tsn_config *config);

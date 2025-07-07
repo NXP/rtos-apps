@@ -190,7 +190,9 @@ int rtos_apps_tsn_init(struct rtos_apps_tsn_config *config)
             c_cfg->params.task_period_offset_ns = NET_DELAY_OFFSET_SERIAL_DEFAULT;
             c_cfg->params.transfer_time_ns = NET_DELAY_OFFSET_SERIAL_DEFAULT;
 
-            if (serial_iodevice_init(&ctx->c_task, c_cfg) < 0) {
+            config->serial_cfg->cyclic_cfg = c_cfg;
+
+            if (serial_iodevice_init(&ctx->c_task, config->serial_cfg) < 0) {
                 log_err("serial_iodevice_init() failed\n");
                 goto err_init;
             }

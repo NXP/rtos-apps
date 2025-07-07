@@ -9,7 +9,6 @@
 #include "rtos_apps/log.h"
 #include "rtos_apps/types.h"
 
-#include "board.h"
 #include "fsl_lpuart.h"
 #include "serial_iodevice.h"
 #include "stats_task.h"
@@ -20,8 +19,9 @@
 #define UART_RX_QUEUE_SIZE      5
 #define UART_RX_MAX_SEM_COUNT   10
 
-#define SERIAL_IODEVICE_STAT_PERIOD_SEC 5
-#define SERIAL_IODEVICE_UART_LOOPBACK   0
+#define SERIAL_IODEVICE_STAT_PERIOD_SEC   5
+#define SERIAL_IODEVICE_UART_LOOPBACK     0
+#define SERIAL_IODEV_UART_RING_BUFFER_LEN 256
 
 #define MAX_SERIAL_COMMAND_LEN 50
 
@@ -49,7 +49,7 @@ struct serial_iodevice_ctx {
     rtos_mqueue_t *feedback_rx_queue;
     rtos_thread_t thread;
     lpuart_handle_t lpuart_handler;
-    uint8_t drv_rx_ring_buffer[BOARD_IODEV_UART_RING_BUFFER_LEN];
+    uint8_t drv_rx_ring_buffer[SERIAL_IODEV_UART_RING_BUFFER_LEN];
     uint8_t uart_rx_buf[MAX_SERIAL_COMMAND_LEN];
     uint32_t uart_rx_index;
     bool new_cmd;
@@ -77,12 +77,12 @@ static void lpuart_cb(LPUART_Type *base, lpuart_handle_t *handle, status_t statu
     }
 }
 
-static int lpuart_init(struct serial_iodevice_ctx *ctx)
+static int lpuart_init(struct serial_iodevice_ctx *ctx, struct rtos_apps_tsn_serial_iodevice_config *cfg)
 {
     lpuart_config_t config;
     status_t status;
 
-    ctx->uart_base = BOARD_IODEV_UART_BASEADDR;
+    ctx->uart_base = cfg->baseaddr;
 
     /*
      * config.baudRate_Bps = 115200U;
@@ -94,11 +94,11 @@ static int lpuart_init(struct serial_iodevice_ctx *ctx)
      * config.enableRx = false;
      */
     LPUART_GetDefaultConfig(&config);
-    config.baudRate_Bps = BOARD_IODEV_UART_BAUDRATE;
+    config.baudRate_Bps = cfg->baudrate;
     config.enableTx = true;
     config.enableRx = true;
 
-    status = LPUART_Init(ctx->uart_base, &config, BOARD_IODEV_UART_CLK_FREQ);
+    status = LPUART_Init(ctx->uart_base, &config, cfg->clk_freq);
     if (status != kStatus_Success) {
         log_err("LPUART_Init() failed\n");
         goto err;
@@ -109,8 +109,8 @@ static int lpuart_init(struct serial_iodevice_ctx *ctx)
 #endif
 
     LPUART_TransferCreateHandle(ctx->uart_base, &ctx->lpuart_handler, lpuart_cb, ctx);
-    LPUART_TransferStartRingBuffer(ctx->uart_base, &ctx->lpuart_handler, ctx->drv_rx_ring_buffer, BOARD_IODEV_UART_RING_BUFFER_LEN);
-    LPUART_EnableInterrupts(ctx->uart_base, BOARD_IODEV_UART_INTERRUPT_MASK);
+    LPUART_TransferStartRingBuffer(ctx->uart_base, &ctx->lpuart_handler, ctx->drv_rx_ring_buffer, SERIAL_IODEV_UART_RING_BUFFER_LEN);
+    LPUART_EnableInterrupts(ctx->uart_base, cfg->irq_mask);
 
     return 0;
 
@@ -301,7 +301,7 @@ static void serial_iodevice_net_receive(void *data, int msg_id, int src_id, void
     }
 }
 
-int serial_iodevice_init(struct cyclic_task *c_task, struct cyclic_task_config *cfg)
+int serial_iodevice_init(struct cyclic_task *c_task, struct rtos_apps_tsn_serial_iodevice_config *cfg)
 {
     struct serial_iodevice_ctx *ctx = &serial_iodev;
 
@@ -318,7 +318,7 @@ int serial_iodevice_init(struct cyclic_task *c_task, struct cyclic_task_config *
         goto err;
     }
 
-    if (lpuart_init(ctx) < 0) {
+    if (lpuart_init(ctx, cfg) < 0) {
         log_err("lpuart_init() failed\n");
         goto err;
     }
@@ -329,7 +329,7 @@ int serial_iodevice_init(struct cyclic_task *c_task, struct cyclic_task_config *
     }
 
     ctx->c_task = c_task;
-    if (cyclic_task_init(c_task, cfg, serial_iodevice_net_receive, serial_iodevice_loop, ctx) < 0)
+    if (cyclic_task_init(c_task, cfg->cyclic_cfg, serial_iodevice_net_receive, serial_iodevice_loop, ctx) < 0)
         goto err;
 
     log_info("Serial iodevice init successfully\n");
