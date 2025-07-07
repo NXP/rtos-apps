@@ -45,6 +45,12 @@ struct controlled_io_device {
     struct controlled_motor_ctx *motors[NB_MOTORS_MAX];
 };
 
+struct controller_config {
+    struct cyclic_task_config *cyclic_cfg;
+    control_strategies_t first_strategy;
+    bool cmd_client;
+};
+
 struct controller_ctx {
     uint16_t num_io_device;
     sm_controller_state_t state;
@@ -65,8 +71,7 @@ struct controller_ctx {
     control_strategies_t last_control_strategy;
 };
 
-int controller_init(struct controller_ctx *ctx, struct cyclic_task *c_task, struct cyclic_task_config *cfg,
-                    control_strategies_t first_strategy, bool cmd_client);
+int controller_init(struct controller_ctx *ctx, struct cyclic_task *c_task, struct controller_config *cfg);
 void controller_exit(struct controller_ctx *ctx);
 void controller_net_receive(void *data, int msg_id, int src_id, void *buf, int len);
 

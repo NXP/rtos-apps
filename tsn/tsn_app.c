@@ -151,8 +151,13 @@ int rtos_apps_tsn_init(struct rtos_apps_tsn_config *config)
     if (config->mode == MOTOR_NETWORK) {
 #if BUILD_MOTOR_CONTROLLER == 1
         if (c_cfg->type == CYCLIC_CONTROLLER) {
-            if (controller_init(&ctx->ctrl, &ctx->c_task, c_cfg,
-                            (control_strategies_t)config->control_strategy, (bool)config->cmd_client) < 0) {
+            struct controller_config controller_cfg = {
+                .cyclic_cfg = c_cfg,
+                .first_strategy = (control_strategies_t)config->control_strategy,
+                .cmd_client = (bool)config->cmd_client,
+            };
+
+            if (controller_init(&ctx->ctrl, &ctx->c_task, &controller_cfg) < 0) {
                 log_err("controller_init() failed\n");
                 goto err_init;
             }
