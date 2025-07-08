@@ -63,7 +63,7 @@ static void null_loop(void *data, int timer_status)
     cyclic_net_transmit(c_task, 0, NULL, 0);
 }
 
-int tsn_app_init(struct tsn_app_config *config)
+int rtos_apps_tsn_init(struct rtos_apps_tsn_config *config)
 {
     struct tsn_app_ctx *ctx;
     struct alarm_task_config *a_cfg;

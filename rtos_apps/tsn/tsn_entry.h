@@ -9,7 +9,7 @@
 
 #include <stdbool.h>
 
-struct tsn_app_config {
+struct rtos_apps_tsn_config {
     unsigned int mode;
     unsigned int role;
     unsigned int num_io_devices;
@@ -26,6 +26,6 @@ struct tsn_app_config {
     unsigned int rx_tc_mask;
 };
 
-int tsn_app_init(struct tsn_app_config *config);
+int rtos_apps_tsn_init(struct rtos_apps_tsn_config *config);
 
 #endif /* _RTOS_APPS_TSN_ENTRY_H_ */
