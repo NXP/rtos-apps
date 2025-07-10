@@ -19,6 +19,7 @@
 
 enum codec_id {
     CODEC_ID_WM8962,
+    CODEC_ID_WM8960,
 };
 
 struct sai_active_config {
