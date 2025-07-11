@@ -132,6 +132,8 @@ int rtos_apps_tsn_init(struct rtos_apps_tsn_config *config)
     c_cfg->params.stream_priority = config->priority;
     c_cfg->params.port_id = config->port_id;
     c_cfg->params.zero_copy = config->zero_copy;
+
+    a_cfg->params.port_id = config->port_id;
     a_cfg->params.zero_copy = config->zero_copy;
 
     if (config->rx_tc_mask > 0xFF)
