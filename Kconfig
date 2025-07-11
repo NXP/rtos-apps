@@ -3,4 +3,5 @@ menu "RTOS Application components"
   rsource "./stats/Kconfig"
   rsource "./audio/Kconfig"
   rsource "./tsn/Kconfig"
+  rsource "./async/Kconfig"
 endmenu

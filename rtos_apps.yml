@@ -206,6 +206,23 @@ component.rtos_apps.tsn_headers:
     type: software_component
     user_visible: always
     version: 1.0.0
+component.rtos_apps.async:
+  belong_to: set.component.rtos_apps
+  contents:
+    package_base_path: rtos-apps
+    project_base_path: rtos-apps
+    repo_base_path: components/rtos-apps
+  section-type: component
+  section_info:
+    description: Component rtos-apps async
+    display_name: rtos-apps_async
+    full_name: Component rtos-apps async
+    taxonomy:
+      belong_to: component_rtos_apps
+      csub: rtos_apps.async
+    type: software_component
+    user_visible: always
+    version: 1.0.0
 scr.component.rtos_apps:
   belong_to: set.component.rtos_apps
   contents:

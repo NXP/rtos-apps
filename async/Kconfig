@@ -1,0 +1,6 @@
+config MCUX_COMPONENT_component.rtos_apps.async
+    bool "Asynchronous processing component"
+    default n
+
+    if MCUX_COMPONENT_component.rtos-apps.async
+    endif
