@@ -401,6 +401,7 @@ void io_device_set_motor_offset(struct io_device_ctx *ctx, uint16_t motor_id, fl
 
 int io_device_init(struct io_device_ctx *ctx, struct cyclic_task *c_task, struct io_device_config *cfg)
 {
+    struct cyclic_task_config *cyclic_cfg = cfg->cyclic_cfg;
     unsigned int i = 0;
 
     ctx->num_motors = cfg->nb_motors;
@@ -409,11 +410,11 @@ int io_device_init(struct io_device_ctx *ctx, struct cyclic_task *c_task, struct
 
     ctx->status = 0;
     ctx->offset_reached = false;
-    ctx->async = c_task->params.async;
+    ctx->async = cyclic_cfg->params.async;
 
     for (i = 0; i < ctx->num_motors; i++) {
         ctx->motors_controlled[i].motor_id = i;
-        ctx->motors_controlled[i].async = c_task->params.async;
+        ctx->motors_controlled[i].async = cyclic_cfg->params.async;
 
         if (mcapi_init(i, &ctx->motors_controlled[i].motor) < 0) {
             log_err("mcapi_init() failed\n");

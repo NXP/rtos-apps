@@ -372,7 +372,7 @@ int controller_init(struct controller_ctx *ctx, struct cyclic_task *c_task, stru
     ctx->stopped = false;
     ctx->control_error = false;
     ctx->cmd_client_ctx = NULL;
-    ctx->async = c_task->params.async;
+    ctx->async = cyclic_cfg->params.async;
 
     // Initialize control strategy
     if (control_strategy_context_init(&ctx->strategy, cfg->first_strategy, cyclic_cfg->params.task_period_ns, cyclic_cfg->params.async) < 0) {
