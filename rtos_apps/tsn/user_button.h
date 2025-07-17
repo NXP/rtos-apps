@@ -48,9 +48,9 @@ void rtos_apps_user_button_irq(struct rtos_apps_user_button *button) { return; }
 
 int rtos_apps_user_button_register_queue(struct rtos_apps_user_button *button, rtos_mqueue_t *queue) { return 0; }
 
-void rtos_apps_user_button_event(struct rtos_apps_user_button *button) ( return; )
+void rtos_apps_user_button_event(struct rtos_apps_user_button *button) { return; }
 
-struct rtos_apps_user_button *rtos_apps_user_button_init(struct rtos_apps_user_button_config *cfg) ( return (struct rtos_apps_user_button *)0xdeadbeef; )
+struct rtos_apps_user_button *rtos_apps_user_button_init(struct rtos_apps_user_button_config *cfg) { return (struct rtos_apps_user_button *)0xdeadbeef; }
 
 void rtos_apps_user_button_exit(struct rtos_apps_user_button *button) { return; }
 
