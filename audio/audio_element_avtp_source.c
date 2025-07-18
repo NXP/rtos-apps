@@ -6,7 +6,7 @@
 
 #include <math.h>
 
-#include "genavb.h"
+#include "avb_tsn/common/genavb.h"
 
 #include "genavb/clock.h"
 #include "genavb/genavb.h"

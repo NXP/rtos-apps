@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
-#include "genavb.h"
+#include "avb_tsn/common/genavb.h"
 
 #include "genavb/genavb.h"
 #include "genavb/streaming.h"

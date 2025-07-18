@@ -10,7 +10,7 @@
 
 #include "m1_pmsm_appconfig.h"
 #include "motor_params.h"
-#include "storage.h"
+#include "avb_tsn/common/storage.h"
 
 #ifndef M_PI
 #define M_PI 3.14159265358979323846

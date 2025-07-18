@@ -16,13 +16,11 @@
 #include "audio_pipeline.h"
 #include "audio.h"
 
-#include "genavb.h"
+#include "avb_tsn/common/genavb.h"
 #include "stats_task.h"
 
 #include "genavb/control.h"
 #include "genavb/genavb.h"
-
-#include "system_config.h"
 
 static int clock_domain_set_source(struct genavb_msg_clock_domain_set_source *set_source, struct pipeline_ctx *ctx)
 {

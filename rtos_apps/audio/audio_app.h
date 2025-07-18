@@ -11,7 +11,7 @@
 #include <stdbool.h>
 
 #include "audio_pipeline.h"
-#include "genavb.h"
+#include "avb_tsn/common/genavb.h"
 
 #define AUDIO_APP_MAX_SUPPORTED_PERIOD 10
 #define AUDIO_APP_MAX_CFG              8
