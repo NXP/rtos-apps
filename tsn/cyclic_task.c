@@ -256,17 +256,18 @@ static void main_cyclic(void *data)
     }
 }
 
-void cyclic_task_set_period(struct cyclic_task_config *cfg, unsigned int period_ns)
+void cyclic_task_set_period(struct cyclic_task_config *cfg, struct rtos_apps_tsn_config *config)
 {
     struct tsn_task_params *params = &cfg->params;
 
-    params->task_period_ns = period_ns;
-    params->transfer_time_ns = period_ns / 2;
+    params->task_period_ns = config->period_ns;
+
+    params->transfer_time_ns = (config->offset + 1) * config->period_ns / 2;
 
     if (cfg->type == CYCLIC_CONTROLLER)
         params->task_period_offset_ns = 0;
     else
-        params->task_period_offset_ns = period_ns / 2;
+        params->task_period_offset_ns = params->transfer_time_ns;
 }
 
 void cyclic_task_set_tx_time(struct cyclic_task_config *cfg, unsigned int tx_time_offset_ns, bool tx_time_enabled)
@@ -332,7 +333,6 @@ int cyclic_task_init(struct cyclic_task *c_task, struct cyclic_task_config *cfg,
     log_info("task_period_ns        : %u\n", params->task_period_ns);
     log_info("task_period_offset_ns : %u\n", params->task_period_offset_ns);
     log_info("transfer_time_ns      : %u\n", params->transfer_time_ns);
-    log_info("sched_traffic_offset  : %u\n", params->sched_traffic_offset);
     log_info("priority              : %u\n", params->stream_priority);
     log_info("port id               : %u\n", params->port_id);
     log_info("packets               : %u\n", params->num_packets);

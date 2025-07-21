@@ -15,11 +15,16 @@
 #define MAX_RX_SOCKET 2
 #define MAX_TX_SOCKET 1
 
-#define PACKET_SIZE        80
-#define APP_PERIOD_DEFAULT 100000
-#define APP_PERIOD_MIN     100000
+#define PACKET_SIZE                80
+#define APP_PERIOD_DEFAULT         100000
+#define APP_PERIOD_MIN             100000
 
-#define APP_PERIOD_SERIAL_DEFAULT       2000000
+#define APP_OFFSET_DEFAULT         0
+#define APP_OFFSET_MAX             1
+
+#define APP_NETWORK_BUDGET_DEFAULT 15000
+
+#define APP_PERIOD_SERIAL_DEFAULT  2000000
 
 /* Supported APP_MODEs */
 #define MOTOR_NETWORK 0 /* Enables the controller to control 1 or 2 motors remotely */
@@ -51,7 +56,6 @@ struct tsn_task_params {
     unsigned int task_period_ns;
     unsigned int task_period_offset_ns; //modulo 1 second
     unsigned int transfer_time_ns;
-    unsigned int sched_traffic_offset;
     uint8_t stream_priority;
     unsigned int tx_time_offset_ns;
     bool tx_time_enabled;

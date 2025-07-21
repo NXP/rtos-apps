@@ -9,6 +9,8 @@
 
 #include "rtos_abstraction_layer.h"
 
+#include "rtos_apps/tsn/tsn_entry.h"
+
 #include "monitoring_stats.h"
 #include "tsn_task.h"
 #include "tsn_tasks_config.h"
@@ -57,7 +59,7 @@ void cyclic_task_stop(struct cyclic_task *);
 int cyclic_net_transmit(struct cyclic_task *c_task, int msg_id, void *buf, int len);
 void cyclic_task_get_monitoring(struct cyclic_task *task, struct monitoring_msg_cyclic_task *mon_cyclic_task,
                                 uint32_t num_socket_monitored);
-void cyclic_task_set_period(struct cyclic_task_config *cfg, unsigned int period_ns);
+void cyclic_task_set_period(struct cyclic_task_config *cfg, struct rtos_apps_tsn_config *config);
 void cyclic_task_set_tx_time(struct cyclic_task_config *cfg, unsigned int tx_time_offset_ns, bool tx_time_enabled);
 
 #endif /* _CYCLIC_TASK_H_ */

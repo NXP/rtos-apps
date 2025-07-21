@@ -68,6 +68,7 @@ int rtos_apps_tsn_init(struct rtos_apps_tsn_config *config)
     struct tsn_app_ctx *ctx;
     struct alarm_task_config *a_cfg;
     struct cyclic_task_config *c_cfg;
+    unsigned int processing_budget_ns;
 
     ctx = rtos_malloc(sizeof(struct tsn_app_ctx));
     if (!ctx) {
@@ -90,6 +91,8 @@ int rtos_apps_tsn_init(struct rtos_apps_tsn_config *config)
     log_info("motor_offset     : %f\n", config->motor_offset);
     log_info("control_strategy : %u\n", config->control_strategy);
     log_info("app period       : %u\n", config->period_ns);
+    log_info("app offset       : %u\n", (config->offset + 1) * config->period_ns / 2);
+    log_info("network budget   : %u\n", config->network_budget_ns);
     if (config->tx_time_enabled) {
         log_info("tx time offset   : %u\n", config->tx_time_offset_ns);
     }
@@ -99,6 +102,18 @@ int rtos_apps_tsn_init(struct rtos_apps_tsn_config *config)
 
     if (config->period_ns < APP_PERIOD_MIN) {
         log_err("invalid application period, minimum is %u ns\n", APP_PERIOD_MIN);
+        goto err_init;
+    }
+
+    if (config->offset > APP_OFFSET_MAX) {
+        log_err("invalid application offset, maximum is %u ns\n", APP_OFFSET_MAX);
+        goto err_init;
+    }
+
+    processing_budget_ns = (config->offset + 1) * config->period_ns / 2;
+
+    if (config->network_budget_ns > processing_budget_ns / 3) {
+        log_err("invalid network budget, maximum is %u ns\n", processing_budget_ns / 3);
         goto err_init;
     }
 
@@ -123,7 +138,7 @@ int rtos_apps_tsn_init(struct rtos_apps_tsn_config *config)
 
     c_cfg->log_update_time = config->log_update_time;
 
-    cyclic_task_set_period(c_cfg, config->period_ns);
+    cyclic_task_set_period(c_cfg, config);
 
     if (c_cfg->type == CYCLIC_CONTROLLER) {
         c_cfg->num_peers = config->num_io_devices;
@@ -193,10 +208,6 @@ int rtos_apps_tsn_init(struct rtos_apps_tsn_config *config)
 #endif
     {
         if (config->mode == SERIAL) {
-            c_cfg->params.task_period_ns = APP_PERIOD_SERIAL_DEFAULT;
-            c_cfg->params.task_period_offset_ns = NET_DELAY_OFFSET_SERIAL_DEFAULT;
-            c_cfg->params.transfer_time_ns = NET_DELAY_OFFSET_SERIAL_DEFAULT;
-
             config->serial_cfg->cyclic_cfg = c_cfg;
 
             if (serial_iodevice_init(&ctx->c_task, config->serial_cfg) < 0) {

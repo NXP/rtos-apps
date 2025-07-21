@@ -68,28 +68,20 @@ static const struct tsn_stream tsn_streams[] = {
     },
 };
 
-#define CYCLIC_TASK_DEFAULT_PARAMS(offset)            \
+#define CYCLIC_TASK_DEFAULT_PARAMS                    \
     {                                                 \
         .clk_id = GENAVB_CLOCK_GPTP_0_0,              \
         .priority = TASK_DEFAULT_PRIORITY,            \
         .stack_depth = TASK_DEFAULT_STACK_SIZE,       \
-        .task_period_ns = APP_PERIOD_DEFAULT,         \
-        .task_period_offset_ns = offset,              \
-        .transfer_time_ns = NET_DELAY_OFFSET_DEFAULT, \
-        .sched_traffic_offset = SCHED_TRAFFIC_OFFSET, \
         .rx_buf_size = PACKET_SIZE,                   \
         .tx_buf_size = PACKET_SIZE,                   \
-        .port_id = 0,                       \
-        .num_packets = 1,                             \
-        .zero_copy = 1,                               \
-        .rx_tc_mask = 0,                              \
     }
 
 static struct cyclic_task_config cyclic_tasks[] = {
     [0] = {
         .type = CYCLIC_CONTROLLER,
         .id = CONTROLLER_0,
-        .params = CYCLIC_TASK_DEFAULT_PARAMS(0),
+        .params = CYCLIC_TASK_DEFAULT_PARAMS,
         .num_peers = 2,
         .rx_socket = {
             [0] = {
@@ -108,7 +100,7 @@ static struct cyclic_task_config cyclic_tasks[] = {
     [1] = {
         .type = CYCLIC_IO_DEVICE,
         .id = IO_DEVICE_0,
-        .params = CYCLIC_TASK_DEFAULT_PARAMS(NET_DELAY_OFFSET_DEFAULT),
+        .params = CYCLIC_TASK_DEFAULT_PARAMS,
         .num_peers = 1,
         .rx_socket = {
             [0] = {
@@ -123,7 +115,7 @@ static struct cyclic_task_config cyclic_tasks[] = {
     [2] = {
         .type = CYCLIC_IO_DEVICE,
         .id = IO_DEVICE_1,
-        .params = CYCLIC_TASK_DEFAULT_PARAMS(NET_DELAY_OFFSET_DEFAULT),
+        .params = CYCLIC_TASK_DEFAULT_PARAMS,
         .num_peers = 1,
         .rx_socket = {
             [0] = {

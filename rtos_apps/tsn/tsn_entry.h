@@ -28,7 +28,9 @@ struct rtos_apps_tsn_config {
     float motor_offset;
     unsigned int control_strategy;
     unsigned int cmd_client;
-    unsigned int period_ns;
+    unsigned int period_ns;          /*< Cyclic task processing period in nanoseconds */
+    unsigned int offset;             /*< Cyclic task processing offset: 0 - half period, 1 - full period */
+    unsigned int network_budget_ns;  /*< Network budget in nanoseconds */
     unsigned int priority;
     unsigned int tx_time_offset_ns;
     bool tx_time_enabled;
