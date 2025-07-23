@@ -136,7 +136,7 @@ struct rtos_apps_user_button *rtos_apps_user_button_init(struct rtos_apps_user_b
     }
 
     if (rtos_thread_create(&button->thread, USER_BUTTON_TASK_PRIORITY, 0, USER_BUTTON_TASK_STACK_SIZE,
-         "user button task", user_button_task, button) < 0) {
+         "user button task", &user_button_task, button) < 0) {
         log_err("rtos_thread_create() failed\n");
         goto err_thread;
     }

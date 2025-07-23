@@ -55,15 +55,15 @@ int mcapi_init(uint16_t id, struct tsn_motor **motor)
 
         (*motor)->sm_motor_controller = &g_sM1Ctrl;
         (*motor)->motor_drive = &g_sM1Drive;
-        (*motor)->slow_loop_func = SM_StateMachineSlow;
-        (*motor)->app_state_getter = M1_GetAppState;
-        (*motor)->app_switch_setter = M1_SetAppSwitch;
-        (*motor)->app_switch_getter = M1_GetAppSwitch;
-        (*motor)->speed_setter = M1_SetSpeed;
-        (*motor)->speed_getter = M1_GetRealSpeed;
-        (*motor)->position_setter = M1_SetPosition;
-        (*motor)->position_getter = M1_GetPositionFloat;
-        (*motor)->last_index_getter = M1_GetLastIndexPosition;
+        (*motor)->slow_loop_func = &SM_StateMachineSlow;
+        (*motor)->app_state_getter = &M1_GetAppState;
+        (*motor)->app_switch_setter = &M1_SetAppSwitch;
+        (*motor)->app_switch_getter = &M1_GetAppSwitch;
+        (*motor)->speed_setter = &M1_SetSpeed;
+        (*motor)->speed_getter = &M1_GetRealSpeed;
+        (*motor)->position_setter = &M1_SetPosition;
+        (*motor)->position_getter = &M1_GetPositionFloat;
+        (*motor)->last_index_getter = &M1_GetLastIndexPosition;
 
         break;
     default:

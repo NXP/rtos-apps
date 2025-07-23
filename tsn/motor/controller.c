@@ -52,7 +52,7 @@ static void controller_stats_dump(struct controller_ctx *ctx)
     ctx->stats_snap.pending = true;
 
     // Print controller data
-    if (rtos_apps_async_call(ctx->async, controller_stats_print, &ctx->stats_snap) < 0)
+    if (rtos_apps_async_call(ctx->async, &controller_stats_print, &ctx->stats_snap) < 0)
         ctx->stats_snap.pending = false;
 }
 
@@ -97,7 +97,7 @@ static void controller_monitoring_send(struct controller_ctx *ctx)
     cyclic_task_get_monitoring(ctx->c_task, &ctx->msg.cyclic_task_stats, MONITOR_MAX_SOCKET);
     ctx->msg_pending = true;
 
-    if (rtos_apps_async_call(ctx->async, __controller_monitoring_send, ctx) < 0)
+    if (rtos_apps_async_call(ctx->async, &__controller_monitoring_send, ctx) < 0)
         ctx->msg_pending = false;
 }
 
@@ -397,7 +397,7 @@ int controller_init(struct controller_ctx *ctx, struct cyclic_task *c_task, stru
     }
 
     // Register control strategy error callback
-    control_strategy_set_error_callback(ctx->strategy, controller_control_err_cb, ctx);
+    control_strategy_set_error_callback(ctx->strategy, &controller_control_err_cb, ctx);
 
     if (cfg->cmd_client) {
         if (command_client_start(&ctx->cmd_client_ctx) < 0) {
@@ -411,7 +411,7 @@ int controller_init(struct controller_ctx *ctx, struct cyclic_task *c_task, stru
     }
 
     ctx->c_task = c_task;
-    if (cyclic_task_init(c_task, cyclic_cfg, controller_net_receive, controller_loop, ctx) < 0)
+    if (cyclic_task_init(c_task, cyclic_cfg, &controller_net_receive, &controller_loop, ctx) < 0)
         goto err_del_queue;
 
     log_info("Controller Init Successful\n");

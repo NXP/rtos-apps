@@ -218,7 +218,7 @@ int rtos_apps_tsn_init(struct rtos_apps_tsn_config *config)
             log_err("mode not supported\n");
             goto err_init;
         } else {
-            if (cyclic_task_init(&ctx->c_task, c_cfg, NULL, null_loop, &ctx->c_task) < 0) {
+            if (cyclic_task_init(&ctx->c_task, c_cfg, NULL, &null_loop, &ctx->c_task) < 0) {
                 log_err("cyclic_task_init() failed\n");
                 goto err_init;
             }
@@ -230,7 +230,7 @@ int rtos_apps_tsn_init(struct rtos_apps_tsn_config *config)
     if (a_cfg->type == ALARM_MONITOR)
         alarm_task_monitor_init(&ctx->a_task, a_cfg, NULL, NULL);
     else if (a_cfg->type == ALARM_IO_DEVICE)
-        alarm_task_io_init(&ctx->a_task, a_cfg, main_alarm_io, &ctx->a_task);
+        alarm_task_io_init(&ctx->a_task, a_cfg, &main_alarm_io, &ctx->a_task);
 
     return 0;
 

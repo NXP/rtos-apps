@@ -108,7 +108,7 @@ int command_client_start(struct command_client_ctx **ctx)
         command_client_context_h->state = CMD_STATE_GO;
 
         if (rtos_thread_create(&command_client_context_h->command_client_task, COMMAND_CLIENT_TASK_PRIO, 0, COMMAND_CLIENT_TASK_STACK_SIZE,
-            "command client task", command_client_task, command_client_context_h) < 0) {
+            "command client task", &command_client_task, command_client_context_h) < 0) {
             log_err("rtos_thread_create() failed\n");
             rc = -1;
         }

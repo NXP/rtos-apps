@@ -53,7 +53,7 @@ static void socket_stats_dump(struct socket *sock)
     stats_reset(&sock->stats.traffic_latency);
     sock->stats_snap.pending = true;
 
-    if (rtos_apps_async_call(sock->async, socket_stats_print, sock) < 0)
+    if (rtos_apps_async_call(sock->async, &socket_stats_print, sock) < 0)
         sock->stats_snap.pending = false;
 }
 
@@ -376,7 +376,7 @@ int cyclic_task_init(struct cyclic_task *c_task, struct cyclic_task_config *cfg,
     c_task->loop_func = loop_func;
     c_task->ctx = ctx;
 
-    rc = tsn_task_register(&c_task->task, params, c_task->id, main_cyclic, c_task, timer_callback);
+    rc = tsn_task_register(&c_task->task, params, c_task->id, &main_cyclic, c_task, &timer_callback);
     if (rc < 0) {
         log_err("tsn_task_register() failed: rc = %d\n", rc);
         goto err_task_register;

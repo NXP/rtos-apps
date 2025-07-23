@@ -109,7 +109,7 @@ static int lpuart_init(struct serial_iodevice_ctx *ctx, struct rtos_apps_tsn_ser
     ctx->uart_base->CTRL |= LPUART_CTRL_LOOPS(1);
 #endif
 
-    LPUART_TransferCreateHandle(ctx->uart_base, &ctx->lpuart_handler, lpuart_cb, ctx);
+    LPUART_TransferCreateHandle(ctx->uart_base, &ctx->lpuart_handler, &lpuart_cb, ctx);
     LPUART_TransferStartRingBuffer(ctx->uart_base, &ctx->lpuart_handler, ctx->drv_rx_ring_buffer, SERIAL_IODEV_UART_RING_BUFFER_LEN);
     LPUART_EnableInterrupts(ctx->uart_base, cfg->irq_mask);
 
@@ -224,7 +224,7 @@ static void serial_iodevice_stats_dump(struct serial_iodevice_ctx *ctx)
     memcpy(&ctx->stats_snap, &ctx->stats, sizeof(struct serial_iodevice_stats));
 
     // Print serial iodevice data
-    rtos_apps_async_call(ctx->async, serial_iodevice_stats_print, &ctx->stats_snap);
+    rtos_apps_async_call(ctx->async, &serial_iodevice_stats_print, &ctx->stats_snap);
 }
 
 static void serial_iodevice_loop(void *data, int timer_status)
@@ -324,7 +324,7 @@ int serial_iodevice_init(struct cyclic_task *c_task, struct rtos_apps_tsn_serial
         goto err;
     }
 
-    if (rtos_thread_create(&ctx->thread, UART_RX_TASK_PRIORITY, 0, UART_RX_TASK_STACK_SIZE, "uart rx task", uart_rx_task, ctx) < 0) {
+    if (rtos_thread_create(&ctx->thread, UART_RX_TASK_PRIORITY, 0, UART_RX_TASK_STACK_SIZE, "uart rx task", &uart_rx_task, ctx) < 0) {
         log_err("rtos_thread_create() failed\n");
         goto err;
     }
@@ -332,7 +332,7 @@ int serial_iodevice_init(struct cyclic_task *c_task, struct rtos_apps_tsn_serial
     ctx->async = c_task->params.async;
 
     ctx->c_task = c_task;
-    if (cyclic_task_init(c_task, cfg->cyclic_cfg, serial_iodevice_net_receive, serial_iodevice_loop, ctx) < 0)
+    if (cyclic_task_init(c_task, cfg->cyclic_cfg, &serial_iodevice_net_receive, &serial_iodevice_loop, ctx) < 0)
         goto err;
 
     log_info("Serial iodevice init successfully\n");

@@ -71,7 +71,7 @@ static void io_device_stats_dump(struct io_device_ctx *ctx)
     memcpy(&ctx->stats_snap, &ctx->stats, sizeof(struct stats_io_device));
     ctx->stats_snap.pending = true;
 
-    if (rtos_apps_async_call(ctx->async, io_device_stats_print, &ctx->stats_snap) < 0)
+    if (rtos_apps_async_call(ctx->async, &io_device_stats_print, &ctx->stats_snap) < 0)
         ctx->stats_snap.pending = false;
 }
 
@@ -95,7 +95,7 @@ void io_device_monitoring_send(struct io_device_ctx *ctx)
     cyclic_task_get_monitoring(ctx->c_task, &ctx->msg.cyclic_task_stats, MONITOR_MAX_SOCKET);
     ctx->msg_pending = true;
 
-    if (rtos_apps_async_call(ctx->async, __io_device_monitoring_send, ctx) < 0)
+    if (rtos_apps_async_call(ctx->async, &__io_device_monitoring_send, ctx) < 0)
         ctx->msg_pending = false;
 }
 
@@ -139,7 +139,7 @@ static void motor_stats_dump(struct motor_controlled *ctx)
     memcpy(&ctx->stats_snap, &ctx->stats, sizeof(struct stats_motor));
     ctx->stats_snap.pending = true;
 
-    if (rtos_apps_async_call(ctx->async, motor_stats_print, &ctx->stats_snap) < 0)
+    if (rtos_apps_async_call(ctx->async, &motor_stats_print, &ctx->stats_snap) < 0)
         ctx->stats_snap.pending = false;
 }
 
@@ -443,7 +443,7 @@ int io_device_init(struct io_device_ctx *ctx, struct cyclic_task *c_task, struct
     }
 
     ctx->c_task = c_task;
-    if (cyclic_task_init(c_task, cfg->cyclic_cfg, io_device_net_receive, io_device_loop, ctx) < 0)
+    if (cyclic_task_init(c_task, cfg->cyclic_cfg, &io_device_net_receive, &io_device_loop, ctx) < 0)
         goto err_del_queue;
 
     log_info("IO device %u initialized successfully\n", c_task->id);

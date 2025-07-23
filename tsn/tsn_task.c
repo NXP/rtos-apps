@@ -129,7 +129,7 @@ static void tsn_task_stats_dump(struct tsn_task *task)
     stats_reset(&task->stats.total_time);
     task->stats_snap.pending = true;
 
-    if (rtos_apps_async_call(task->params->async, tsn_task_stats_print, task) < 0)
+    if (rtos_apps_async_call(task->params->async, &tsn_task_stats_print, task) < 0)
         task->stats_snap.pending = false;
 }
 
@@ -152,7 +152,7 @@ static void net_socket_stats_dump(struct net_socket *sock)
     memcpy(&sock->stats_snap, &sock->stats, sizeof(struct net_socket_stats));
     sock->stats_snap.pending = true;
 
-    if (rtos_apps_async_call(sock->async, net_socket_stats_print, sock) < 0)
+    if (rtos_apps_async_call(sock->async, &net_socket_stats_print, sock) < 0)
         sock->stats_snap.pending = false;
 }
 

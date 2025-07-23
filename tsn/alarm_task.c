@@ -118,13 +118,13 @@ int alarm_task_monitor_init(struct alarm_task *a_task, struct alarm_task_config 
         goto err;
     }
 
-    rc = tsn_task_register(&a_task->task, params, a_task->id, main_alarm_monitor, a_task, NULL);
+    rc = tsn_task_register(&a_task->task, params, a_task->id, &main_alarm_monitor, a_task, NULL);
     if (rc < 0) {
         log_err("tsn_task_register() failed: rc = %d\n", rc);
         goto err;
     }
 
-    rc = tsn_net_receive_set_cb(&a_task->task->sock_rx[0], net_callback);
+    rc = tsn_net_receive_set_cb(&a_task->task->sock_rx[0], &net_callback);
     if (rc < 0) {
         log_err("tsn_net_receive_set_cb() failed: rc = %d\n", rc);
         goto err;
