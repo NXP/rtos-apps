@@ -302,11 +302,11 @@ int pll_element_init(struct audio_element *element, struct audio_element_config 
     if (rtos_mutex_init(&pll->mutex))
         goto err;
 
-    element->run = pll_element_run;
-    element->reset = pll_element_reset;
-    element->exit = pll_element_exit;
-    element->dump = pll_element_dump;
-    element->stats = pll_element_stats;
+    element->run = &pll_element_run;
+    element->reset = &pll_element_reset;
+    element->exit = &pll_element_exit;
+    element->dump = &pll_element_dump;
+    element->stats = &pll_element_stats;
 
     pll->enabled = true;
     pll->period = (PLL_SAMPLING_PERIOD_MS * element->sample_rate) / element->period / 1000;

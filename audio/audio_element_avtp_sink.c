@@ -415,11 +415,11 @@ int avtp_sink_element_init(struct audio_element *element, struct audio_element_c
     if (rtos_mutex_init(&avtp->mutex))
         goto err;
 
-    element->run = avtp_sink_element_run;
-    element->reset = avtp_sink_element_reset;
-    element->exit = avtp_sink_element_exit;
-    element->dump = avtp_sink_element_dump;
-    element->stats = avtp_sink_element_stats;
+    element->run = &avtp_sink_element_run;
+    element->reset = &avtp_sink_element_reset;
+    element->exit = &avtp_sink_element_exit;
+    element->dump = &avtp_sink_element_dump;
+    element->stats = &avtp_sink_element_stats;
 
     avtp->clock_domain = config->u.avtp_sink.clock_domain;
 

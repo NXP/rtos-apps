@@ -257,10 +257,10 @@ int dtmf_element_init(struct audio_element *element, struct audio_element_config
     struct dtmf_element *dtmf = element->data;
     unsigned int freq1, freq2;
 
-    element->run = dtmf_element_run;
-    element->reset = dtmf_element_reset;
-    element->exit = dtmf_element_exit;
-    element->dump = dtmf_element_dump;
+    element->run = &dtmf_element_run;
+    element->reset = &dtmf_element_reset;
+    element->exit = &dtmf_element_exit;
+    element->dump = &dtmf_element_dump;
 
     dtmf->sample_rate = config->sample_rate;
 

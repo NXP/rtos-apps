@@ -361,10 +361,10 @@ int sai_drv_setup(struct sai_device *dev, struct sai_cfg *sai_config)
     dev->rx_user_data = sai_config->rx_user_data;
 
     dev->sai_tx_handle.base = sai;
-    dev->sai_tx_handle.callback = tx_callback;
+    dev->sai_tx_handle.callback = &tx_callback;
     dev->sai_tx_handle.userData = (void *)dev;
     dev->sai_rx_handle.base = sai;
-    dev->sai_rx_handle.callback = rx_callback;
+    dev->sai_rx_handle.callback = &rx_callback;
     dev->sai_rx_handle.userData = (void *)dev;
 
     dev->sai_base = sai_config->sai_base;
@@ -392,10 +392,10 @@ int sai_drv_setup(struct sai_device *dev, struct sai_cfg *sai_config)
     handler[sai_id].data = dev;
     switch (sai_config->working_mode) {
     case SAI_RX_IRQ_MODE:
-        handler[sai_id].func = sai_irq_handler_continuous;
+        handler[sai_id].func = &sai_irq_handler_continuous;
         break;
     case SAI_CALLBACK_MODE:
-        handler[sai_id].func = sai_irq_handler;
+        handler[sai_id].func = &sai_irq_handler;
         break;
     case SAI_POLLING_MODE:
     default:

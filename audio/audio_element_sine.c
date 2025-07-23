@@ -101,10 +101,10 @@ int sine_element_init(struct audio_element *element, struct audio_element_config
 {
     struct sine_element *sine = element->data;
 
-    element->run = sine_element_run;
-    element->reset = sine_element_reset;
-    element->exit = sine_element_exit;
-    element->dump = sine_element_dump;
+    element->run = &sine_element_run;
+    element->reset = &sine_element_reset;
+    element->exit = &sine_element_exit;
+    element->dump = &sine_element_dump;
 
     sine->dphase = 2.0 * M_PI * config->u.sine.freq / config->sample_rate;
     sine->amplitude = config->u.sine.amplitude;

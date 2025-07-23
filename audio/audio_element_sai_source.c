@@ -345,11 +345,11 @@ int sai_source_element_init(struct audio_element *element, struct audio_element_
     struct sai_line *line;
     int i, j, k, l;
 
-    element->run = sai_source_element_run;
-    element->reset = sai_source_element_reset;
-    element->exit = sai_source_element_exit;
-    element->dump = sai_source_element_dump;
-    element->stats = sai_source_element_stats;
+    element->run = &sai_source_element_run;
+    element->reset = &sai_source_element_reset;
+    element->exit = &sai_source_element_exit;
+    element->dump = &sai_source_element_dump;
+    element->stats = &sai_source_element_stats;
 
     sai->started = false;
 

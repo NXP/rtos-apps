@@ -542,11 +542,11 @@ int avtp_source_element_init(struct audio_element *element, struct audio_element
     if (rtos_mutex_init(&avtp->mutex))
         goto err;
 
-    element->run = avtp_source_element_run;
-    element->reset = avtp_source_element_reset;
-    element->exit = avtp_source_element_exit;
-    element->dump = avtp_source_element_dump;
-    element->stats = avtp_source_element_stats;
+    element->run = &avtp_source_element_run;
+    element->reset = &avtp_source_element_reset;
+    element->exit = &avtp_source_element_exit;
+    element->dump = &avtp_source_element_dump;
+    element->stats = &avtp_source_element_stats;
 
     avtp->clock_domain = config->u.avtp_source.clock_domain;
 

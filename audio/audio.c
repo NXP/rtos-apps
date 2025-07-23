@@ -64,11 +64,11 @@ struct data_ctx {
 };
 
 const static struct mode_handler g_handler = {
-    .init = play_pipeline_init,
-    .exit = play_pipeline_exit,
-    .run = play_pipeline_run,
-    .stats = play_pipeline_stats,
-    .ctrl = play_pipeline_ctrl,
+    .init = &play_pipeline_init,
+    .exit = &play_pipeline_exit,
+    .run = &play_pipeline_run,
+    .stats = &play_pipeline_stats,
+    .ctrl = &play_pipeline_ctrl,
 };
 
 static void data_send_event(struct data_ctx *ctx, uint8_t status)
@@ -188,7 +188,7 @@ static int sai_setup(struct data_ctx *ctx)
 
         if (i == ctx->sai_dev_irq_source) {
             /* SAI instance used as IRQ source */
-            sai_config.rx_callback = rx_callback;
+            sai_config.rx_callback = &rx_callback;
             sai_config.rx_user_data = ctx;
             sai_config.working_mode = SAI_RX_IRQ_MODE;
         } else {
@@ -602,7 +602,7 @@ static int audio_thread_init(struct thread_data_ctx_t *thread, const struct rtos
         goto err_mqueue;
     }
 
-    if (rtos_thread_create(&thread->thread, config->data_priority, thread->id, config->data_stack_size, "audio data", data_task, thread) < 0) {
+    if (rtos_thread_create(&thread->thread, config->data_priority, thread->id, config->data_stack_size, "audio data", &data_task, thread) < 0) {
         log_err("rtos_thread_create(audio data) failed\n");
         goto err_thread;
     }
@@ -656,7 +656,7 @@ int rtos_apps_audio_init(const struct rtos_apps_audio_config *config)
             goto err_thread;
     }
 
-    if (rtos_thread_create(&ctx->thread, config->ctrl_priority, 0, config->ctrl_stack_size, "audio ctrl", ctrl_task, ctx) < 0) {
+    if (rtos_thread_create(&ctx->thread, config->ctrl_priority, 0, config->ctrl_stack_size, "audio ctrl", &ctrl_task, ctx) < 0) {
         log_err("rtos_thread_create(audio ctrl) failed\n");
         goto err_ctrl;
     }

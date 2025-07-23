@@ -338,11 +338,11 @@ int sai_sink_element_init(struct audio_element *element, struct audio_element_co
     struct sai_line *line;
     int i, j, k, l;
 
-    element->run = sai_sink_element_run;
-    element->reset = sai_sink_element_reset;
-    element->exit = sai_sink_element_exit;
-    element->dump = sai_sink_element_dump;
-    element->stats = sai_sink_element_stats;
+    element->run = &sai_sink_element_run;
+    element->reset = &sai_sink_element_reset;
+    element->exit = &sai_sink_element_exit;
+    element->dump = &sai_sink_element_dump;
+    element->stats = &sai_sink_element_stats;
 
     sai->started = false;
 

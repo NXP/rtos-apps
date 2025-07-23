@@ -205,10 +205,10 @@ int routing_element_init(struct audio_element *element, struct audio_element_con
     if (rtos_mutex_init(&routing->mutex))
         goto err;
 
-    element->run = routing_element_run;
-    element->reset = routing_element_reset;
-    element->exit = routing_element_exit;
-    element->dump = routing_element_dump;
+    element->run = &routing_element_run;
+    element->reset = &routing_element_reset;
+    element->exit = &routing_element_exit;
+    element->dump = &routing_element_dump;
 
     routing->inputs = config->inputs;
     routing->outputs = config->outputs;
