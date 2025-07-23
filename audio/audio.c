@@ -152,7 +152,7 @@ static inline uint8_t sai_get_effective_channels_count(uint32_t mask, uint32_t c
 
 static int sai_setup(struct data_ctx *ctx)
 {
-    struct sai_cfg sai_config;
+    struct sai_cfg sai_config = {0};
     bool pll_disable = true;
     int rc = 0;
     int i;
