@@ -25,7 +25,7 @@ struct rtos_apps_user_button_config {
 
 struct rtos_apps_user_button;
 
-#if ENABLE_USER_BUTTON == 1
+#ifdef CONFIG_RTOS_APPS_USER_BUTTON
 
 void rtos_apps_user_button_irq(struct rtos_apps_user_button *button);
 

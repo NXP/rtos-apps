@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 NXP
+ * Copyright 2019-2023, 2025 NXP
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -40,7 +40,7 @@ struct monitoring_msg {
 
 struct monitoring_stats_ctx;
 
-#if ENABLE_LWIP == 1
+#ifdef CONFIG_RTOS_APPS_LWIP
 int monitoring_stats_open(struct monitoring_stats_ctx **ctx);
 int monitoring_stats_send(struct monitoring_stats_ctx *ctx, struct monitoring_msg *datagram);
 #else

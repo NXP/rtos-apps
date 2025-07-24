@@ -16,11 +16,11 @@
 #include "serial_iodevice.h"
 #include "tsn_tasks_config.h"
 
-#if BUILD_MOTOR_CONTROLLER == 1
+#ifdef CONFIG_RTOS_APPS_MOTOR_CONTROLLER
 #include "motor/controller.h"
 #endif
 
-#if BUILD_MOTOR_IO_DEVICE == 1
+#ifdef CONFIG_RTOS_APPS_MOTOR_IO_DEVICE
 #include "motor/io_device.h"
 #endif
 
@@ -29,10 +29,10 @@
  ******************************************************************************/
 
 struct tsn_app_ctx {
-#if BUILD_MOTOR_CONTROLLER == 1
+#ifdef CONFIG_RTOS_APPS_MOTOR_CONTROLLER
     struct controller_ctx ctrl;
 #endif
-#if BUILD_MOTOR_IO_DEVICE == 1
+#ifdef CONFIG_RTOS_APPS_MOTOR_IO_DEVICE
     struct io_device_ctx io_device;
 #endif
 
@@ -117,11 +117,11 @@ int rtos_apps_tsn_init(struct rtos_apps_tsn_config *config)
         goto err_init;
     }
 
-#if ((BUILD_MOTOR_CONTROLLER == 0) && (BUILD_MOTOR_IO_DEVICE == 0))
-    log_info("BUILD_MOTOR disabled, MOTOR_NETWORK mode cannot be used\n");
+#if (!defined(CONFIG_RTOS_APPS_MOTOR_CONTROLLER) && !defined(CONFIG_RTOS_APPS_MOTOR_IO_DEVICE))
+    log_info("CONFIG_RTOS_APPS_MOTOR disabled, MOTOR_NETWORK mode cannot be used\n");
 #endif
 
-#if ((BUILD_MOTOR_CONTROLLER == 1) || (BUILD_MOTOR_IO_DEVICE == 1))
+#if (defined(CONFIG_RTOS_APPS_MOTOR_CONTROLLER) || defined(CONFIG_RTOS_APPS_MOTOR_IO_DEVICE))
     if (config->mode == MOTOR_NETWORK) {
         if ((config->period_ns != 100000) && (config->period_ns != 250000)) {
             log_err("invalid application period, only 100000 us and 250000 us are supported\n");
@@ -167,9 +167,9 @@ int rtos_apps_tsn_init(struct rtos_apps_tsn_config *config)
 
     cyclic_task_set_tx_time(c_cfg, config->tx_time_offset_ns, config->tx_time_enabled);
 
-#if (BUILD_MOTOR_CONTROLLER == 1) || (BUILD_MOTOR_IO_DEVICE == 1)
+#if (defined(CONFIG_RTOS_APPS_MOTOR_CONTROLLER) || defined(CONFIG_RTOS_APPS_MOTOR_IO_DEVICE))
     if (config->mode == MOTOR_NETWORK) {
-#if BUILD_MOTOR_CONTROLLER == 1
+#ifdef CONFIG_RTOS_APPS_MOTOR_CONTROLLER
         if (c_cfg->type == CYCLIC_CONTROLLER) {
             struct controller_config controller_cfg = {
                 .cyclic_cfg = c_cfg,
@@ -184,7 +184,7 @@ int rtos_apps_tsn_init(struct rtos_apps_tsn_config *config)
             }
         }
 #endif
-#if BUILD_MOTOR_IO_DEVICE == 1
+#ifdef CONFIG_RTOS_APPS_MOTOR_IO_DEVICE
         if (c_cfg->type == CYCLIC_IO_DEVICE) {
              struct io_device_config io_device_cfg = {
                 .cyclic_cfg = c_cfg,

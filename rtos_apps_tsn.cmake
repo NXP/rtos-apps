@@ -17,25 +17,41 @@ target_sources(${RTOS_APPS_TARGET} PRIVATE
     ${CMAKE_CURRENT_LIST_DIR}/tsn/tsn_tasks_config.c
 )
 
-if(enable_user_button)
+if(CONFIG_APP_USER_BUTTON)
+    target_compile_definitions(${RTOS_APPS_TARGET} PRIVATE
+        CONFIG_RTOS_APPS_USER_BUTTON=1
+    )
+
     target_sources(${RTOS_APPS_TARGET} PRIVATE
         ${CMAKE_CURRENT_LIST_DIR}/tsn/user_button.c
     )
 endif()
 
-if(enable_lwip)
+if(CONFIG_APP_LWIP)
+    target_compile_definitions(${RTOS_APPS_TARGET} PRIVATE
+        CONFIG_RTOS_APPS_LWIP=1
+    )
+
     target_sources(${RTOS_APPS_TARGET} PRIVATE
         ${CMAKE_CURRENT_LIST_DIR}/tsn/monitoring_stats.c
     )
 endif()
 
-if(build_serial)
+if(CONFIG_APP_SERIAL)
+    target_compile_definitions(${RTOS_APPS_TARGET} PRIVATE
+        CONFIG_RTOS_APPS_SERIAL=1
+    )
+
     target_sources(${RTOS_APPS_TARGET} PRIVATE
         ${CMAKE_CURRENT_LIST_DIR}/tsn/serial_iodevice.c
     )
 endif()
 
-if(build_motor_controller)
+if(CONFIG_APP_MOTOR_CONTROLLER)
+    target_compile_definitions(${RTOS_APPS_TARGET} PRIVATE
+        CONFIG_RTOS_APPS_MOTOR_CONTROLLER=1
+    )
+
     target_sources(${RTOS_APPS_TARGET} PRIVATE
         ${CMAKE_CURRENT_LIST_DIR}/tsn/motor/controller.c
         ${CMAKE_CURRENT_LIST_DIR}/tsn/motor/control_strategies.c
@@ -45,20 +61,24 @@ if(build_motor_controller)
         ${CMAKE_CURRENT_LIST_DIR}/tsn/motor/traj_planner.c
     )
 
-    if(enable_lwip)
+    if(CONFIG_APP_LWIP)
         target_sources(${RTOS_APPS_TARGET} PRIVATE
             ${CMAKE_CURRENT_LIST_DIR}/tsn/motor/command_client.c
         )
     endif()
 endif()
 
-if(build_motor_io_device)
+if(CONFIG_APP_MOTOR_IO_DEVICE)
+    target_compile_definitions(${RTOS_APPS_TARGET} PRIVATE
+        CONFIG_RTOS_APPS_MOTOR_IO_DEVICE=1
+    )
+
     target_sources(${RTOS_APPS_TARGET} PRIVATE
         ${CMAKE_CURRENT_LIST_DIR}/tsn/motor/io_device.c
         ${CMAKE_CURRENT_LIST_DIR}/tsn/motor/motor_control_api.c
     )
 
-    if(enable_lwip)
+    if(CONFIG_APP_LWIP)
         target_sources(${RTOS_APPS_TARGET} PRIVATE
             ${CMAKE_CURRENT_LIST_DIR}/tsn/motor/network_stats.c
         )

@@ -27,7 +27,7 @@ struct net_stat_msg {
 
 struct network_stats_ctx;
 
-#if ENABLE_LWIP == 1
+#ifdef CONFIG_RTOS_APPS_LWIP
 int network_stats_open(struct network_stats_ctx **ctx);
 int network_stats_send(struct network_stats_ctx *ctx, struct net_stat_msg *dg);
 #else
