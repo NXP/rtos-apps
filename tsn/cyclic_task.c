@@ -31,7 +31,7 @@ static void socket_stats_print(void *data)
 
     stats_compute(&sock->stats_snap.traffic_latency);
 
-    log_info("cyclic rx socket(%p) net_sock(%p) peer id: %d\n", sock, sock->net_sock, sock->peer_id);
+    log_info("cyclic rx socket(%p) net_sock(%p) peer id: %u\n", sock, sock->net_sock, sock->peer_id);
     log_info("valid frames  : %u\n", sock->stats_snap.valid_frames);
     log_info("err id        : %u\n", sock->stats_snap.err_id);
     log_info("err ts        : %u\n", sock->stats_snap.err_ts);
@@ -147,13 +147,13 @@ static void cyclic_net_receive(struct cyclic_task *c_task)
     }
 }
 
-int cyclic_net_transmit(struct cyclic_task *c_task, int msg_id, void *buf, int len)
+int cyclic_net_transmit(struct cyclic_task *c_task, unsigned int msg_id, void *buf, unsigned int len)
 {
     struct tsn_task *task = c_task->task;
     struct socket *sock = &c_task->tx_socket;
     struct tsn_common_hdr *hdr[NET_TX_BATCH];
     struct tsn_task_params *params = &c_task->params;
-    int payload_len;
+    unsigned int payload_len;
     int status, i;
 
     payload_len = (len + sizeof(*hdr[0]));
@@ -315,7 +315,7 @@ void cyclic_task_stop(struct cyclic_task *c_task)
 }
 
 int cyclic_task_init(struct cyclic_task *c_task, struct cyclic_task_config *cfg,
-                     void (*net_rx_func)(void *ctx, int msg_id, int src_id, void *buf, int len),
+                     void (*net_rx_func)(void *ctx, unsigned int msg_id, unsigned int src_id, void *buf, unsigned int len),
                      void (*loop_func)(void *ctx, int timer_status), void *ctx)
 {
     struct tsn_task_params *params = &c_task->params;

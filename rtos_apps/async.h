@@ -12,8 +12,8 @@
 struct rtos_apps_async_config {
     const char *name;
     unsigned int stack_size;
-    int priority;
-    int affinity;
+    unsigned int priority;
+    unsigned int affinity;
 
     void (*func)(void *data);
     void *data;

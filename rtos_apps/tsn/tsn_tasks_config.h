@@ -10,21 +10,21 @@
 #include "genavb/clock.h"
 #include "genavb/socket.h"
 
-#define MAX_PEERS     2
+#define MAX_PEERS     2U
 
-#define MAX_RX_SOCKET 2
-#define MAX_TX_SOCKET 1
+#define MAX_RX_SOCKET 2U
+#define MAX_TX_SOCKET 1U
 
-#define PACKET_SIZE                80
-#define APP_PERIOD_DEFAULT         100000
-#define APP_PERIOD_MIN             100000
+#define PACKET_SIZE                80U
+#define APP_PERIOD_DEFAULT         100000U
+#define APP_PERIOD_MIN             100000U
 
-#define APP_OFFSET_DEFAULT         0
-#define APP_OFFSET_MAX             1
+#define APP_OFFSET_DEFAULT         0U
+#define APP_OFFSET_MAX             1U
 
-#define APP_NETWORK_BUDGET_DEFAULT 15000
+#define APP_NETWORK_BUDGET_DEFAULT 15000U
 
-#define APP_PERIOD_SERIAL_DEFAULT  2000000
+#define APP_PERIOD_SERIAL_DEFAULT  2000000U
 
 /* Supported APP_MODEs */
 #define MOTOR_NETWORK 0 /* Enables the controller to control 1 or 2 motors remotely */
@@ -65,11 +65,11 @@ struct tsn_task_params {
     unsigned int rx_tc_mask;
 
     int num_rx_socket;
-    int rx_buf_size;
+    unsigned int rx_buf_size;
     struct genavb_socket_rx_params rx_params[MAX_RX_SOCKET];
 
     int num_tx_socket;
-    int tx_buf_size;
+    unsigned int tx_buf_size;
     struct genavb_socket_tx_params tx_params[MAX_TX_SOCKET];
     struct rtos_apps_async *async;
 };
@@ -77,21 +77,21 @@ struct tsn_task_params {
 struct alarm_task_config {
     struct tsn_task_params params;
     int type;
-    int id;
-    int stream_id;
+    unsigned int id;
+    unsigned int stream_id;
     unsigned int length;
 };
 
 struct socket_config {
-    int peer_id;
-    int stream_id;
+    unsigned int peer_id;
+    unsigned int stream_id;
 };
 
 struct cyclic_task_config {
     struct tsn_task_params params;
     int type;
-    int id;
-    int num_peers;
+    unsigned int id;
+    unsigned int num_peers;
     struct socket_config rx_socket[MAX_PEERS];
     struct socket_config tx_socket;
 
@@ -99,6 +99,6 @@ struct cyclic_task_config {
     void (*log_update_time)(genavb_clock_id_t clk_id);
 };
 
-struct cyclic_task_config *tsn_conf_get_cyclic_task(int index);
+struct cyclic_task_config *tsn_conf_get_cyclic_task(unsigned int index);
 
 #endif /* _RTOS_APPS_TSN_TASKS_CONFIG_H_ */

@@ -29,7 +29,7 @@ struct socket_stats {
 };
 
 struct socket {
-    int peer_id;
+    unsigned int peer_id;
     struct socket_stats stats;
     struct socket_stats stats_snap;
     struct rtos_apps_async *async;
@@ -39,11 +39,11 @@ struct socket {
 struct cyclic_task {
     struct tsn_task *task;
     struct tsn_task_params params;
-    int id;
-    int num_peers;
+    unsigned int id;
+    unsigned int num_peers;
     struct socket rx_socket[MAX_PEERS];
     struct socket tx_socket;
-    void (*net_rx_func)(void *ctx, int msg_id, int src_id, void *buf, int len);
+    void (*net_rx_func)(void *ctx, unsigned int msg_id, unsigned int src_id, void *buf, unsigned int len);
     void (*loop_func)(void *ctx, int timer_status);
     void *ctx;
     void (*log_update_time)(genavb_clock_id_t clk_id);
@@ -51,12 +51,12 @@ struct cyclic_task {
 };
 
 int cyclic_task_init(struct cyclic_task *c_task, struct cyclic_task_config *cfg,
-                     void (*net_rx_func)(void *ctx, int msg_id, int src_id, void *buf, int len),
+                     void (*net_rx_func)(void *ctx, unsigned int msg_id, unsigned int src_id, void *buf, unsigned int len),
                      void (*loop_func)(void *ctx, int timer_status), void *ctx);
 void cyclic_task_exit(struct cyclic_task *c_task);
 int cyclic_task_start(struct cyclic_task *c_task);
 void cyclic_task_stop(struct cyclic_task *c_task);
-int cyclic_net_transmit(struct cyclic_task *c_task, int msg_id, void *buf, int len);
+int cyclic_net_transmit(struct cyclic_task *c_task, unsigned int msg_id, void *buf, unsigned int len);
 void cyclic_task_get_monitoring(struct cyclic_task *task, struct monitoring_msg_cyclic_task *mon_cyclic_task,
                                 uint32_t num_socket_monitored);
 void cyclic_task_set_period(struct cyclic_task_config *cfg, struct rtos_apps_tsn_config *config);

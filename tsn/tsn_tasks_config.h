@@ -29,7 +29,7 @@ struct tsn_stream {
     struct net_address address;
 };
 
-const struct tsn_stream *tsn_conf_get_stream(int index);
-struct alarm_task_config *tsn_conf_get_alarm_task(int index);
+const struct tsn_stream *tsn_conf_get_stream(unsigned int index);
+struct alarm_task_config *tsn_conf_get_alarm_task(unsigned int index);
 
 #endif /* _TSN_TASKS_CONFIG_H_ */

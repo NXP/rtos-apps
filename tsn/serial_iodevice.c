@@ -275,7 +275,7 @@ static void serial_iodevice_loop(void *data, int timer_status)
         serial_iodevice_stats_dump(ctx);
 }
 
-static void serial_iodevice_net_receive(void *data, int msg_id, int src_id, void *buf, int len)
+static void serial_iodevice_net_receive(void *data, unsigned int msg_id, unsigned int src_id, void *buf, unsigned int len)
 {
     struct serial_iodevice_ctx *ctx = data;
     struct msg_serial *msg_recv = buf;

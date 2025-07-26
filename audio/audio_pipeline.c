@@ -169,8 +169,8 @@ static unsigned int audio_pipeline_count_input(struct audio_pipeline_config *con
 {
     struct audio_pipeline_stage_config *stage_config;
     struct audio_element_config *element_config;
-    int count = 0;
-    int i, j, k;
+    unsigned int count = 0;
+    unsigned int i, j, k;
 
     for (i = stage; i < config->stages; i++) {
         stage_config = &config->stage[i];
@@ -193,8 +193,8 @@ static unsigned int audio_pipeline_count_output(struct audio_pipeline_config *co
 {
     struct audio_pipeline_stage_config *stage_config;
     struct audio_element_config *element_config;
-    int count = 0;
-    int i, j, k;
+    unsigned int count = 0;
+    unsigned int i, j, k;
 
     for (i = stage; i < config->stages; i++) {
         stage_config = &config->stage[i];
@@ -214,7 +214,7 @@ static unsigned int audio_pipeline_count_output(struct audio_pipeline_config *co
 
 static unsigned int audio_pipeline_count_buffers(struct audio_pipeline_config *config, unsigned int storage)
 {
-    int count = 0;
+    unsigned int count = 0;
     int i;
 
     for (i = 0; i < config->buffers; i++) {
@@ -647,7 +647,7 @@ static void audio_pipeline_set_config(struct audio_pipeline_config *config)
     struct audio_pipeline_stage_config *stage_config;
     struct audio_element_config *element_config;
     unsigned int next;
-    int i, j, k;
+    unsigned int i, j, k;
 
     for (i = 0; i < config->stages; i++) {
         stage_config = &config->stage[i];

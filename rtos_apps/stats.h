@@ -33,12 +33,12 @@ struct stats {
     void (*func)(struct stats *s);
 };
 
-#define RTOS_APPS_STATS_MAX_SLOTS 101
+#define RTOS_APPS_STATS_MAX_SLOTS 101U
 
 struct hist {
     uint32_t slots[RTOS_APPS_STATS_MAX_SLOTS];
-    int n_slots;
-    int slot_size;
+    unsigned int n_slots;
+    unsigned int slot_size;
 };
 
 void stats_init(struct stats *s, unsigned int log2_size, const char *name, void (*func)(struct stats *s));

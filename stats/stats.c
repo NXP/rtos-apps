@@ -121,7 +121,7 @@ int hist_init(struct hist *hist, unsigned int n_slots, unsigned slot_size)
 {
     /* One extra slot for last bucket.
      */
-    if ((n_slots + 1) > RTOS_APPS_STATS_MAX_SLOTS)
+    if ((n_slots + 1U) > RTOS_APPS_STATS_MAX_SLOTS)
         return -1;
 
     hist->n_slots = n_slots;
@@ -152,10 +152,10 @@ void hist_print(struct hist *hist)
 {
     int i;
 
-    log_info("n_slot %d slot_size %d \n", hist->n_slots, hist->slot_size);
+    log_info("n_slot %u slot_size %u \n", hist->n_slots, hist->slot_size);
 
     log_raw_info(RTOS_APPS_LOG_FMT, "INFO", RTOS_APPS_LOG_ARGS);
-    for (i = 0; i < (hist->n_slots + 1); i++) {
+    for (i = 0; i < (hist->n_slots + 1U); i++) {
         log_raw_info("%u ", hist->slots[i]);
     }
     log_raw_info("\r\n");

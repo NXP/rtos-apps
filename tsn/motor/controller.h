@@ -40,7 +40,7 @@ struct controller_stats {
 
 struct controlled_io_device {
     int id;
-    int num_motors;
+    unsigned int num_motors;
     int connected;
     struct controlled_motor_ctx *motors[NB_MOTORS_MAX];
 };
@@ -75,6 +75,5 @@ struct controller_ctx {
 
 int controller_init(struct controller_ctx *ctx, struct cyclic_task *c_task, struct controller_config *cfg);
 void controller_exit(struct controller_ctx *ctx);
-void controller_net_receive(void *data, int msg_id, int src_id, void *buf, int len);
 
 #endif /* _CONTROLLER_H_ */

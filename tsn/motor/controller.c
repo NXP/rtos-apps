@@ -53,7 +53,7 @@ static void controller_stats_dump(struct controller_ctx *ctx)
         ctx->stats_snap.pending = false;
 }
 
-static inline struct controlled_io_device *dev_id_to_io_device_ctx(struct controller_ctx *ctx, int io_device_id)
+static inline struct controlled_io_device *dev_id_to_io_device_ctx(struct controller_ctx *ctx, unsigned int io_device_id)
 {
     unsigned int i;
     struct controlled_io_device *io_device = NULL;
@@ -65,7 +65,7 @@ static inline struct controlled_io_device *dev_id_to_io_device_ctx(struct contro
     return io_device;
 }
 
-static inline struct controlled_motor_ctx *motor_id_to_motor_data(struct controlled_io_device *io_device, int motor_id)
+static inline struct controlled_motor_ctx *motor_id_to_motor_data(struct controlled_io_device *io_device, unsigned int motor_id)
 {
     if (motor_id < io_device->num_motors)
         return io_device->motors[motor_id];
@@ -282,7 +282,7 @@ static void controller_loop(void *data, int timer_status)
     }
 }
 
-void controller_net_receive(void *data, int msg_id, int src_id, void *buf, int len)
+static void controller_net_receive(void *data, unsigned int msg_id, unsigned int src_id, void *buf, unsigned int len)
 {
     unsigned int i;
     struct controller_ctx *ctx = data;

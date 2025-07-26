@@ -164,7 +164,7 @@ static struct alarm_task_config alarm_tasks[] = {
     },
 };
 
-const struct tsn_stream *tsn_conf_get_stream(int index)
+const struct tsn_stream *tsn_conf_get_stream(unsigned int index)
 {
     if (index >= (sizeof(tsn_streams) / sizeof(struct tsn_stream)))
         return NULL;
@@ -172,7 +172,7 @@ const struct tsn_stream *tsn_conf_get_stream(int index)
     return &tsn_streams[index];
 }
 
-struct cyclic_task_config *tsn_conf_get_cyclic_task(int index)
+struct cyclic_task_config *tsn_conf_get_cyclic_task(unsigned int index)
 {
     if (index >= (sizeof(cyclic_tasks) / sizeof(struct cyclic_task_config)))
         return NULL;
@@ -180,7 +180,7 @@ struct cyclic_task_config *tsn_conf_get_cyclic_task(int index)
     return &cyclic_tasks[index];
 }
 
-struct alarm_task_config *tsn_conf_get_alarm_task(int index)
+struct alarm_task_config *tsn_conf_get_alarm_task(unsigned int index)
 {
     if (index >= (sizeof(alarm_tasks) / sizeof(struct alarm_task_config)))
         return NULL;

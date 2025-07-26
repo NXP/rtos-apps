@@ -49,12 +49,12 @@ static void main_alarm_monitor(void *data)
     }
 }
 
-int alarm_net_transmit(struct alarm_task *a_task, int msg_id, void *buf, int len)
+int alarm_net_transmit(struct alarm_task *a_task, unsigned int msg_id, void *buf, unsigned int len)
 {
     struct tsn_task *task = a_task->task;
     struct net_socket *sock = &task->sock_tx[0];
     struct tsn_common_hdr *hdr;
-    int payload_len;
+    unsigned int payload_len;
     int status;
     uint64_t now = 0;
 
@@ -92,7 +92,7 @@ err:
 }
 
 int alarm_task_monitor_init(struct alarm_task *a_task, struct alarm_task_config *cfg,
-                            void (*net_rx_func)(void *ctx, int msg_id, int src_id, void *buf, int len),
+                            void (*net_rx_func)(void *ctx, unsigned int msg_id, unsigned int src_id, void *buf, unsigned int len),
                             void *ctx)
 {
     struct tsn_task_params *params = &a_task->params;

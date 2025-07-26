@@ -343,7 +343,7 @@ int sai_source_element_init(struct audio_element *element, struct audio_element_
     struct sai_rx_line_config *line_config;
     struct sai_source_map *map;
     struct sai_line *line;
-    int i, j, k, l;
+    unsigned int i, j, k, l;
 
     element->run = &sai_source_element_run;
     element->reset = &sai_source_element_reset;

@@ -15,18 +15,18 @@
 struct alarm_task {
     struct tsn_task *task;
     struct tsn_task_params params;
-    int id;
+    unsigned int id;
     rtos_mqueue_t *queue_h;
-    void (*net_rx_func)(void *ctx, int msg_id, int src_id, void *buf, int len);
+    void (*net_rx_func)(void *ctx, unsigned int msg_id, unsigned int src_id, void *buf, unsigned int len);
     void *ctx;
 };
 
 int alarm_task_monitor_init(struct alarm_task *a_task, struct alarm_task_config *cfg,
-                            void (*net_rx_func)(void *ctx, int msg_id, int src_id, void *buf, int len),
+                            void (*net_rx_func)(void *ctx, unsigned int msg_id, unsigned int src_id, void *buf, unsigned int len),
                             void *ctx);
 void alarm_task_monitor_exit(struct alarm_task *a_task);
 int alarm_task_io_init(struct alarm_task *a_task, struct alarm_task_config *cfg, void (*main_loop)(void *data), void *data);
 void alarm_task_io_exit(struct alarm_task *a_task);
-int alarm_net_transmit(struct alarm_task *a_task, int msg_id, void *buf, int len);
+int alarm_net_transmit(struct alarm_task *a_task, unsigned int msg_id, void *buf, unsigned int len);
 
 #endif /* _ALARM_TASK_H_ */

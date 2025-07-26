@@ -410,7 +410,7 @@ int avtp_sink_element_init(struct audio_element *element, struct audio_element_c
                            struct audio_buffer *buffer)
 {
     struct avtp_sink_element *avtp = element->data;
-    int i, j, k;
+    unsigned int i, j, k;
 
     if (rtos_mutex_init(&avtp->mutex))
         goto err;

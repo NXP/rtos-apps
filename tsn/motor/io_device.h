@@ -81,6 +81,5 @@ struct io_device_ctx {
 
 int io_device_init(struct io_device_ctx *ctx, struct cyclic_task *c_task, struct io_device_config *cfg);
 void io_device_set_motor_offset(struct io_device_ctx *ctx, uint16_t motor_id, float offset);
-void io_device_net_receive(void *data, int msg_id, int src_id, void *buf, int len);
 
 #endif /* _IO_DEVICE_H_ */

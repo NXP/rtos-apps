@@ -336,7 +336,7 @@ int sai_sink_element_init(struct audio_element *element, struct audio_element_co
     struct sai_tx_line_config *line_config;
     struct sai_sink_map *map;
     struct sai_line *line;
-    int i, j, k, l;
+    unsigned int i, j, k, l;
 
     element->run = &sai_sink_element_run;
     element->reset = &sai_sink_element_reset;

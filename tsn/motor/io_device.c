@@ -343,7 +343,7 @@ static void io_device_loop(void *data, int timer_status)
     io_device_status_set_error_network(&ctx->status);
 }
 
-void io_device_net_receive(void *data, int msg_id, int src_id, void *buf, int len)
+static void io_device_net_receive(void *data, unsigned int msg_id, unsigned int src_id, void *buf, unsigned int len)
 {
     unsigned int i;
     struct io_device_ctx *ctx = data;
