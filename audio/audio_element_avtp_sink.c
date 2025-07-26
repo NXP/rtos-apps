@@ -63,7 +63,7 @@ struct avtp_sink_element {
     rtos_mutex_t mutex;
 };
 
-static unsigned int avtp_sink_stream_n()
+static unsigned int avtp_sink_stream_n(void)
 {
     return AVTP_TX_STREAM_N;
 }

@@ -78,7 +78,7 @@ struct avtp_source_element {
     rtos_mutex_t mutex;
 };
 
-static unsigned int avtp_source_stream_n()
+static unsigned int avtp_source_stream_n(void)
 {
     return AVTP_RX_STREAM_N;
 }
