@@ -1266,7 +1266,7 @@ static void motor_stats_send(struct control_strategy_ctx *ctx)
 
     ctx->net_stats_pending = true;
 
-    if (rtos_apps_async_call(ctx->async, __motor_stats_send, ctx) < 0)
+    if (rtos_apps_async_call(ctx->async, &__motor_stats_send, ctx) < 0)
         ctx->net_stats_pending = false;
 }
 
@@ -1429,7 +1429,7 @@ void control_strategy_stats_dump(struct control_strategy_ctx *ctx)
         memcpy(&ctx->stats_snap, &ctx->stats, sizeof(struct stats_control_strategy));
         ctx->stats_snap.pending = true;
 
-        if (rtos_apps_async_call(ctx->async, control_strategy_stats_print, &ctx->stats_snap) < 0)
+        if (rtos_apps_async_call(ctx->async, &control_strategy_stats_print, &ctx->stats_snap) < 0)
             ctx->stats_snap.pending = false;
     }
 
@@ -1451,7 +1451,7 @@ void control_strategy_stats_dump(struct control_strategy_ctx *ctx)
         stats_reset(&motor->stats.pos_err_deg);
 
         // Print motor data on serial interface
-        if (rtos_apps_async_call(ctx->async, control_strategy_motor_stats_print, &motor->stats_snap) < 0)
+        if (rtos_apps_async_call(ctx->async, &control_strategy_motor_stats_print, &motor->stats_snap) < 0)
             motor->stats_snap.pending = false;
     }
 }
