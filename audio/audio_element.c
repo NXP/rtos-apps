@@ -9,7 +9,6 @@
 #include "rtos_apps/log.h"
 
 #include "audio_element.h"
-#include "audio_pipeline.h"
 
 /* clang-format off */
 const char *element_name[AUDIO_ELEMENT_MAX] = {

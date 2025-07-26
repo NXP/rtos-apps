@@ -22,7 +22,6 @@
 #include "audio_element.h"
 #include "audio_element_avtp_source.h"
 #include "audio_format.h"
-#include "audio_pipeline.h"
 
 /*
  * AVTP source: AVB audio stream listener

@@ -14,7 +14,6 @@
 #include "rtos_apps/audio/audio_app.h"
 #include "rtos_apps/audio/audio_ctrl.h"
 #include "rtos_apps/log.h"
-#include "rtos_apps/types.h"
 
 #include "audio_element.h"
 #include "audio_element_avtp_sink.h"

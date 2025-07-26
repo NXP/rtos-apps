@@ -14,9 +14,6 @@
 #include "rtos_apps/types.h"
 
 #include "controller.h"
-#include "io_device.h"
-#include "motor_control_api.h"
-
 
 #define RESTART_DELAY_MS           (2000)
 #define STRATEGY_CHANGE_DELAY      5000
