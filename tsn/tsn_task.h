@@ -120,13 +120,13 @@ static inline unsigned int *tsn_net_sock_buf_size(struct net_socket *socket, int
 }
 
 int tsn_task_register(struct tsn_task **task, struct tsn_task_params *params,
-                      int id, void (*main_loop)(void *), void *ctx,
-                      void (*timer_callback)(void *, int));
+                      int id, void (*main_loop)(void *ctx), void *ctx,
+                      void (*timer_callback)(void *data, int count));
 void tsn_task_unregister(struct tsn_task **task);
 int tsn_task_start(struct tsn_task *task);
 void tsn_task_stop(struct tsn_task *task);
 int tsn_net_receive_set_cb(struct net_socket *sock,
-                           void (*net_rx_cb)(void *));
+                           void (*net_rx_cb)(void *data));
 int tsn_net_receive_enable_cb(struct net_socket *sock);
 void tsn_net_receive_free(struct net_socket *sock, unsigned int n);
 void *tsn_net_payload(struct net_socket *sock, int idx);

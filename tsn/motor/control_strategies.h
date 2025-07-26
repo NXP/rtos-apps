@@ -39,6 +39,6 @@ int control_strategy_previous_strategy(struct control_strategy_ctx *ctx);
 int control_strategy_next_strategy(struct control_strategy_ctx *ctx);
 int control_strategy_set_strategy(struct control_strategy_ctx *ctx, control_strategies_t new_strategy);
 control_strategies_t control_strategy_get_strategy(struct control_strategy_ctx *ctx);
-void control_strategy_set_error_callback(struct control_strategy_ctx *ctx, void (*callback)(void *, int), void *user_data);
+void control_strategy_set_error_callback(struct control_strategy_ctx *ctx, void (*callback)(void *data, int err), void *user_data);
 
 #endif /* _CONTROL_STRATEGIES_H_ */

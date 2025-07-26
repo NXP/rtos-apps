@@ -17,11 +17,11 @@
 #include "sai_drv.h"
 
 struct mode_handler {
-    void *(*init)(void *);
-    void (*exit)(void *);
-    void (*stats)(void *);
-    void (*ctrl)(void *);
-    int (*run)(void *, struct event *e);
+    void *(*init)(void *parameters);
+    void (*exit)(void *handle);
+    void (*stats)(void *handle);
+    void (*ctrl)(void *handle);
+    int (*run)(void *handle, struct event *e);
 };
 
 #define DEFAULT_PERIOD      8

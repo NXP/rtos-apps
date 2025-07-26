@@ -54,8 +54,8 @@ int cyclic_task_init(struct cyclic_task *c_task, struct cyclic_task_config *cfg,
                      void (*net_rx_func)(void *ctx, int msg_id, int src_id, void *buf, int len),
                      void (*loop_func)(void *ctx, int timer_status), void *ctx);
 void cyclic_task_exit(struct cyclic_task *c_task);
-int cyclic_task_start(struct cyclic_task *);
-void cyclic_task_stop(struct cyclic_task *);
+int cyclic_task_start(struct cyclic_task *c_task);
+void cyclic_task_stop(struct cyclic_task *c_task);
 int cyclic_net_transmit(struct cyclic_task *c_task, int msg_id, void *buf, int len);
 void cyclic_task_get_monitoring(struct cyclic_task *task, struct monitoring_msg_cyclic_task *mon_cyclic_task,
                                 uint32_t num_socket_monitored);

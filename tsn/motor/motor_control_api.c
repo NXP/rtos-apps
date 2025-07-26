@@ -20,10 +20,10 @@ struct tsn_motor {
     sm_app_ctrl_t *sm_motor_controller;
     void (*slow_loop_func)(sm_app_ctrl_t *sm_motor_controller);
     uint16_t (*app_state_getter)(void);
-    void (*app_switch_setter)(bool_t);
+    void (*app_switch_setter)(bool_t on);
     bool_t (*app_switch_getter)(void);
-    void (*speed_setter)(float);
-    void (*position_setter)(acc32_t);
+    void (*speed_setter)(float speed_cmd);
+    void (*position_setter)(acc32_t position_cmd);
     float (*speed_getter)(void);
     float (*position_getter)(void);
     uint32_t (*last_index_getter)(void);

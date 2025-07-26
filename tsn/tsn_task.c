@@ -343,7 +343,7 @@ int tsn_net_transmit_sock(struct net_socket *sock, bool tx_time, uint64_t ts)
     return status;
 }
 
-int tsn_net_receive_set_cb(struct net_socket *sock, void (*net_rx_cb)(void *))
+int tsn_net_receive_set_cb(struct net_socket *sock, void (*net_rx_cb)(void *data))
 {
     int rc;
 
@@ -538,8 +538,8 @@ static void tsn_task_net_exit(struct tsn_task *task)
 }
 
 int tsn_task_register(struct tsn_task **task, struct tsn_task_params *params,
-                      int id, void (*main_loop)(void *), void *ctx,
-                      void (*timer_callback)(void *, int))
+                      int id, void (*main_loop)(void *ctx), void *ctx,
+                      void (*timer_callback)(void *data, int count))
 {
     char task_name[20] = {0, };
 

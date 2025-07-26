@@ -163,7 +163,7 @@ struct control_strategy_ctx {
     struct stats_control_strategy stats_snap;
     struct stats_control_strategy stats;
     struct rtos_apps_async *async;
-    void (*err_cb)(void *, int);
+    void (*err_cb)(void *data, int err);
     void *err_cb_user_data;
     union {
         struct interlaced_ctx interlaced_context;
@@ -1621,7 +1621,7 @@ control_strategies_t control_strategy_get_strategy(struct control_strategy_ctx *
     return ctx->current_strategy;
 }
 
-void control_strategy_set_error_callback(struct control_strategy_ctx *ctx, void (*callback)(void *, int), void *user_data)
+void control_strategy_set_error_callback(struct control_strategy_ctx *ctx, void (*callback)(void *data, int err), void *user_data)
 {
     ctx->err_cb = callback;
     ctx->err_cb_user_data = user_data;
