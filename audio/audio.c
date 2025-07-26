@@ -371,7 +371,7 @@ static int audio_run(struct data_ctx *ctx, struct audio_cmd_run *run)
     struct event e;
     uint8_t pipeline_count = 0;
     size_t period = DEFAULT_PERIOD;
-    uint32_t rate = DEFAULT_SAMPLE_RATE;
+    uint32_t rate;
     int i;
 
     if (ctx->handler)

@@ -80,11 +80,11 @@ static void avtp_sink_connect(struct avtp_sink_element *avtp, unsigned int strea
 {
     struct avtp_stream *stream = &avtp->stream[stream_index];
     struct genavb_handle *handle;
-    int avb_result;
     unsigned int cur_batch_size;
     bool invert;
     uint32_t mask;
     unsigned int shift;
+    int rc;
 
     if (stream->connected) {
         log_warn("stream already connected, exit.\n");
@@ -148,8 +148,9 @@ static void avtp_sink_connect(struct avtp_sink_element *avtp, unsigned int strea
     }
 
     /* Create new AVTP stream, update stream_handle */
-    if ((avb_result = genavb_stream_create(handle, &stream->handle, params, &cur_batch_size, 0)) != GENAVB_SUCCESS) {
-        log_err("genavb_stream_create() failed: %s\n", genavb_strerror(avb_result));
+    rc = genavb_stream_create(handle, &stream->handle, params, &cur_batch_size, 0);
+    if (rc != GENAVB_SUCCESS) {
+        log_err("genavb_stream_create() failed: %s\n", genavb_strerror(rc));
         stream->cur_batch_size = 0;
 
         goto exit;
@@ -168,7 +169,7 @@ exit:
 static void avtp_sink_disconnect(struct avtp_sink_element *avtp, unsigned int stream_index)
 {
     struct avtp_stream *stream = &avtp->stream[stream_index];
-    int avb_result;
+    int rc;
 
     if (!stream->connected) {
         goto exit;
@@ -178,9 +179,9 @@ static void avtp_sink_disconnect(struct avtp_sink_element *avtp, unsigned int st
     stream->connected = 0;
     rtos_mutex_unlock(&avtp->mutex);
 
-    avb_result = genavb_stream_destroy(stream->handle);
-    if (avb_result != GENAVB_SUCCESS) {
-        log_err("genavb_stream_destroy() failed: %s\n", genavb_strerror(avb_result));
+    rc = genavb_stream_destroy(stream->handle);
+    if (rc != GENAVB_SUCCESS) {
+        log_err("genavb_stream_destroy() failed: %s\n", genavb_strerror(rc));
     }
 
     stream->handle = NULL;

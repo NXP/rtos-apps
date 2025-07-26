@@ -29,15 +29,20 @@ static int clock_domain_set_source(struct genavb_msg_clock_domain_set_source *se
     int rc;
 
     rc = genavb_control_send_sync(ctx->avb.clk_h, &msg_type, set_source, msg_len, &set_source_rsp, &msg_len, 1000);
-    if ((rc == GENAVB_SUCCESS) && (msg_type == GENAVB_MSG_CLOCK_DOMAIN_RESPONSE))
-        rc = set_source_rsp.status;
+    if ((rc != GENAVB_SUCCESS) || (msg_type != GENAVB_MSG_CLOCK_DOMAIN_RESPONSE)) {
+        log_err("genavb_control_send_sync(GENAVB_MSG_CLOCK_DOMAIN_SET_SOURCE) failed %s\n", genavb_strerror(rc));
+        rc = -1;
+    } else {
+        rc = 0;
+    }
 
-    return 0;
+    return rc;
 }
 
 static void crf_disconnect(struct pipeline_ctx *ctx)
 {
     struct crf_stream *crf_stream = &ctx->avb.crf_stream;
+    int rc;
 
     if (!crf_stream->connected)
         goto exit;
@@ -48,8 +53,9 @@ static void crf_disconnect(struct pipeline_ctx *ctx)
         return;
     }
 
-    if (genavb_stream_destroy(crf_stream->stream.stream_handle) != GENAVB_SUCCESS)
-        log_err("CRF stream(%p): genavb_stream_destroy() failed\n", crf_stream);
+    rc = genavb_stream_destroy(crf_stream->stream.stream_handle);
+    if (rc != GENAVB_SUCCESS)
+        log_err("CRF stream(%p): genavb_stream_destroy() failed %s\n", crf_stream, genavb_strerror(rc));
 
     crf_stream->stream.stream_handle = NULL;
     crf_stream->connected = 0;
@@ -64,6 +70,7 @@ exit:
 static void crf_connect(struct pipeline_ctx *ctx, unsigned int stream_index, struct genavb_stream_params *params)
 {
     struct crf_stream *crf_stream = &ctx->avb.crf_stream;
+    int rc;
 
     if (crf_stream->connected) {
         log_err("CRF stream(%p) already connected to stream_index(%u)\n", crf_stream, crf_stream->index);
@@ -75,9 +82,10 @@ static void crf_connect(struct pipeline_ctx *ctx, unsigned int stream_index, str
     if (params)
         params->clock_domain = GENAVB_CLOCK_DOMAIN_0;
 
-    if (genavb_stream_create(ctx->avb.avb_handle, &crf_stream->stream.stream_handle, params,
-                             &crf_stream->stream.cur_batch_size, 0) != GENAVB_SUCCESS) {
-        log_err("CRF stream(%p): genavb_stream_create() failed\n", crf_stream);
+    rc = genavb_stream_create(ctx->avb.avb_handle, &crf_stream->stream.stream_handle, params,
+                             &crf_stream->stream.cur_batch_size, 0);
+    if (rc != GENAVB_SUCCESS) {
+        log_err("CRF stream(%p): genavb_stream_create() failed %s\n", crf_stream, genavb_strerror(rc));
 
         goto exit;
     } else {
@@ -233,7 +241,6 @@ static void handle_avdecc_event(struct pipeline_ctx *ctx, struct genavb_control_
 
     default:
         log_err("Error, unknown message type: %d\n", msg_type);
-        rc = -1;
         break;
     }
 
@@ -310,8 +317,7 @@ int audio_avb_init(struct pipeline_ctx *ctx)
     genavb_msg_type_t msg_type = GENAVB_MSG_MEDIA_STACK_ENTITY_START;
     struct genavb_msg_media_stack_start media_stack_start;
     unsigned int msg_len = sizeof(media_stack_start);
-    int genavb_result;
-    int rc = 0;
+    int rc;
 
     log_info("enter\n");
 
@@ -323,18 +329,18 @@ int audio_avb_init(struct pipeline_ctx *ctx)
         goto exit;
     }
 
-    genavb_result = genavb_control_open(ctx->avb.avb_handle, &ctx->avb.clk_h, GENAVB_CTRL_CLOCK_DOMAIN);
+    rc = genavb_control_open(ctx->avb.avb_handle, &ctx->avb.clk_h, GENAVB_CTRL_CLOCK_DOMAIN);
     if (rc != GENAVB_SUCCESS) {
-        log_err("genavb_control_open(GENAVB_CTRL_CLOCK_DOMAIN)  failed: %s\n", genavb_strerror(rc));
+        log_err("genavb_control_open(GENAVB_CTRL_CLOCK_DOMAIN) failed: %s\n", genavb_strerror(rc));
         rc = -1;
 
         goto exit;
     }
 
     /* open avdecc control channel */
-    genavb_result = genavb_control_open(ctx->avb.avb_handle, &ctx->avb.ctrl_h, GENAVB_CTRL_AVDECC_MEDIA_STACK);
-    if (genavb_result != GENAVB_SUCCESS) {
-        log_err("genavb_control_open(GENAVB_CTRL_AVDECC_MEDIA_STACK) failed: %s\n", genavb_strerror(genavb_result));
+    rc = genavb_control_open(ctx->avb.avb_handle, &ctx->avb.ctrl_h, GENAVB_CTRL_AVDECC_MEDIA_STACK);
+    if (rc != GENAVB_SUCCESS) {
+        log_err("genavb_control_open(GENAVB_CTRL_AVDECC_MEDIA_STACK) failed: %s\n", genavb_strerror(rc));
         rc = -1;
 
         goto exit;
@@ -342,9 +348,9 @@ int audio_avb_init(struct pipeline_ctx *ctx)
     /*
     * Open controlled channel for AVDECC commands.
     */
-    genavb_result = genavb_control_open(ctx->avb.avb_handle, &ctx->avb.controlled_h, GENAVB_CTRL_AVDECC_CONTROLLED);
-    if (genavb_result != GENAVB_SUCCESS) {
-        log_err("genavb_control_open(GENAVB_CTRL_AVDECC_CONTROLLED) failed: %s\n", genavb_strerror(genavb_result));
+    rc = genavb_control_open(ctx->avb.avb_handle, &ctx->avb.controlled_h, GENAVB_CTRL_AVDECC_CONTROLLED);
+    if (rc != GENAVB_SUCCESS) {
+        log_err("genavb_control_open(GENAVB_CTRL_AVDECC_CONTROLLED) failed: %s\n", genavb_strerror(rc));
         rc = -1;
 
         goto exit;
@@ -355,8 +361,8 @@ int audio_avb_init(struct pipeline_ctx *ctx)
     */
     media_stack_start.entity_id = 0;
     rc = genavb_control_send(ctx->avb.ctrl_h, msg_type, &media_stack_start, msg_len);
-    if (genavb_result != GENAVB_SUCCESS) {
-        log_err("genavb_control_send(GENAVB_MSG_MEDIA_STACK_ENTITY_START) failed: %s\n", genavb_strerror(genavb_result));
+    if (rc != GENAVB_SUCCESS) {
+        log_err("genavb_control_send(GENAVB_MSG_MEDIA_STACK_ENTITY_START) failed: %s\n", genavb_strerror(rc));
         rc = -1;
 
         goto exit;
