@@ -7,7 +7,7 @@
 #ifndef _AUDIO_AVB_H_
 #define _AUDIO_AVB_H_
 
-struct pipeline_ctx *ctx;
+struct pipeline_ctx;
 
 typedef struct {
     struct genavb_stream_params stream_params;
