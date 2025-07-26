@@ -7,7 +7,7 @@ target_sources(${RTOS_APPS_TARGET} PRIVATE
 )
 
 if(CONFIG_RTOS_APPS_LOG_TIMESTAMP)
-    target_compile_definitions(${RTOS_APPS_TARGET} PRIVATE CONFIG_RTOS_APPS_LOG_TIMESTAMP)
+    target_compile_definitions(${RTOS_APPS_TARGET} PRIVATE CONFIG_RTOS_APPS_LOG_TIMESTAMP=1)
 endif()
 
 target_compile_definitions(${RTOS_APPS_TARGET} PRIVATE
