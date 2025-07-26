@@ -257,14 +257,12 @@ static void serial_iodevice_loop(void *data, int timer_status)
 
     // Check if a feedback has been received on uart
     if (!rtos_mqueue_receive(ctx->feedback_rx_queue, &feedback, RTOS_NO_WAIT)) {
-        if (feedback) {
-            ctx->stats.uart_rx++;
+        ctx->stats.uart_rx++;
 
-            msg_to_send.cmd_len = feedback->cmd_len;
-            memcpy(msg_to_send.cmd, feedback->cmd_buffer, feedback->cmd_len);
+        msg_to_send.cmd_len = feedback->cmd_len;
+        memcpy(msg_to_send.cmd, feedback->cmd_buffer, feedback->cmd_len);
 
-            rtos_free(feedback);
-        }
+        rtos_free(feedback);
     } else {
         msg_to_send.cmd_len = 0;
         memset(msg_to_send.cmd, 0, MAX_SERIAL_COMMAND_LEN);
