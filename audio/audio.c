@@ -63,7 +63,7 @@ struct data_ctx {
     rtos_thread_t thread;
 };
 
-const static struct mode_handler g_handler = {
+static const struct mode_handler g_handler = {
     .init = &play_pipeline_init,
     .exit = &play_pipeline_exit,
     .run = &play_pipeline_run,
