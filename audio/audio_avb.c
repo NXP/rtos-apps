@@ -17,7 +17,7 @@
 #include "audio.h"
 
 #include "avb_tsn/common/genavb.h"
-#include "stats_task.h"
+#include "avb_tsn/common/stats_task.h"
 
 #include "genavb/control.h"
 #include "genavb/genavb.h"
