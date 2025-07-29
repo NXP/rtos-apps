@@ -4,6 +4,9 @@
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
+#include "network_stats.h"
+
+#ifdef CONFIG_RTOS_APPS_LWIP
 #include "rtos_abstraction_layer.h"
 
 #include "lwip/api.h"
@@ -12,8 +15,6 @@
 #include "lwip/sys.h"
 
 #include "rtos_apps/log.h"
-
-#include "network_stats.h"
 
 #define UDP_SERVER_IP   "192.168.1.1"
 #define UDP_SERVER_PORT 6000
@@ -77,3 +78,9 @@ int network_stats_send(struct network_stats_ctx *ctx, struct net_stat_msg *dg)
 err:
     return -1;
 }
+#else
+int network_stats_open(struct network_stats_ctx **ctx) { return 0; }
+
+int network_stats_send(struct network_stats_ctx *ctx, struct net_stat_msg *dg) { return 0; }
+
+#endif

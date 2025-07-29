@@ -19,19 +19,7 @@ enum command_client_state {
 
 struct command_client_ctx;
 
-#ifdef CONFIG_RTOS_APPS_LWIP
 int command_client_start(struct command_client_ctx **ctx);
 int command_client_get_state(struct command_client_ctx *ctx);
-#else
-static inline int command_client_start(struct command_client_ctx **ctx)
-{
-    return 0;
-}
-
-static inline int command_client_get_state(struct command_client_ctx *ctx)
-{
-    return 0;
-}
-#endif
 
 #endif /* _COMMAND_SERVER_H_ */

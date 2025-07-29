@@ -4,24 +4,26 @@
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
-#include "rtos_abstraction_layer.h"
+#include "monitoring_stats.h"
+
+#ifdef CONFIG_RTOS_APPS_LWIP
 
 #include "lwip/api.h"
 #include "lwip/opt.h"
 #include "lwip/sockets.h"
 #include "lwip/sys.h"
 
+#include "rtos_abstraction_layer.h"
+
 #include "rtos_apps/log.h"
-
-#include "monitoring_stats.h"
-
-#define UDP_SERVER_IP   "192.168.1.1"
-#define UDP_SERVER_PORT 7000
 
 struct monitoring_stats_ctx {
     int socket_fd;
     struct sockaddr_in server_address;
 };
+
+#define UDP_SERVER_IP   "192.168.1.1"
+#define UDP_SERVER_PORT 7000
 
 int monitoring_stats_open(struct monitoring_stats_ctx **ctx)
 {
@@ -64,3 +66,9 @@ int monitoring_stats_send(struct monitoring_stats_ctx *ctx, struct monitoring_ms
 err:
     return -1;
 }
+#else
+int monitoring_stats_open(struct monitoring_stats_ctx **ctx) { return 0; }
+
+int monitoring_stats_send(struct monitoring_stats_ctx *ctx, struct monitoring_msg *datagram) { return 0; }
+
+#endif

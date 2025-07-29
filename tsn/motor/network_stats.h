@@ -27,19 +27,7 @@ struct net_stat_msg {
 
 struct network_stats_ctx;
 
-#ifdef CONFIG_RTOS_APPS_LWIP
 int network_stats_open(struct network_stats_ctx **ctx);
 int network_stats_send(struct network_stats_ctx *ctx, struct net_stat_msg *dg);
-#else
-static inline int network_stats_open(struct network_stats_ctx **ctx)
-{
-    return 0;
-}
-
-static inline int network_stats_send(struct network_stats_ctx *ctx, struct net_stat_msg *dg)
-{
-    return 0;
-}
-#endif
 
 #endif /* _NETWORK_STATS_H_ */

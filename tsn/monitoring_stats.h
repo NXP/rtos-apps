@@ -7,6 +7,8 @@
 #ifndef _MONITORING_STATS_H_
 #define _MONITORING_STATS_H_
 
+#include <stdint.h>
+
 #define MONITOR_MAX_SOCKET 2
 #define MONITOR_MAX_MOTOR  2
 
@@ -40,19 +42,7 @@ struct monitoring_msg {
 
 struct monitoring_stats_ctx;
 
-#ifdef CONFIG_RTOS_APPS_LWIP
 int monitoring_stats_open(struct monitoring_stats_ctx **ctx);
 int monitoring_stats_send(struct monitoring_stats_ctx *ctx, struct monitoring_msg *datagram);
-#else
-static inline int monitoring_stats_open(struct monitoring_stats_ctx **ctx)
-{
-    return 0;
-}
-
-static inline int monitoring_stats_send(struct monitoring_stats_ctx *ctx, struct monitoring_msg *datagram)
-{
-    return 0;
-}
-#endif
 
 #endif /* _MONITORING_STATS_H_ */

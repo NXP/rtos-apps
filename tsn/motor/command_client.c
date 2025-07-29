@@ -4,18 +4,15 @@
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
-#include "rtos_abstraction_layer.h"
+#include "command_client.h"
+
+#ifdef CONFIG_RTOS_APPS_LWIP
 
 #include "lwip/sockets.h"
 
+#include "rtos_abstraction_layer.h"
+
 #include "rtos_apps/log.h"
-
-#include "command_client.h"
-
-#define COMMAND_CLIENT_TASK_STACK_SIZE (RTOS_MINIMAL_STACK_SIZE + 512)
-#define COMMAND_CLIENT_TASK_PRIO       (RTOS_MAX_PRIORITY - 1)
-
-#define COMMAND_CLIENT_PORT 8000
 
 struct command_msg_type {
     uint32_t seq_id;
@@ -31,6 +28,11 @@ struct command_client_ctx {
     struct sockaddr_in client_address;
     enum command_client_state state;
 };
+
+#define COMMAND_CLIENT_TASK_STACK_SIZE (RTOS_MINIMAL_STACK_SIZE + 512)
+#define COMMAND_CLIENT_TASK_PRIO       (RTOS_MAX_PRIORITY - 1)
+
+#define COMMAND_CLIENT_PORT 8000
 
 struct command_client_ctx command_client_context;
 struct command_client_ctx *command_client_context_h = NULL;
@@ -127,3 +129,9 @@ int command_client_get_state(struct command_client_ctx *ctx)
 {
     return ctx->state;
 }
+#else
+int command_client_start(struct command_client_ctx **ctx) { return 0; }
+
+int command_client_get_state(struct command_client_ctx *ctx) { return 0; }
+
+#endif
