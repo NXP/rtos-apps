@@ -17,6 +17,7 @@ target_sources(${RTOS_APPS_TARGET} PRIVATE
     ${CMAKE_CURRENT_LIST_DIR}/tsn/tsn_tasks_config.c
     ${CMAKE_CURRENT_LIST_DIR}/tsn/user_button.c
     ${CMAKE_CURRENT_LIST_DIR}/tsn/monitoring_stats.c
+    ${CMAKE_CURRENT_LIST_DIR}/tsn/serial_iodevice.c
 )
 
 if(CONFIG_APP_USER_BUTTON)
@@ -34,10 +35,6 @@ endif()
 if(CONFIG_APP_SERIAL)
     target_compile_definitions(${RTOS_APPS_TARGET} PRIVATE
         CONFIG_RTOS_APPS_SERIAL=1
-    )
-
-    target_sources(${RTOS_APPS_TARGET} PRIVATE
-        ${CMAKE_CURRENT_LIST_DIR}/tsn/serial_iodevice.c
     )
 endif()
 

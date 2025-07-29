@@ -4,6 +4,10 @@
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
+#include "serial_iodevice.h"
+
+#ifdef CONFIG_RTOS_APPS_SERIAL
+
 #include "rtos_abstraction_layer.h"
 
 #include "rtos_apps/async.h"
@@ -11,7 +15,6 @@
 #include "rtos_apps/types.h"
 
 #include "fsl_lpuart.h"
-#include "serial_iodevice.h"
 
 // UART RX Task parameters
 #define UART_RX_TASK_STACK_SIZE (RTOS_MINIMAL_STACK_SIZE + 256)
@@ -340,3 +343,6 @@ int serial_iodevice_init(struct cyclic_task *c_task, struct rtos_apps_tsn_serial
 err:
     return -1;
 }
+#else
+int serial_iodevice_init(struct cyclic_task *c_task, struct rtos_apps_tsn_serial_iodevice_config *cfg) { return -1;}
+#endif
