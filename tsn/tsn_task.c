@@ -199,7 +199,7 @@ void *tsn_net_payload(struct net_socket *sock, int idx)
 int tsn_net_receive_sock(struct net_socket *sock)
 {
     struct tsn_task *task = container_of(sock, struct tsn_task, sock_rx[sock->id]);
-    struct genavb_socket_rx_receive_params params[NET_RX_BATCH] = {[0 ... NET_RX_BATCH - 1] = { .flags = 0 }};
+    struct genavb_socket_rx_receive_params params[NET_RX_BATCH] = {[0 ... NET_RX_BATCH - 1] = { .flags = (genavb_socket_rx_receive_flags_t)0 }};
     int pkts;
     int status, i, n;
 
@@ -412,7 +412,7 @@ static int tsn_task_net_init(struct tsn_task *task)
 
     rx_flags = GENAVB_SOCKF_NONBLOCK;
     rx_alloc_size = task->params->num_packets * sizeof(struct genavb_iovec);
-    tx_flags = 0;
+    tx_flags = (genavb_sock_f_t)0;
     tx_alloc_size = task->params->num_packets * sizeof(struct genavb_iovec);
 
     if (task->params->zero_copy) {
@@ -569,7 +569,7 @@ int tsn_task_register(struct tsn_task **task, struct tsn_task_params *params,
     }
 
     if (timer_callback) {
-        if (genavb_timer_create(&(*task)->timer, params->clk_id, 0) != GENAVB_SUCCESS) {
+        if (genavb_timer_create(&(*task)->timer, params->clk_id, (genavb_timer_f_t)0) != GENAVB_SUCCESS) {
             log_err("genavb_timer_create() failed\n");
             goto task_delete;
         }

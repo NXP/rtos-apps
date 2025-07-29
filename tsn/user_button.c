@@ -31,7 +31,7 @@ struct rtos_apps_user_button {
     void (*exit)(void);
     uint32_t (*active)(void);
     void (*clear)(void);
-    unsigned int irq_n;
+    IRQn_Type irq_n;
 };
 
 static void user_button_task(void *data)
