@@ -88,7 +88,7 @@ int rtos_apps_tsn_init(struct rtos_apps_tsn_config *config)
     log_info("mode             : %s\n", app_mode_names[config->mode]);
     log_info("role             : %u\n", config->role);
     log_info("num_io_devices   : %u\n", config->num_io_devices);
-    log_info("motor_offset     : %f\n", config->motor_offset);
+    log_info("motor_offset     : %f\n", (double)config->motor_offset);
     log_info("control_strategy : %u\n", config->control_strategy);
     log_info("app period       : %u\n", config->period_ns);
     log_info("app offset       : %u\n", (config->offset + 1) * config->period_ns / 2);
