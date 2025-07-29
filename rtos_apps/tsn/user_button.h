@@ -25,8 +25,6 @@ struct rtos_apps_user_button_config {
 
 struct rtos_apps_user_button;
 
-#ifdef CONFIG_RTOS_APPS_USER_BUTTON
-
 void rtos_apps_user_button_irq(struct rtos_apps_user_button *button);
 
 /*
@@ -42,18 +40,5 @@ void rtos_apps_user_button_event(struct rtos_apps_user_button *button);
 struct rtos_apps_user_button *rtos_apps_user_button_init(struct rtos_apps_user_button_config *cfg);
 
 void rtos_apps_user_button_exit(struct rtos_apps_user_button *button);
-
-#else
-void rtos_apps_user_button_irq(struct rtos_apps_user_button *button) { return; }
-
-int rtos_apps_user_button_register_queue(struct rtos_apps_user_button *button, rtos_mqueue_t *queue) { return 0; }
-
-void rtos_apps_user_button_event(struct rtos_apps_user_button *button) { return; }
-
-struct rtos_apps_user_button *rtos_apps_user_button_init(struct rtos_apps_user_button_config *cfg) { return (struct rtos_apps_user_button *)0xdeadbeef; }
-
-void rtos_apps_user_button_exit(struct rtos_apps_user_button *button) { return; }
-
-#endif
 
 #endif /* _RTOS_APPS_TSN_USER_BUTTON_H_ */

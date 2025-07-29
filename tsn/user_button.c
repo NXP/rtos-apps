@@ -4,15 +4,15 @@
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
+#include "rtos_apps/tsn/user_button.h"
+
+#ifdef CONFIG_RTOS_APPS_USER_BUTTON
 #include <stdbool.h>
 #include <string.h>
 
-#include "rtos_abstraction_layer.h"
-
 #include "fsl_common.h"
-
+#include "rtos_abstraction_layer.h"
 #include "rtos_apps/log.h"
-#include "rtos_apps/tsn/user_button.h"
 
 #define USER_BUTTON_TASK_STACK_SIZE (RTOS_MINIMAL_STACK_SIZE + 128)
 #define USER_BUTTON_TASK_PRIORITY   2
@@ -165,3 +165,15 @@ void rtos_apps_user_button_exit(struct rtos_apps_user_button *button)
     rtos_sem_destroy(&button->sem);
     rtos_free(button);
 }
+#else
+void rtos_apps_user_button_irq(struct rtos_apps_user_button *button) { return; }
+
+int rtos_apps_user_button_register_queue(struct rtos_apps_user_button *button, rtos_mqueue_t *queue) { return 0; }
+
+void rtos_apps_user_button_event(struct rtos_apps_user_button *button) { return; }
+
+struct rtos_apps_user_button *rtos_apps_user_button_init(struct rtos_apps_user_button_config *cfg) { return (struct rtos_apps_user_button *)0xdeadbeef; }
+
+void rtos_apps_user_button_exit(struct rtos_apps_user_button *button) { return; }
+
+#endif

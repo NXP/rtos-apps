@@ -15,15 +15,12 @@ target_sources(${RTOS_APPS_TARGET} PRIVATE
     ${CMAKE_CURRENT_LIST_DIR}/tsn/tsn_app.c
     ${CMAKE_CURRENT_LIST_DIR}/tsn/tsn_task.c
     ${CMAKE_CURRENT_LIST_DIR}/tsn/tsn_tasks_config.c
+    ${CMAKE_CURRENT_LIST_DIR}/tsn/user_button.c
 )
 
 if(CONFIG_APP_USER_BUTTON)
     target_compile_definitions(${RTOS_APPS_TARGET} PRIVATE
         CONFIG_RTOS_APPS_USER_BUTTON=1
-    )
-
-    target_sources(${RTOS_APPS_TARGET} PRIVATE
-        ${CMAKE_CURRENT_LIST_DIR}/tsn/user_button.c
     )
 endif()
 
