@@ -42,11 +42,6 @@ static inline void io_device_status_clear_error_network(uint16_t *status)
     *status &= ~IO_DEVICE_STATUS_ERR_NETWORK;
 }
 
-static inline void io_device_status_clear_error_fault(uint16_t *status)
-{
-    *status &= ~IO_DEVICE_STATUS_ERR_FAULT;
-}
-
 static void io_device_stats_print(void *data)
 {
     struct stats_io_device *stats_snap = data;
