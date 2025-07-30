@@ -19,6 +19,7 @@
 struct sai_active_config {
     void *sai_base;
     uint32_t clk_id;
+    uint32_t root_clk_id;
     uint32_t clk_freq;
     uint32_t masterSlave;
     uint32_t msel;
