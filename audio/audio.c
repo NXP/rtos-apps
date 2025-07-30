@@ -172,7 +172,7 @@ static int sai_setup(struct data_ctx *ctx)
         int32_t ret;
 
         sai_config.sai_base = audio_app_sai_active_list[i].sai_base;
-        sai_config.bit_width = audio_app_sai_active_list[i].slot_size;
+        sai_config.bit_width = (sai_word_width_t)audio_app_sai_active_list[i].slot_size;
         sai_config.chan_numbers = audio_app_sai_active_list[i].slot_count;
         sai_config.rx_mask = audio_app_sai_active_list[i].rx_mask;
         sai_config.tx_mask = audio_app_sai_active_list[i].tx_mask;
@@ -182,8 +182,8 @@ static int sai_setup(struct data_ctx *ctx)
 
         sai_config.source_clock_hz = audio_app_sai_get_clock_freq(i);
 
-        sai_config.tx_sync_mode = audio_app_sai_active_list[i].tx_sync_mode;
-        sai_config.rx_sync_mode = audio_app_sai_active_list[i].rx_sync_mode;
+        sai_config.tx_sync_mode = (sai_sync_mode_t)audio_app_sai_active_list[i].tx_sync_mode;
+        sai_config.rx_sync_mode = (sai_sync_mode_t)audio_app_sai_active_list[i].rx_sync_mode;
         sai_config.msel = audio_app_sai_active_list[i].msel;
 
         if (i == ctx->sai_dev_irq_source) {
@@ -418,7 +418,7 @@ static int audio_run(struct data_ctx *ctx, struct audio_cmd_run *run)
 
     ctx->callback_err = 0;
     ctx->callback = 0;
-    ctx->sample_rate = rate;
+    ctx->sample_rate = (sai_sample_rate_t)rate;
     ctx->period = period;
     ctx->use_alternate_config = run->use_alternate_config;
     cfg.rate = rate;

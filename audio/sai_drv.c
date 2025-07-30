@@ -311,8 +311,8 @@ int sai_drv_setup(struct sai_device *dev, struct sai_cfg *sai_config)
     }
 
     config.syncMode = sai_config->tx_sync_mode;
-    config.masterSlave = sai_config->masterSlave;
-    config.bitClock.bclkSource = sai_config->msel;
+    config.masterSlave = (sai_master_slave_t)sai_config->masterSlave;
+    config.bitClock.bclkSource = (sai_bclk_source_t)sai_config->msel;
     config.serialData.dataMaskedWord = sai_config->tx_mask;
 
 #if defined(FSL_FEATURE_SAI_HAS_FIFO) && (FSL_FEATURE_SAI_HAS_FIFO)

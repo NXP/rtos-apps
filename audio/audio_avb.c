@@ -83,7 +83,7 @@ static void crf_connect(struct pipeline_ctx *ctx, unsigned int stream_index, str
         params->clock_domain = GENAVB_CLOCK_DOMAIN_0;
 
     rc = genavb_stream_create(ctx->avb.avb_handle, &crf_stream->stream.stream_handle, params,
-                             &crf_stream->stream.cur_batch_size, 0);
+                             &crf_stream->stream.cur_batch_size, (genavb_stream_create_flags_t)0);
     if (rc != GENAVB_SUCCESS) {
         log_err("CRF stream(%p): genavb_stream_create() failed %s\n", crf_stream, genavb_strerror(rc));
 

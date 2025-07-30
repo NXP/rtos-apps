@@ -148,7 +148,7 @@ static void avtp_sink_connect(struct avtp_sink_element *avtp, unsigned int strea
     }
 
     /* Create new AVTP stream, update stream_handle */
-    rc = genavb_stream_create(handle, &stream->handle, params, &cur_batch_size, 0);
+    rc = genavb_stream_create(handle, &stream->handle, params, &cur_batch_size, (genavb_stream_create_flags_t)0);
     if (rc != GENAVB_SUCCESS) {
         log_err("genavb_stream_create() failed: %s\n", genavb_strerror(rc));
         stream->cur_batch_size = 0;

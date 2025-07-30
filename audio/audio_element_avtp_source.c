@@ -160,7 +160,7 @@ static void avtp_source_connect(struct avtp_source_element *avtp, unsigned int s
     else
         cur_batch_size = stream->cur_batch_size;
 
-    params->flags = stream->connection_flags;
+    params->flags = (genavb_stream_flags_t)stream->connection_flags;
     stream->sr_class = params->stream_class;
 
     if (avtp->clock_domain != GENAVB_CLOCK_DOMAIN_DEFAULT) {
@@ -168,7 +168,7 @@ static void avtp_source_connect(struct avtp_source_element *avtp, unsigned int s
     }
 
     /* Create new AVTP stream, update stream_handle */
-    rc = genavb_stream_create(handle, &stream->handle, params, &cur_batch_size, 0);
+    rc = genavb_stream_create(handle, &stream->handle, params, &cur_batch_size, (genavb_stream_create_flags_t)0);
     if (rc != GENAVB_SUCCESS) {
         log_err("genavb_stream_create() failed: %s\n", genavb_strerror(rc));
         stream->cur_batch_size = 0;
@@ -281,7 +281,7 @@ err:
  */
 #define  GENAVB_PROCESSING_TIME_NS		1000000U
 static int listener_timestamp_accept(unsigned int ts, unsigned int now, unsigned int period, unsigned int sample_rate,
-                                     unsigned int sr_class)
+                                     sr_class_t sr_class)
 {
     /* Timestamp + playback offset must be after now (otherwise packet are too late) */
     /* Timestamp must be before now + transit time + timing uncertainty (otherwise they arrived too early) */
@@ -338,7 +338,7 @@ static int listener_receive(struct avtp_source_element *avtp, unsigned int strea
                 continue;
 
             ts = event[idx].ts - (event[idx].index / stream->sample_size) * (unsigned int)stream->sample_dt;
-            if (!listener_timestamp_accept(ts, now, period, sample_rate, stream->sr_class)) {
+            if (!listener_timestamp_accept(ts, now, period, sample_rate, (sr_class_t)stream->sr_class)) {
                 stream->ts_err++;
                 goto exit;
             }
