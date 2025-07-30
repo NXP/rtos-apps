@@ -252,8 +252,8 @@ static void controller_loop(void *data, int timer_status)
 {
     unsigned int i = 0;
     struct controller_ctx *ctx = data;
-    unsigned int num_sched_stats = CONTROLLER_STAT_PERIOD_SEC *
-                                   (NSECS_PER_SEC_F / ctx->c_task->task->params->task_period_ns);
+    unsigned int num_sched_stats = (unsigned int)(CONTROLLER_STAT_PERIOD_SEC *
+                                   (NSECS_PER_SEC_F / ctx->c_task->task->params->task_period_ns));
     unsigned int num_sched_monitoring = MONITORING_STAT_PERIOD_MS *
                                         (NSECS_PER_MSEC / ctx->c_task->task->params->task_period_ns);
 

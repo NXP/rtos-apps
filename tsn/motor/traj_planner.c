@@ -98,9 +98,9 @@ void compute_trap_traj(struct traj_trapez *traj, uint32_t start_cycle, float pos
         t_a = ((vel_reached - actual_speed) / accel_max);
 
         traj->speed_max = vel_reached;
-        traj->cycles_accel = t_a * traj->loop_freq;
-        traj->cycles_constant_vel = t_v * traj->loop_freq;
-        traj->cycles_total = 2.0 * traj->cycles_accel + traj->cycles_constant_vel;
+        traj->cycles_accel = (uint32_t)(t_a * traj->loop_freq);
+        traj->cycles_constant_vel = (uint32_t)(t_v * traj->loop_freq);
+        traj->cycles_total = (uint32_t)(2.0 * traj->cycles_accel + traj->cycles_constant_vel);
         traj->y_end_accel = traj->pos_init + traj->sign_traj * (actual_speed * t_a + 0.5 * accel_max * (t_a * t_a));
     }
 }

@@ -195,14 +195,14 @@ static void update_pos_err_stat(struct controlled_motor_ctx *motor, float pos, f
     int pos_err_deg_stats;
     unsigned int pos_err_deg_hist;
 
-    pos_err_deg_stats = (fabs(pos - pos_target)) * 360.0 * DEG_SCALE_STATS;
-    pos_err_deg_hist = (fabs(pos - pos_target)) * 360.0 * DEG_SCALE_HIST;
+    pos_err_deg_stats = (int)((fabs(pos - pos_target)) * 360.0 * DEG_SCALE_STATS);
+    pos_err_deg_hist = (unsigned int)((fabs(pos - pos_target)) * 360.0 * DEG_SCALE_HIST);
 
     stats_update(&motor->stats.pos_err_deg, pos_err_deg_stats);
     hist_update(&motor->stats.pos_err_deg_hist, pos_err_deg_hist);
 
     if (pos_err_deg_stats > abs(motor->stats.pos_err_max)) {
-        motor->stats.pos_err_max = (pos - pos_target) * 360.0 * DEG_SCALE_STATS;
+        motor->stats.pos_err_max = (int32_t)((pos - pos_target) * 360.0 * DEG_SCALE_STATS);
     }
 }
 
@@ -642,7 +642,7 @@ static ctrl_strategy_return_codes_t strategy_interlaced_prepare(struct control_s
     if (delta_notch_deg > (NOTCH_POSITIONS / 2))
         delta_notch_deg -= NOTCH_POSITIONS;
 
-    if (abs(delta_notch_deg) <= NOTCH_ACCURACY) {
+    if (fabs(delta_notch_deg) <= NOTCH_ACCURACY) {
         motor_static->pos_target = motor_static->fb.pos - ((float)delta_notch_deg / 360.0);
 
         // We set the startup delay used to wait for static motor to hold the position
