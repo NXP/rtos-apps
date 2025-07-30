@@ -62,6 +62,6 @@ void audio_app_avb_exit(void);
 
 void audio_app_sai_clock_setup(void);
 uint32_t audio_app_sai_select_audio_pll_mux(unsigned int index, int srate);
-uint32_t audio_app_sai_get_clock_freq(unsigned int sai_active_index);
+uint32_t audio_app_sai_get_clock_freq(unsigned int index);
 
 #endif /* _RTOS_APPS_AUDIO_APP_H_ */
