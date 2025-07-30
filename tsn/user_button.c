@@ -123,7 +123,7 @@ struct rtos_apps_user_button *rtos_apps_user_button_init(struct rtos_apps_user_b
     button->exit = cfg->exit;
     button->active = cfg->active;
     button->clear = cfg->clear;
-    button->irq_n = cfg->irq_n;
+    button->irq_n = (IRQn_Type)cfg->irq_n;
 
     if (rtos_mutex_init(&button->mutex) < 0)  {
         log_err("rtos_mutex_init() failed\n");
