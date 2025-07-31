@@ -12,14 +12,15 @@
 
 #if defined (CONFIG_HAS_CORTEX_A) && (CONFIG_HAS_CORTEX_A)
 #include "os/irq.h"
-#endif
 
+#elif defined (CONFIG_HAS_CORTEX_M) && (CONFIG_HAS_CORTEX_M)
 struct sai_irq_handler_ctx {
     void (*func)(void *data);
     void *data;
 };
 
 static struct sai_irq_handler_ctx handler[4];
+#endif
 
 static I2S_Type *const s_saiBases[] = I2S_BASE_PTRS;
 
