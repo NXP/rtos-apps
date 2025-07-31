@@ -13,7 +13,7 @@
 #include "audio_pipeline.h"
 
 #define AUDIO_APP_MAX_SUPPORTED_PERIOD 10
-#define AUDIO_APP_MAX_CFG              8
+#define AUDIO_APP_MAX_CFG              9
 #define AUDIO_APP_MAX_DATA_THREADS     2
 
 struct sai_active_config {
