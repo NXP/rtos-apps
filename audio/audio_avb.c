@@ -17,8 +17,6 @@
 #include "audio_pipeline.h"
 #include "audio.h"
 
-#include "avb_tsn/common/genavb.h"
-
 #include "genavb/control.h"
 #include "genavb/genavb.h"
 
