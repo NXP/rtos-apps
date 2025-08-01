@@ -100,7 +100,7 @@ void *play_pipeline_init(void *parameters)
              (uint32_t)pipeline_cfg->period);
 
 #if defined(CONFIG_RTOS_APPS_AUDIO_GENAVB_ENABLE)
-    if (ctx->id == 0) {
+    if (ctx->id == 0 && pipeline_cfg->avb) {
         if (audio_avb_init(ctx) < 0) {
             play_pipeline_exit(ctx);
             goto err_init;

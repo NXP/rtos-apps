@@ -55,8 +55,7 @@ struct audio_pipeline_config {
     struct audio_buffer_storage_config storage[AUDIO_PIPELINE_MAX_BUFFERS];
 
 #if defined(CONFIG_RTOS_APPS_AUDIO_GENAVB_ENABLE)
-    unsigned int aem_id;
-    bool milan_mode;
+    bool avb;
 #endif
 };
 
