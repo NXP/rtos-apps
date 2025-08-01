@@ -5,41 +5,46 @@ It aims to provide a common repository to maximize code sharing across different
 
 Supported application components
 -----------------------
+- asynchronous processing (component name: async)
+- audio pipeline (component name: audio)
 - logging (component name: log)
 - statistics (component name: stats)
+- tsn endpoint (component name: tsn)
 
 Using the RTOS Application Layer
 ------------------------------
 Each of the components provides:
 - A cmake submodule file: rtos_apps_\<component\>.cmake
-- An header file: rtos_apps/\<component\>.h
+- One or more header file(s): rtos_apps/\<component\>.h or rtos_apps/\<component\>/\<file\>.h
 
 On the applications' CMake, add the following lines:
 
 #### FreeRTOS
 ```cmake
+set(RTOS_APPS_DIR /path/to/rtos-apps)
 set(RTOS_APPS_TARGET <application target name>)
 
-set(CMAKE_MODULE_PATH ... <rtos_apps_top_directory>)
-
-include(rtos_apps_<component_a>.cmake)
+include(${RTOS_APPS_DIR}/rtos_apps_<component_a>.cmake)
 ...
-include(rtos_apps_<component_b>.cmake)
+include(${RTOS_APPS_DIR}/rtos_apps_<component_b>.cmake)
 ```
 
 #### Zephyr
 ```cmake
+set(RTOS_APPS_DIR /path/to/rtos-apps)
 set(RTOS_APPS_TARGET <application target name>)
 
-set(CMAKE_MODULE_PATH ... <rtos_apps_top_directory>)
-
-include(rtos_apps_<component_a>.cmake)
+include(${RTOS_APPS_DIR}/rtos_apps_<component_a>.cmake)
 ...
-include(rtos_apps_<component_b>.cmake)
+include(${RTOS_APPS_DIR}/rtos_apps_<component_b>.cmake)
 ```
 
 Sources will be added to the specified target, as well as required include paths.
-To use the application layer, include the component specific header file:
+To use the application layer, include the component specific header file(s):
+```c
+#include <rtos_apps/<component>.h>
 ```
-#include <rtos_apps/\<component\>.h>
+or
+```c
+#include <rtos_apps/<component>/<file>.h>
 ```
