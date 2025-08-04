@@ -40,7 +40,7 @@ void check_trap_traj(struct traj_trapez *traj)
  */
 
 void compute_trap_traj(struct traj_trapez *traj, uint32_t start_cycle, float pos_target, float actual_pos,
-                       float actual_speed, float speed_max, unsigned int app_period_ns, struct motor_control_params *params)
+                       float actual_speed, float speed_max, unsigned int app_period_ns, struct rtos_apps_tsn_motor_params *params)
 {
     if (pos_target != traj->pos_target || traj->reset_flag) {
         float t_a_max, min_dist, t_a, vel_reached, t_v, accel_max;

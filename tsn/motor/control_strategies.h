@@ -27,7 +27,8 @@ int control_strategy_context_init(struct control_strategy_ctx **ctx, control_str
                                   unsigned int app_period_ns, struct rtos_apps_async *async);
 int control_strategy_context_exit(void);
 void control_strategy_stats_dump(struct control_strategy_ctx *ctx);
-struct controlled_motor_ctx *control_strategy_register_motor(struct control_strategy_ctx *ctx, uint16_t io_device_id, uint16_t motor_id, uint64_t time);
+struct controlled_motor_ctx *control_strategy_register_motor(struct control_strategy_ctx *ctx, uint16_t io_device_id, uint16_t motor_id, uint64_t time,
+                                                             void (*app_motor_params_init)(struct rtos_apps_tsn_motor_params *params, unsigned int id));
 int control_strategy_unregister_motor(struct control_strategy_ctx *ctx, struct controlled_motor_ctx *ctrl_ctx);
 int control_strategy_set_feedback(struct controlled_motor_ctx *motor, struct motor_feedback *feedback);
 float control_strategy_get_iq(struct controlled_motor_ctx *motor);

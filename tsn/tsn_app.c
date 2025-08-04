@@ -176,6 +176,7 @@ int rtos_apps_tsn_init(struct rtos_apps_tsn_config *config)
                 .first_strategy = (control_strategies_t)config->control_strategy,
                 .cmd_client = (bool)config->cmd_client,
                 .user_button = config->user_button,
+                .app_motor_params_init = config->app_motor_params_init,
             };
 
             if (controller_init(&ctx->ctrl, &ctx->c_task, &controller_cfg) < 0) {

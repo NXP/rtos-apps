@@ -32,9 +32,9 @@ struct iq_control {
     float ff_gain;
 };
 
-struct motor_control_params;
+struct rtos_apps_tsn_motor_params;
 
-void iq_controller_init(struct iq_control *iq_ctrl, enum control_mode ctrl_mode, struct motor_control_params *params);
+void iq_controller_init(struct iq_control *iq_ctrl, enum control_mode ctrl_mode, struct rtos_apps_tsn_motor_params *params);
 
 float get_iq_command(struct iq_control *iq_ctrl, float pos_real, float speed_real,
                      float pos_cmd, float speed_cmd, float accel_cmd);

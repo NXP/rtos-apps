@@ -10,7 +10,6 @@
 
 #include "m1_pmsm_appconfig.h"
 #include "motor_params.h"
-#include "avb_tsn/common/storage.h"
 
 #ifndef M_PI
 #define M_PI 3.14159265358979323846
@@ -19,7 +18,7 @@
 #define MIN_ACCEL_RPM_P_S	1000.0
 #define MIN_VEL_RPM		60.0
 
-static void motor_params_dump(struct motor_control_params *params, unsigned int id)
+static void motor_params_dump(struct rtos_apps_tsn_motor_params *params, unsigned int id)
 {
     log_info("motor%u:%u params:\n", (id >> 8) & 0xff, id & 0xff);
     log_info("vel max: %f (rpm)\n", params->max_vel_rpm);
@@ -30,7 +29,7 @@ static void motor_params_dump(struct motor_control_params *params, unsigned int 
     log_info("Tm:      %f (A)\n", params->Tm);
 }
 
-static void motor_params_check(struct motor_control_params *params)
+static void motor_params_check(struct rtos_apps_tsn_motor_params *params)
 {
     float ratio = params->max_accel_rpm_p_s / params->max_vel_rpm;
 
@@ -73,7 +72,7 @@ static void motor_params_check(struct motor_control_params *params)
     }
 }
 
-static void motor_params_default(struct motor_control_params *params)
+static void motor_params_default(struct rtos_apps_tsn_motor_params *params)
 {
     params->pos_kp = NETCTRL_POS_KP;
     params->pos_gain = POS_GAIN;
@@ -95,27 +94,14 @@ static void motor_params_default(struct motor_control_params *params)
     params->ff_gain = FF_GAIN;
 }
 
-void motor_params_init(struct motor_control_params *params, unsigned int id)
+void motor_params_init(struct rtos_apps_tsn_motor_params *params, unsigned int id,
+                       void (*app_motor_params_init)(struct rtos_apps_tsn_motor_params *params, unsigned int id))
 {
-    char buf[20];
-
     motor_params_default(params);
 
-    h_snprintf(buf, 20, "/tsn_app/motor%u:%u", (id >> 8) & 0xff, id & 0xff);
+    if (app_motor_params_init)
+        app_motor_params_init(params, id);
 
-    if (storage_cd(buf, true))
-        goto out;
-
-    storage_read_float("max_vel", &params->max_vel_rpm);
-    storage_read_float("max_accel", &params->max_accel_rpm_p_s);
-
-    storage_read_float("J", &params->J);
-    storage_read_float("b", &params->b);
-    storage_read_float("Tm", &params->Tm);
-
-    storage_cd("-", true);
-
-out:
     motor_params_check(params);
 
     motor_params_dump(params, id);

@@ -384,7 +384,7 @@ int controller_init(struct controller_ctx *ctx, struct cyclic_task *c_task, stru
         ctx->io_devices[i].num_motors = 1;
         for (j = 0; j < ctx->io_devices[i].num_motors; j++) {
             if (genavb_clock_gettime64(cyclic_cfg->params.clk_id, &now) == GENAVB_SUCCESS) {
-                ctx->io_devices[i].motors[j] = control_strategy_register_motor(ctx->strategy, ctx->io_devices[i].id, j, now);
+                ctx->io_devices[i].motors[j] = control_strategy_register_motor(ctx->strategy, ctx->io_devices[i].id, j, now, cfg->app_motor_params_init);
             } else {
                 log_err("genavb_clock_gettime64() failed\n");
                 goto err;

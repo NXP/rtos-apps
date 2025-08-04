@@ -50,6 +50,7 @@ struct controller_config {
     control_strategies_t first_strategy;
     bool cmd_client;
     struct rtos_apps_user_button *user_button;
+    void (*app_motor_params_init)(struct rtos_apps_tsn_motor_params *params, unsigned int id);
 };
 
 struct controller_ctx {

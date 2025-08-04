@@ -85,7 +85,7 @@ static float iq_feedforward(struct iq_control *iq_ctrl, float speed_real, float 
  * \param ctrl_mode control mode of the motor
  * \param params motor control params
  */
-void iq_controller_init(struct iq_control *iq_ctrl, enum control_mode ctrl_mode, struct motor_control_params *params)
+void iq_controller_init(struct iq_control *iq_ctrl, enum control_mode ctrl_mode, struct rtos_apps_tsn_motor_params *params)
 {
     iq_ctrl->ctrl_mode = ctrl_mode;
     iq_ctrl->pos_kp = params->pos_kp;

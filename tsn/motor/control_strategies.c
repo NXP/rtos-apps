@@ -140,7 +140,7 @@ struct controlled_motor_ctx {
     struct scenario_ctx scenario;
     struct iq_control runtime_iq_ctrl;
     struct iq_control startup_iq_ctrl;
-    struct motor_control_params params;
+    struct rtos_apps_tsn_motor_params params;
     uint32_t demo_count;
     uint64_t absolute_time_beginning;
     uint32_t seqid_stats;
@@ -1466,7 +1466,8 @@ int control_strategy_unregister_motor(struct control_strategy_ctx *ctx, struct c
     return 0;
 }
 
-struct controlled_motor_ctx *control_strategy_register_motor(struct control_strategy_ctx *ctx, uint16_t io_device_id, uint16_t motor_id, uint64_t time)
+struct controlled_motor_ctx *control_strategy_register_motor(struct control_strategy_ctx *ctx, uint16_t io_device_id, uint16_t motor_id, uint64_t time,
+                                                             void (*app_motor_params_init)(struct rtos_apps_tsn_motor_params *params, unsigned int id))
 {
     struct controlled_motor_ctx *new_motor = rtos_malloc(sizeof(struct controlled_motor_ctx));
     if (!new_motor) {
@@ -1485,7 +1486,7 @@ struct controlled_motor_ctx *control_strategy_register_motor(struct control_stra
     stats_init(&new_motor->stats.pos_err_deg, 31, "pos err", NULL);
     hist_init(&new_motor->stats.pos_err_deg_hist, 100, 1);
 
-    motor_params_init(&new_motor->params, new_motor->id);
+    motor_params_init(&new_motor->params, new_motor->id, app_motor_params_init);
 
     // Initialize startup controller
     iq_controller_init(&new_motor->startup_iq_ctrl, CTRL_MODE_TRAJECTORY,

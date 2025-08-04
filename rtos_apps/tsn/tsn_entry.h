@@ -11,6 +11,29 @@
 
 #include "genavb/clock.h"
 
+#if defined(CONFIG_RTOS_APPS_MOTOR_CONTROLLER)
+struct rtos_apps_tsn_motor_params {
+    float pos_kp;
+    float pos_gain;
+
+    float speed_angular_scale;
+    float speed_kp;
+    float speed_ki;
+    float max_vel_rpm;
+    float speed_gain;
+
+    float iq_max;
+    float iq_min;
+
+    float max_accel_rpm_p_s;
+
+    float J;
+    float b;
+    float Tm;
+    float ff_gain;
+};
+#endif
+
 struct rtos_apps_tsn_serial_iodevice_config {
     void *baseaddr;
     unsigned int baudrate;
@@ -40,6 +63,9 @@ struct rtos_apps_tsn_config {
     unsigned int rx_tc_mask;
 
     void (*log_update_time)(genavb_clock_id_t clk_id);
+#if defined(CONFIG_RTOS_APPS_MOTOR_CONTROLLER)
+    void (*app_motor_params_init)(struct rtos_apps_tsn_motor_params *params, unsigned int id);
+#endif
 
     struct rtos_apps_tsn_serial_iodevice_config *serial_cfg;
 

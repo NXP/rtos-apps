@@ -1,5 +1,5 @@
 /*
- * Copyright 2019, 2021, 2023 NXP
+ * Copyright 2019, 2021, 2023, 2025 NXP
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -7,28 +7,10 @@
 #ifndef _MOTOR_PARAMS_H_
 #define _MOTOR_PARAMS_H_
 
-struct motor_control_params {
-    float pos_kp;
-    float pos_gain;
+#include "rtos_apps/tsn/tsn_entry.h"
 
-    float speed_angular_scale;
-    float speed_kp;
-    float speed_ki;
-    float max_vel_rpm;
-    float speed_gain;
-
-    float iq_max;
-    float iq_min;
-
-    float max_accel_rpm_p_s;
-
-    float J;
-    float b;
-    float Tm;
-    float ff_gain;
-};
-
-void motor_params_init(struct motor_control_params *params, unsigned int id);
+void motor_params_init(struct rtos_apps_tsn_motor_params *params, unsigned int id,
+                       void (*app_motor_params_init)(struct rtos_apps_tsn_motor_params *params, unsigned int id));
 
 #define MP_IO_DEVICES_1170
 #define MP_TEKNIC_NEW_COUPLERS

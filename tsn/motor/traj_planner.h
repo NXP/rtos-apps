@@ -27,10 +27,10 @@ struct traj_trapez {
     bool reset_flag;
 };
 
-struct motor_control_params;
+struct rtos_apps_tsn_motor_params;
 
 void compute_trap_traj(struct traj_trapez *traj, uint32_t start_cycle, float pos_target,
-                       float actual_pos, float actual_speed, float speed_max, unsigned int app_period_ns, struct motor_control_params *params);
+                       float actual_pos, float actual_speed, float speed_max, unsigned int app_period_ns, struct rtos_apps_tsn_motor_params *params);
 void check_trap_traj(struct traj_trapez *traj);
 void evaluate_trap_traj(struct traj_trapez *traj, float *step_pos, float *step_speed, float *step_accel, uint32_t cycle);
 void reset_trap_traj(struct traj_trapez *traj);
