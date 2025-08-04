@@ -188,7 +188,7 @@ static void controller_state_control(struct controller_ctx *ctx)
         cmd_client_state = command_client_get_state(ctx->cmd_client_ctx);
         if (cmd_client_state == CMD_STATE_STOP && !ctx->stopped) {
             ctx->stopped = true;
-            control_strategy_set_strategy(ctx->strategy, STOP);
+            control_strategy_set_strategy(ctx->strategy, CTRL_STRAT_STOP);
         } else if (cmd_client_state == CMD_STATE_GO && ctx->stopped) {
             ctx->stopped = false;
             control_strategy_previous_strategy(ctx->strategy);

@@ -33,12 +33,12 @@
 #define SERIAL        3
 
 typedef enum control_strategies {
-    SYNCHRONIZED,
-    FOLLOW,
-    HOLD_INDEX,
-    INTERLACED,
-    STOP,
-    IDENTIFICATION
+    CTRL_STRAT_SYNCHRONIZED,
+    CTRL_STRAT_FOLLOW,
+    CTRL_STRAT_HOLD_INDEX,
+    CTRL_STRAT_INTERLACED,
+    CTRL_STRAT_STOP,
+    CTRL_STRAT_IDENTIFICATION
 } control_strategies_t;
 
 enum task_id {
