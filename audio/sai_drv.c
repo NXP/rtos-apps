@@ -10,7 +10,7 @@
 
 #include "sai_drv.h"
 
-#if (CONFIG_HAS_CORTEX_A)
+#if defined (CONFIG_HAS_CORTEX_A) && (CONFIG_HAS_CORTEX_A)
 #include "os/irq.h"
 #endif
 
@@ -270,7 +270,7 @@ static inline bool sai_is_valid_watermark(void *sai_base, uint32_t watermark)
     return watermark && !(watermark > (uint32_t)FSL_FEATURE_SAI_FIFO_COUNTn(sai_base));
 }
 
-#if (CONFIG_HAS_CORTEX_M)
+#if defined (CONFIG_HAS_CORTEX_M) && (CONFIG_HAS_CORTEX_M)
 void SAI1_IRQHandler(void)
 {
     handler[1].func(handler[1].data);
@@ -293,7 +293,7 @@ int sai_drv_setup(struct sai_device *dev, struct sai_cfg *sai_config)
     IRQn_Type sai_irq_n;
     I2S_Type *sai = (I2S_Type *)sai_config->sai_base;
     uint32_t sai_id;
-#if (CONFIG_HAS_CORTEX_A)
+#if defined (CONFIG_HAS_CORTEX_A) && (CONFIG_HAS_CORTEX_A)
     int ret;
 #endif
     int rc = 0;
@@ -372,7 +372,7 @@ int sai_drv_setup(struct sai_device *dev, struct sai_cfg *sai_config)
     /* Currently rx and tx use the same irq number */
     sai_irq_n = s_saiTxIRQ[sai_id];
 
-#if (CONFIG_HAS_CORTEX_A)
+#if defined (CONFIG_HAS_CORTEX_A) && (CONFIG_HAS_CORTEX_A)
     switch (sai_config->working_mode) {
     case SAI_RX_IRQ_MODE:
         ret = os_irq_register(sai_irq_n, sai_irq_handler_continuous, dev, OS_IRQ_PRIO_DEFAULT);
