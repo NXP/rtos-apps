@@ -58,6 +58,12 @@ err:
     return -1;
 }
 
+void network_stats_exit(struct network_stats_ctx *ctx)
+{
+    close(ctx->socket_fd);
+    rtos_free(ctx);
+}
+
 int network_stats_send(struct network_stats_ctx *ctx, struct net_stat_msg *dg)
 {
     int rc;
@@ -80,6 +86,7 @@ err:
 }
 #else
 int network_stats_open(struct network_stats_ctx **ctx) { return 0; }
+void network_stats_exit(struct network_stats_ctx *ctx) { return; }
 
 int network_stats_send(struct network_stats_ctx *ctx, struct net_stat_msg *dg) { return 0; }
 

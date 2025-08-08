@@ -28,6 +28,7 @@ struct net_stat_msg {
 struct network_stats_ctx;
 
 int network_stats_open(struct network_stats_ctx **ctx);
+void network_stats_exit(struct network_stats_ctx *ctx);
 int network_stats_send(struct network_stats_ctx *ctx, struct net_stat_msg *dg);
 
 #endif /* _NETWORK_STATS_H_ */
