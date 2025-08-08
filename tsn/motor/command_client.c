@@ -6,6 +6,8 @@
 
 #include "command_client.h"
 
+#include "rtos_abstraction_layer.h"
+
 #ifdef CONFIG_RTOS_APPS_LWIP
 
 #include "lwip/sockets.h"
@@ -33,9 +35,6 @@ struct command_client_ctx {
 #define COMMAND_CLIENT_TASK_PRIO       (RTOS_MAX_PRIORITY - 1)
 
 #define COMMAND_CLIENT_PORT 8000
-
-struct command_client_ctx command_client_context;
-struct command_client_ctx *command_client_context_h = NULL;
 
 static void command_client_task(void *pvParameters)
 {
@@ -101,28 +100,33 @@ exit:
 
 int command_client_start(struct command_client_ctx **ctx)
 {
-    int rc = 0;
+    *ctx = rtos_malloc(sizeof(struct command_client_ctx));
+    if (!*ctx)
+        goto err_malloc;
 
-    if (command_client_context_h == NULL) {
-        command_client_context_h = &command_client_context;
+    // By default, the command is set to start
+    (*ctx)->state = CMD_STATE_GO;
 
-        // By default, the command is set to start
-        command_client_context_h->state = CMD_STATE_GO;
-
-        if (rtos_thread_create(&command_client_context_h->command_client_task, COMMAND_CLIENT_TASK_PRIO, 0, COMMAND_CLIENT_TASK_STACK_SIZE,
-            "command client task", &command_client_task, command_client_context_h) < 0) {
-            log_err("rtos_thread_create() failed\n");
-            rc = -1;
-        }
-    } else {
-        log_err("Command client task already started\n");
-        rc = -1;
+    if (rtos_thread_create(&(*ctx)->command_client_task, COMMAND_CLIENT_TASK_PRIO, 0, COMMAND_CLIENT_TASK_STACK_SIZE,
+        "command client task", &command_client_task, (*ctx)) < 0) {
+        log_err("rtos_thread_create() failed\n");
+        goto err;
     }
 
-    if (ctx)
-        *ctx = command_client_context_h;
+    return 0;
 
-    return rc;
+err:
+    rtos_free(*ctx);
+
+err_malloc:
+    return -1;
+}
+
+void command_client_exit(struct command_client_ctx *ctx)
+{
+    rtos_thread_abort(&ctx->command_client_task);
+    close(ctx->socket_fd);
+    rtos_free(ctx);
 }
 
 int command_client_get_state(struct command_client_ctx *ctx)
@@ -131,6 +135,7 @@ int command_client_get_state(struct command_client_ctx *ctx)
 }
 #else
 int command_client_start(struct command_client_ctx **ctx) { return 0; }
+void command_client_exit(struct command_client_ctx *ctx) { return; }
 
 int command_client_get_state(struct command_client_ctx *ctx) { return 0; }
 

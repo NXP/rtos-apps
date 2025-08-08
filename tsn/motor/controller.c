@@ -333,6 +333,9 @@ void controller_exit(struct controller_ctx *ctx)
 
     monitoring_stats_exit(ctx->monitoring_stats_ctx);
 
+    if (ctx->cmd_client_ctx)
+        command_client_exit(ctx->cmd_client_ctx);
+
     rtos_apps_user_button_unregister_queue(ctx->user_button, ctx->event_queue);
     ctx->user_button = NULL;
 

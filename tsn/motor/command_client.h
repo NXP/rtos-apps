@@ -20,6 +20,7 @@ enum command_client_state {
 struct command_client_ctx;
 
 int command_client_start(struct command_client_ctx **ctx);
+void command_client_exit(struct command_client_ctx *ctx);
 int command_client_get_state(struct command_client_ctx *ctx);
 
 #endif /* _COMMAND_SERVER_H_ */
