@@ -39,6 +39,7 @@ struct tsn_app_ctx {
     struct cyclic_task c_task;
     struct alarm_task a_task;
     struct serial_iodevice_ctx *s_task;
+    unsigned int app_mode;
 };
 
 static const char *app_mode_names[] = {"MOTOR_NETWORK", "Not Supported", "NETWORK_ONLY", "SERIAL"};
@@ -64,7 +65,7 @@ static void null_loop(void *data, int timer_status)
     cyclic_net_transmit(c_task, 0, NULL, 0);
 }
 
-int rtos_apps_tsn_init(struct rtos_apps_tsn_config *config)
+int rtos_apps_tsn_init(struct rtos_apps_tsn_config *config, struct tsn_app_ctx **tsn_ctx)
 {
     struct tsn_app_ctx *ctx;
     struct alarm_task_config *a_cfg;
@@ -234,6 +235,10 @@ int rtos_apps_tsn_init(struct rtos_apps_tsn_config *config)
     else if (a_cfg->type == ALARM_IO_DEVICE)
         alarm_task_io_init(&ctx->a_task, a_cfg, &main_alarm_io, &ctx->a_task);
 
+    ctx->app_mode = config->mode;
+
+    *tsn_ctx = ctx;
+
     return 0;
 
 err_init:
@@ -241,4 +246,26 @@ err_init:
 
 err_malloc:
     return -1;
+}
+
+void rtos_apps_tsn_exit(struct tsn_app_ctx *tsn_ctx)
+{
+    alarm_task_exit(&tsn_ctx->a_task);
+
+    cyclic_task_stop(&tsn_ctx->c_task);
+    cyclic_task_exit(&tsn_ctx->c_task);
+
+#ifdef CONFIG_RTOS_APPS_MOTOR_IO_DEVICE
+    io_device_exit(&tsn_ctx->io_device, &tsn_ctx->c_task);
+#endif
+#ifdef CONFIG_RTOS_APPS_MOTOR_CONTROLLER
+    if (tsn_ctx->app_mode == MOTOR_NETWORK) {
+        controller_exit(&tsn_ctx->ctrl);
+    }
+    else
+#endif
+    if (tsn_ctx->app_mode == SERIAL)
+    {
+        serial_iodevice_exit(tsn_ctx->s_task);
+    }
 }

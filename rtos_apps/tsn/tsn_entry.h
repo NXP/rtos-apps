@@ -74,6 +74,9 @@ struct rtos_apps_tsn_config {
     struct rtos_apps_user_button *user_button;
 };
 
-int rtos_apps_tsn_init(struct rtos_apps_tsn_config *config);
+struct tsn_app_ctx;
+
+int rtos_apps_tsn_init(struct rtos_apps_tsn_config *config, struct tsn_app_ctx **tsn_ctx);
+void rtos_apps_tsn_exit(struct tsn_app_ctx *ctx);
 
 #endif /* _RTOS_APPS_TSN_ENTRY_H_ */
