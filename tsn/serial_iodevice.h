@@ -11,6 +11,9 @@
 
 #include "cyclic_task.h"
 
-int serial_iodevice_init(struct cyclic_task *c_task, struct rtos_apps_tsn_serial_iodevice_config *cfg);
+struct serial_iodevice_ctx;
+
+int serial_iodevice_init(struct serial_iodevice_ctx **ctx, struct cyclic_task *c_task, struct rtos_apps_tsn_serial_iodevice_config *cfg);
+void serial_iodevice_exit(struct serial_iodevice_ctx *ctx);
 
 #endif /* _SERIAL_IODEVICE_H_ */

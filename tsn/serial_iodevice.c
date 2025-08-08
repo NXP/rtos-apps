@@ -63,8 +63,6 @@ struct serial_iodevice_ctx {
     struct rtos_apps_async *async;
 };
 
-static struct serial_iodevice_ctx serial_iodev;
-
 struct uart_rx_msg {
     uint16_t cmd_len;
     uint8_t cmd_buffer[MAX_SERIAL_COMMAND_LEN];
@@ -303,37 +301,39 @@ static void serial_iodevice_net_receive(void *data, unsigned int msg_id, unsigne
     }
 }
 
-int serial_iodevice_init(struct cyclic_task *c_task, struct rtos_apps_tsn_serial_iodevice_config *cfg)
+int serial_iodevice_init(struct serial_iodevice_ctx **ctx, struct cyclic_task *c_task, struct rtos_apps_tsn_serial_iodevice_config *cfg)
 {
-    struct serial_iodevice_ctx *ctx = &serial_iodev;
+    *ctx = rtos_malloc(sizeof(struct serial_iodevice_ctx));
+    if (!*ctx)
+        goto err_malloc;
 
-    memset(ctx, 0, sizeof(struct serial_iodevice_ctx));
+    memset((*ctx), 0, sizeof(struct serial_iodevice_ctx));
 
-    ctx->feedback_rx_queue = rtos_mqueue_alloc_init(UART_RX_QUEUE_SIZE, sizeof(struct uart_rx_msg *));
-    if (!ctx->feedback_rx_queue) {
+    (*ctx)->feedback_rx_queue = rtos_mqueue_alloc_init(UART_RX_QUEUE_SIZE, sizeof(struct uart_rx_msg *));
+    if (!(*ctx)->feedback_rx_queue) {
         log_err("rtos_mqueue_alloc_init() failed\n");
         goto err;
     }
 
-    if (rtos_sem_init(&ctx->sem_uart_rx, 0) < 0) {
+    if (rtos_sem_init(&(*ctx)->sem_uart_rx, 0) < 0) {
         log_err("rtos_sem_init() failed\n");
         goto err;
     }
 
-    if (lpuart_init(ctx, cfg) < 0) {
+    if (lpuart_init((*ctx), cfg) < 0) {
         log_err("lpuart_init() failed\n");
         goto err;
     }
 
-    if (rtos_thread_create(&ctx->thread, UART_RX_TASK_PRIORITY, 0, UART_RX_TASK_STACK_SIZE, "uart rx task", &uart_rx_task, ctx) < 0) {
+    if (rtos_thread_create(&(*ctx)->thread, UART_RX_TASK_PRIORITY, 0, UART_RX_TASK_STACK_SIZE, "uart rx task", &uart_rx_task, (*ctx)) < 0) {
         log_err("rtos_thread_create() failed\n");
         goto err;
     }
 
-    ctx->async = c_task->params.async;
+    (*ctx)->async = c_task->params.async;
 
-    ctx->c_task = c_task;
-    if (cyclic_task_init(c_task, cfg->cyclic_cfg, &serial_iodevice_net_receive, &serial_iodevice_loop, ctx) < 0)
+    (*ctx)->c_task = c_task;
+    if (cyclic_task_init(c_task, cfg->cyclic_cfg, &serial_iodevice_net_receive, &serial_iodevice_loop, (*ctx)) < 0)
         goto err;
 
     log_info("Serial iodevice init successfully\n");
@@ -341,8 +341,21 @@ int serial_iodevice_init(struct cyclic_task *c_task, struct rtos_apps_tsn_serial
     return 0;
 
 err:
+    rtos_free(*ctx);
+
+err_malloc:
     return -1;
 }
+
+void serial_iodevice_exit(struct serial_iodevice_ctx *ctx)
+{
+    rtos_thread_abort(&ctx->thread);
+    rtos_sem_destroy(&ctx->sem_uart_rx);
+    rtos_mqueue_destroy(ctx->feedback_rx_queue);
+    rtos_free(ctx);
+}
+
 #else
-int serial_iodevice_init(struct cyclic_task *c_task, struct rtos_apps_tsn_serial_iodevice_config *cfg) { return -1;}
+int serial_iodevice_init(struct serial_iodevice_ctx **ctx, struct cyclic_task *c_task, struct rtos_apps_tsn_serial_iodevice_config *cfg) { return -1; }
+void serial_iodevice_exit(struct serial_iodevice_ctx *c_task) { return; }
 #endif

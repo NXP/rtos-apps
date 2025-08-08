@@ -38,6 +38,7 @@ struct tsn_app_ctx {
 
     struct cyclic_task c_task;
     struct alarm_task a_task;
+    struct serial_iodevice_ctx *s_task;
 };
 
 static const char *app_mode_names[] = {"MOTOR_NETWORK", "Not Supported", "NETWORK_ONLY", "SERIAL"};
@@ -211,7 +212,7 @@ int rtos_apps_tsn_init(struct rtos_apps_tsn_config *config)
         if (config->mode == SERIAL) {
             config->serial_cfg->cyclic_cfg = c_cfg;
 
-            if (serial_iodevice_init(&ctx->c_task, config->serial_cfg) < 0) {
+            if (serial_iodevice_init(&ctx->s_task, &ctx->c_task, config->serial_cfg) < 0) {
                 log_err("serial_iodevice_init() failed\n");
                 goto err_init;
             }
