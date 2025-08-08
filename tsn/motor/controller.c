@@ -331,6 +331,8 @@ void controller_exit(struct controller_ctx *ctx)
 {
     int i, j;
 
+    monitoring_stats_exit(ctx->monitoring_stats_ctx);
+
     rtos_apps_user_button_unregister_queue(ctx->user_button, ctx->event_queue);
     ctx->user_button = NULL;
 

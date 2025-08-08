@@ -43,6 +43,7 @@ struct monitoring_msg {
 struct monitoring_stats_ctx;
 
 int monitoring_stats_open(struct monitoring_stats_ctx **ctx);
+void monitoring_stats_exit(struct monitoring_stats_ctx *ctx);
 int monitoring_stats_send(struct monitoring_stats_ctx *ctx, struct monitoring_msg *datagram);
 
 #endif /* _MONITORING_STATS_H_ */

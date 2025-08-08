@@ -15,6 +15,7 @@
 struct tsn_motor;
 
 int mcapi_init(uint16_t id, struct tsn_motor **motor);
+void mcapi_exit(uint16_t id, struct tsn_motor *motor);
 uint16_t mcapi_get_motor_state(struct tsn_motor *motor);
 void mcapi_set_speed(struct tsn_motor *motor, float speed);
 void mcapi_set_position(struct tsn_motor *motor, float pos);

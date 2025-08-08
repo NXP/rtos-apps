@@ -450,3 +450,19 @@ err_del_queue:
 err:
     return -1;
 }
+
+void io_device_exit(struct io_device_ctx *ctx, struct cyclic_task *c_task)
+{
+    int i;
+
+    cyclic_task_exit(c_task);
+
+    monitoring_stats_exit(ctx->monitoring_stats_ctx);
+
+    rtos_mqueue_destroy(ctx->event_queue);
+
+    for (i = 0; i < ctx->num_motors; i++) {
+        mcapi_exit(i, ctx->motors_controlled[i].motor);
+    }
+
+}

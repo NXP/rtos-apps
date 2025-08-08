@@ -77,6 +77,18 @@ err:
     return -1;
 }
 
+/** Exit motor control API
+ *
+ * \return None
+ * \param id id of motor control implementation
+ * \param motor pointer to tsn_motor struct
+ */
+void mcapi_exit(uint16_t id, struct tsn_motor *motor)
+{
+    if (id == 0)
+        rtos_free(motor);
+}
+
 /** Get state of motor control state machines
  *
  * \return state of motor control state machines

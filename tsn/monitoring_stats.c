@@ -50,6 +50,12 @@ err:
     return -1;
 }
 
+void monitoring_stats_exit(struct monitoring_stats_ctx *ctx)
+{
+    close(ctx->socket_fd);
+    rtos_free(ctx);
+}
+
 int monitoring_stats_send(struct monitoring_stats_ctx *ctx, struct monitoring_msg *datagram)
 {
     int rc;
@@ -68,6 +74,7 @@ err:
 }
 #else
 int monitoring_stats_open(struct monitoring_stats_ctx **ctx) { return 0; }
+void monitoring_stats_exit(struct monitoring_stats_ctx *ctx) { return; }
 
 int monitoring_stats_send(struct monitoring_stats_ctx *ctx, struct monitoring_msg *datagram) { return 0; }
 
