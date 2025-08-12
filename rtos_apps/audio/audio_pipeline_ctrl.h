@@ -69,6 +69,13 @@ struct audio_cmd_element_dump {
     struct audio_cmd_element_id element;
 };
 
+struct audio_cmd_element_avtp_set_handle {
+    uint32_t type; /* command type */
+    struct audio_cmd_pipeline_id pipeline;
+    struct audio_cmd_element_id element;
+    void *genavb_h;
+};
+
 struct audio_cmd_element_avtp_disconnect {
     uint32_t type; /* command type */
     struct audio_cmd_pipeline_id pipeline;
@@ -91,6 +98,7 @@ struct audio_cmd_element_avtp {
         struct audio_cmd_element_common common;
         struct audio_cmd_element_avtp_connect connect;
         struct audio_cmd_element_avtp_disconnect disconnect;
+        struct audio_cmd_element_avtp_set_handle set_handle;
     } u;
 };
 

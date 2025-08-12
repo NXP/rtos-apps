@@ -10,6 +10,7 @@
 
 #include "rtos_apps/audio/audio_app.h"
 #include "rtos_apps/audio/audio_ctrl.h"
+#include "rtos_apps/audio/audio_pipeline_ctrl.h"
 #include "rtos_apps/log.h"
 
 #include "audio_avb.h"
@@ -96,6 +97,40 @@ static void crf_connect(struct pipeline_ctx *ctx, unsigned int stream_index, str
 
 exit:
     return;
+}
+
+static void avtp_source_set_handle(void* genavb_h)
+{
+    struct audio_cmd_element_avtp_set_handle set_handle;
+    int i;
+
+    set_handle.type = AUDIO_CMD_TYPE_ELEMENT_AVTP_SOURCE_SET_HANDLE;
+    set_handle.pipeline.id = 0;
+    set_handle.element.type = AUDIO_ELEMENT_AVTP_SOURCE;
+    set_handle.element.id = 0;
+    set_handle.genavb_h = genavb_h;
+
+    for (i = 0; i < AUDIO_PIPELINE_MAX_PIPELINES; i++) {
+        set_handle.pipeline.id = i;
+        audio_pipeline_ctrl((struct audio_cmd_pipeline *)&set_handle, sizeof(set_handle), NULL);
+    }
+}
+
+static void avtp_sink_set_handle(void* genavb_h)
+{
+    struct audio_cmd_element_avtp_set_handle set_handle;
+    int i;
+
+    set_handle.type = AUDIO_CMD_TYPE_ELEMENT_AVTP_SINK_SET_HANDLE;
+    set_handle.pipeline.id = 0;
+    set_handle.element.type = AUDIO_ELEMENT_AVTP_SINK;
+    set_handle.element.id = 0;
+    set_handle.genavb_h = genavb_h;
+
+    for (i = 0; i < AUDIO_PIPELINE_MAX_PIPELINES; i++) {
+        set_handle.pipeline.id = i;
+        audio_pipeline_ctrl((struct audio_cmd_pipeline *)&set_handle, sizeof(set_handle), NULL);
+    }
 }
 
 static void listener_disconnect(unsigned int stream_index)
@@ -329,6 +364,9 @@ int audio_avb_init(struct pipeline_ctx *ctx)
         goto exit;
     }
 
+    avtp_source_set_handle(ctx->avb.avb_handle);
+    avtp_sink_set_handle(ctx->avb.avb_handle);
+
     rc = genavb_control_open(ctx->avb.avb_handle, &ctx->avb.clk_h, GENAVB_CTRL_CLOCK_DOMAIN);
     if (rc != GENAVB_SUCCESS) {
         log_err("genavb_control_open(GENAVB_CTRL_CLOCK_DOMAIN) failed: %s\n", genavb_strerror(rc));
@@ -379,6 +417,10 @@ void audio_avb_exit(struct pipeline_ctx *ctx)
 
     genavb_control_close(ctx->avb.clk_h);
     ctx->avb.clk_h = NULL;
+
+    ctx->avb.avb_handle = NULL;
+    avtp_source_set_handle(NULL);
+    avtp_sink_set_handle(NULL);
 
     audio_app_avb_exit();
 }

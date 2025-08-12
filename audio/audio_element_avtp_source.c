@@ -6,8 +6,6 @@
 
 #include <math.h>
 
-#include "avb_tsn/common/genavb.h"
-
 #include "genavb/clock.h"
 #include "genavb/genavb.h"
 #include "genavb/sr_class.h"
@@ -71,6 +69,8 @@ struct avtp_source_element {
     unsigned int out_n;
     struct avtp_output out[AVTP_RX_STREAM_N * AVTP_RX_CHANNEL_N];
 
+    struct genavb_handle *genavb_h;
+
     genavb_clock_domain_t clock_domain;
 
     /* used in the control path to protect all streams' ->connected states */
@@ -94,7 +94,6 @@ static void avtp_source_connect(struct avtp_source_element *avtp, unsigned int s
                                 struct genavb_stream_params *params, struct audio_element *element)
 {
     struct avtp_stream *stream = &avtp->stream[stream_index];
-    struct genavb_handle *handle;
     unsigned int cur_batch_size;
     bool invert;
     uint32_t mask;
@@ -107,9 +106,8 @@ static void avtp_source_connect(struct avtp_source_element *avtp, unsigned int s
         goto exit;
     }
 
-    handle = get_genavb_handle();
-    if (!handle) {
-        log_err("get_genavb_handle() failed: null genavb_handle\n");
+    if (!avtp->genavb_h) {
+        log_err("avtp->genavb_h: null genavb_handle\n");
 
         goto exit;
     }
@@ -168,7 +166,7 @@ static void avtp_source_connect(struct avtp_source_element *avtp, unsigned int s
     }
 
     /* Create new AVTP stream, update stream_handle */
-    rc = genavb_stream_create(handle, &stream->handle, params, &cur_batch_size, (genavb_stream_create_flags_t)0);
+    rc = genavb_stream_create(avtp->genavb_h, &stream->handle, params, &cur_batch_size, (genavb_stream_create_flags_t)0);
     if (rc != GENAVB_SUCCESS) {
         log_err("genavb_stream_create() failed: %s\n", genavb_strerror(rc));
         stream->cur_batch_size = 0;
@@ -186,6 +184,11 @@ static void avtp_source_connect(struct avtp_source_element *avtp, unsigned int s
 
 exit:
     return;
+}
+
+static void avtp_source_set_handle(struct avtp_source_element *avtp, void *genavb_h)
+{
+    avtp->genavb_h = genavb_h;
 }
 
 static void avtp_source_disconnect(struct avtp_source_element *avtp, unsigned int stream_index)
@@ -258,6 +261,15 @@ int avtp_source_element_ctrl(struct audio_element *element, struct audio_cmd_ele
             goto err;
 
         avtp_source_disconnect(avtp, cmd->u.disconnect.stream_index);
+
+        break;
+
+    case AUDIO_CMD_TYPE_ELEMENT_AVTP_SOURCE_SET_HANDLE:
+
+        if ((len != sizeof(struct audio_cmd_element_avtp_set_handle)))
+            goto err;
+
+        avtp_source_set_handle(avtp, cmd->u.set_handle.genavb_h);
 
         break;
 

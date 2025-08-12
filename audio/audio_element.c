@@ -69,10 +69,12 @@ int audio_element_ctrl(struct audio_element *element, struct audio_cmd_element *
 #if defined(CONFIG_RTOS_APPS_AUDIO_GENAVB_ENABLE)
     case AUDIO_CMD_TYPE_ELEMENT_AVTP_SOURCE_CONNECT:
     case AUDIO_CMD_TYPE_ELEMENT_AVTP_SOURCE_DISCONNECT:
+    case AUDIO_CMD_TYPE_ELEMENT_AVTP_SOURCE_SET_HANDLE:
         rc = avtp_source_element_ctrl(element, &cmd->u.avtp, len, ctrl_handle);
         break;
     case AUDIO_CMD_TYPE_ELEMENT_AVTP_SINK_CONNECT:
     case AUDIO_CMD_TYPE_ELEMENT_AVTP_SINK_DISCONNECT:
+    case AUDIO_CMD_TYPE_ELEMENT_AVTP_SINK_SET_HANDLE:
         rc = avtp_sink_element_ctrl(element, &cmd->u.avtp, len, ctrl_handle);
         break;
 #endif
