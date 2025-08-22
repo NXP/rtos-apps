@@ -54,6 +54,8 @@ if(CONFIG_MCUX_COMPONENT_component.rtos_apps.tsn)
             tsn/motor/traj_planner.h
             tsn/motor/command_client.c
             tsn/motor/command_client.h
+            tsn/motor/network_stats.c
+            tsn/motor/network_stats.h
         )
     endif()
 

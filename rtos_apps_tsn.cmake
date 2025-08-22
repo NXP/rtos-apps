@@ -51,6 +51,7 @@ if(CONFIG_APP_MOTOR_CONTROLLER)
         ${CMAKE_CURRENT_LIST_DIR}/tsn/motor/scenarios.c
         ${CMAKE_CURRENT_LIST_DIR}/tsn/motor/traj_planner.c
         ${CMAKE_CURRENT_LIST_DIR}/tsn/motor/command_client.c
+        ${CMAKE_CURRENT_LIST_DIR}/tsn/motor/network_stats.c
     )
 endif()
 
