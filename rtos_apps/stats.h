@@ -9,7 +9,7 @@
 
 #include <stdint.h>
 
-struct stats {
+struct rtos_apps_stats {
     uint32_t log2_size;
     uint32_t current_count;
 
@@ -30,26 +30,26 @@ struct stats {
     int32_t abs_max;
 
     const char *name;
-    void (*func)(struct stats *s);
+    void (*func)(struct rtos_apps_stats *s);
 };
 
 #define RTOS_APPS_STATS_MAX_SLOTS 101U
 
-struct hist {
+struct rtos_apps_hist {
     uint32_t slots[RTOS_APPS_STATS_MAX_SLOTS];
     unsigned int n_slots;
     unsigned int slot_size;
 };
 
-void stats_init(struct stats *s, unsigned int log2_size, const char *name, void (*func)(struct stats *s));
-void stats_reset(struct stats *s);
-void stats_print(struct stats *s);
-void stats_update(struct stats *s, int32_t val);
-void stats_compute(struct stats *s);
+void rtos_apps_stats_init(struct rtos_apps_stats *s, unsigned int log2_size, const char *name, void (*func)(struct rtos_apps_stats *s));
+void rtos_apps_stats_reset(struct rtos_apps_stats *s);
+void rtos_apps_stats_print(struct rtos_apps_stats *s);
+void rtos_apps_stats_update(struct rtos_apps_stats *s, int32_t val);
+void rtos_apps_stats_compute(struct rtos_apps_stats *s);
 
-int hist_init(struct hist *hist, unsigned int n_slots, unsigned slot_size);
-void hist_update(struct hist *hist, unsigned int value);
-void hist_reset(struct hist *hist);
-void hist_print(struct hist *hist);
+int rtos_apps_hist_init(struct rtos_apps_hist *hist, unsigned int n_slots, unsigned slot_size);
+void rtos_apps_hist_update(struct rtos_apps_hist *hist, unsigned int value);
+void rtos_apps_hist_reset(struct rtos_apps_hist *hist);
+void rtos_apps_hist_print(struct rtos_apps_hist *hist);
 
 #endif /* _RTOS_APPS_STATS_H_ */

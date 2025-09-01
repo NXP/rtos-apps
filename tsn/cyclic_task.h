@@ -24,8 +24,8 @@ struct socket_stats {
     int link_status;
     unsigned int traffic_latency_max;
     unsigned int traffic_latency_min;
-    struct stats traffic_latency;
-    struct hist traffic_latency_hist;
+    struct rtos_apps_stats traffic_latency;
+    struct rtos_apps_hist traffic_latency_hist;
 };
 
 struct socket {

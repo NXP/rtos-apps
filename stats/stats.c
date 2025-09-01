@@ -10,11 +10,11 @@
 /** Initialize a stats structure.
  * @s: 			Pointer to structure to be initialized
  * @log2_size:	Set size to be reached before statistics are computed, expressed as a power of 2
- * @name:		character field used by stats_print
+ * @name:		character field used by rtos_apps_stats_print
  * @func:		pointer to the function to be called when stats are computed
  *
  */
-void stats_init(struct stats *s, unsigned int log2_size, const char *name, void (*func)(struct stats *s))
+void rtos_apps_stats_init(struct rtos_apps_stats *s, unsigned int log2_size, const char *name, void (*func)(struct rtos_apps_stats *s))
 {
     s->log2_size = log2_size;
     s->name = name;
@@ -23,10 +23,10 @@ void stats_init(struct stats *s, unsigned int log2_size, const char *name, void 
     s->abs_min = 0x7fffffff;
     s->abs_max = -0x7fffffff;
 
-    stats_reset(s);
+    rtos_apps_stats_reset(s);
 }
 
-void stats_reset(struct stats *s)
+void rtos_apps_stats_reset(struct rtos_apps_stats *s)
 {
     s->current_count = 0;
     s->current_min = 0x7fffffff;
@@ -35,11 +35,11 @@ void stats_reset(struct stats *s)
     s->current_ms = 0;
 }
 
-/** Example function to be passed to stats_init
+/** Example function to be passed to rtos_apps_stats_init
  * Usage:
- * stats_init(s, log2_size, "your string", print_stats);
+ * rtos_apps_stats_init(s, log2_size, "your string", print_stats);
  */
-void stats_print(struct stats *s)
+void rtos_apps_stats_print(struct rtos_apps_stats *s)
 {
     log_info("stats(%p) %s min %d mean %d max %d rms^2 %llu stddev^2 %llu absmin %d absmax %d\n\r", s, s->name, s->min,
              s->mean, s->max, s->ms, s->variance, s->abs_min, s->abs_max);
@@ -57,7 +57,7 @@ void stats_print(struct stats *s)
  *    . square of the RMS (i.e. mean of the squares)
  *    . square of the standard deviation (i.e. variance)
  */
-void stats_update(struct stats *s, int32_t val)
+void rtos_apps_stats_update(struct rtos_apps_stats *s, int32_t val)
 {
     s->current_count++;
 
@@ -87,7 +87,7 @@ void stats_update(struct stats *s, int32_t val)
         if (s->func)
             s->func(s);
 
-        stats_reset(s);
+        rtos_apps_stats_reset(s);
     }
 }
 
@@ -101,7 +101,7 @@ void stats_update(struct stats *s, int32_t val)
  *    . square of the RMS (i.e. mean of the squares)
  *    . square of the standard deviation (i.e. variance)
  */
-void stats_compute(struct stats *s)
+void rtos_apps_stats_compute(struct rtos_apps_stats *s)
 {
     if (s->current_count) {
         s->ms = s->current_ms / s->current_count;
@@ -117,7 +117,7 @@ void stats_compute(struct stats *s)
     s->max = s->current_max;
 }
 
-int hist_init(struct hist *hist, unsigned int n_slots, unsigned slot_size)
+int rtos_apps_hist_init(struct rtos_apps_hist *hist, unsigned int n_slots, unsigned slot_size)
 {
     /* One extra slot for last bucket.
      */
@@ -130,7 +130,7 @@ int hist_init(struct hist *hist, unsigned int n_slots, unsigned slot_size)
     return 0;
 }
 
-void hist_update(struct hist *hist, unsigned int value)
+void rtos_apps_hist_update(struct rtos_apps_hist *hist, unsigned int value)
 {
     unsigned int slot = value / hist->slot_size;
 
@@ -140,7 +140,7 @@ void hist_update(struct hist *hist, unsigned int value)
     hist->slots[slot]++;
 }
 
-void hist_reset(struct hist *hist)
+void rtos_apps_hist_reset(struct rtos_apps_hist *hist)
 {
     int i;
 
@@ -148,7 +148,7 @@ void hist_reset(struct hist *hist)
         hist->slots[i] = 0;
 }
 
-void hist_print(struct hist *hist)
+void rtos_apps_hist_print(struct rtos_apps_hist *hist)
 {
     int i;
 
