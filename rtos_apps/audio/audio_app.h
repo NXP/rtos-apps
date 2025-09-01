@@ -17,11 +17,6 @@
 #define AUDIO_APP_MAX_CFG              8
 #define AUDIO_APP_MAX_DATA_THREADS     2
 
-enum codec_id {
-    CODEC_ID_WM8962,
-    CODEC_ID_WM8960,
-};
-
 struct sai_active_config {
     void *sai_base;
     uint32_t clk_id;
@@ -37,7 +32,7 @@ struct sai_active_config {
     uint32_t tx_mask;
     int rx_sync_mode;
     int tx_sync_mode;
-    enum codec_id cid;
+    uint8_t codec_id;
 };
 
 struct play_pipeline_config {
@@ -57,9 +52,9 @@ bool audio_app_check_params(uint32_t period, uint32_t rate);
 void audio_app_pin_mux_dynamic_config(bool use_alternate_config);
 void audio_app_sai_alternate_config(bool use_alternate_config, unsigned int rate);
 
-int32_t audio_app_codec_setup(enum codec_id cid);
-int32_t audio_app_codec_set_format(enum codec_id cid, uint32_t mclk, uint32_t sample_rate, uint32_t bitwidth);
-int32_t audio_app_codec_close(enum codec_id cid);
+int32_t audio_app_codec_setup(uint8_t codec_id);
+int32_t audio_app_codec_set_format(uint8_t codec_id, uint32_t mclk, uint32_t sample_rate, uint32_t bitwidth);
+int32_t audio_app_codec_close(uint8_t codec_id);
 bool audio_app_codec_is_rate_supported(uint32_t rate, bool use_alternate_config);
 
 struct genavb_handle *audio_app_avb_init(void);

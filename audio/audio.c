@@ -168,7 +168,7 @@ static int sai_setup(struct data_ctx *ctx)
     for (i = 0; i < audio_app_sai_active_list_nelems; i++) {
         uint32_t pll_id;
         int sai_id;
-        enum codec_id cid;
+        uint8_t codec_id;
         int32_t ret;
 
         sai_config.sai_base = audio_app_sai_active_list[i].sai_base;
@@ -198,8 +198,8 @@ static int sai_setup(struct data_ctx *ctx)
         }
 
         /* Configure attached codec */
-        cid = audio_app_sai_active_list[i].cid;
-        ret = audio_app_codec_setup(cid);
+        codec_id = audio_app_sai_active_list[i].codec_id;
+        ret = audio_app_codec_setup(codec_id);
         if (ret != kStatus_Success) {
             if (audio_app_sai_active_list[i].masterSlave == kSAI_Slave) {
                 log_info("No codec found on SAI%d, forcing master mode\n",
@@ -207,7 +207,7 @@ static int sai_setup(struct data_ctx *ctx)
                 audio_app_sai_active_list[i].masterSlave = kSAI_Master;
             }
         } else {
-            audio_app_codec_set_format(cid, sai_config.source_clock_hz, sai_config.sample_rate, sai_config.bit_width);
+            audio_app_codec_set_format(codec_id, sai_config.source_clock_hz, sai_config.sample_rate, sai_config.bit_width);
         }
 
         sai_config.masterSlave = audio_app_sai_active_list[i].masterSlave;
@@ -490,7 +490,7 @@ static int audio_stop(struct data_ctx *ctx)
     sai_close(ctx);
 
     for (i = 0; i < audio_app_sai_active_list_nelems; i++)
-        audio_app_codec_close(audio_app_sai_active_list[i].cid);
+        audio_app_codec_close(audio_app_sai_active_list[i].codec_id);
 
 exit:
     return AUDIO_RESP_STATUS_SUCCESS;
