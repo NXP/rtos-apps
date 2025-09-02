@@ -338,7 +338,7 @@ void controller_exit(struct controller_ctx *ctx)
 
     rtos_mqueue_destroy(ctx->event_queue);
 
-    control_strategy_context_exit();
+    control_strategy_context_exit(ctx->strategy);
 
     // Delete io_devices
     for (i = 0; i < ctx->num_io_device; i++) {

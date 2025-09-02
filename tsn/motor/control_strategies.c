@@ -173,9 +173,6 @@ struct control_strategy_ctx {
     unsigned int app_period_ns;
 };
 
-static struct control_strategy_ctx control_strategy;
-static struct control_strategy_ctx *control_strategy_h = NULL;
-
 static bool check_margin_position(struct controlled_motor_ctx *motor, float pos_real, float pos_target, float margin)
 {
     float gap;
@@ -1345,74 +1342,73 @@ static void control_strategy_reset(struct control_strategy_ctx *ctx)
 
 /* -----  API  ----- */
 
-int control_strategy_context_exit(void)
+void control_strategy_context_exit(struct control_strategy_ctx *ctx)
 {
-    control_strategy_h = NULL;
+    network_stats_exit(ctx->net_stats_ctx);
 
-    return 0;
+    rtos_free(ctx);
 }
 
 int control_strategy_context_init(struct control_strategy_ctx **ctx, control_strategies_t first_strategy,
                                   unsigned int app_period_ns, struct rtos_apps_async *async)
 {
-    if (control_strategy_h != NULL) {
-        log_err("Strategy context already initialized\n");
-        goto err;
-    }
 
-    control_strategy_h = &control_strategy;
+    *ctx = rtos_malloc(sizeof(struct control_strategy_ctx));
+    if (!*ctx)
+        goto err_malloc;
 
-    slist_head_init(&control_strategy_h->motor_list);
+    slist_head_init(&(*ctx)->motor_list);
 
-    control_strategy_h->app_period_ns = app_period_ns;
-    control_strategy_h->async = async;
-    control_strategy_h->current_strategy = first_strategy;
-    control_strategy_h->old_strategy = first_strategy;
-    control_strategy_h->num_strategies = MAX_NUM_CONTROL_STRATEGIES;
-    control_strategy_h->ops[CTRL_STRAT_SYNCHRONIZED].prepare = &strategy_generic_prepare;
-    control_strategy_h->ops[CTRL_STRAT_SYNCHRONIZED].startup = &strategy_generic_startup;
-    control_strategy_h->ops[CTRL_STRAT_SYNCHRONIZED].init = &strategy_synchronized_init;
-    control_strategy_h->ops[CTRL_STRAT_SYNCHRONIZED].loop = &strategy_synchronized_loop;
-    control_strategy_h->ops[CTRL_STRAT_SYNCHRONIZED].reset = &strategy_synchronized_reset;
-    control_strategy_h->ops[CTRL_STRAT_FOLLOW].prepare = &strategy_generic_prepare;
-    control_strategy_h->ops[CTRL_STRAT_FOLLOW].startup = &strategy_generic_startup;
-    control_strategy_h->ops[CTRL_STRAT_FOLLOW].init = &strategy_follow_init;
-    control_strategy_h->ops[CTRL_STRAT_FOLLOW].loop = &strategy_follow_loop;
-    control_strategy_h->ops[CTRL_STRAT_FOLLOW].reset = &strategy_follow_reset;
-    control_strategy_h->ops[CTRL_STRAT_HOLD_INDEX].prepare = &strategy_generic_prepare;
-    control_strategy_h->ops[CTRL_STRAT_HOLD_INDEX].startup = &strategy_generic_startup;
-    control_strategy_h->ops[CTRL_STRAT_HOLD_INDEX].init = &strategy_hold_index_init;
-    control_strategy_h->ops[CTRL_STRAT_HOLD_INDEX].loop = &strategy_hold_index_loop;
-    control_strategy_h->ops[CTRL_STRAT_HOLD_INDEX].reset = &strategy_hold_index_reset;
-    control_strategy_h->ops[CTRL_STRAT_INTERLACED].prepare = &strategy_interlaced_prepare;
-    control_strategy_h->ops[CTRL_STRAT_INTERLACED].startup = &strategy_interlaced_startup;
-    control_strategy_h->ops[CTRL_STRAT_INTERLACED].init = &strategy_interlaced_init;
-    control_strategy_h->ops[CTRL_STRAT_INTERLACED].loop = &strategy_interlaced_loop;
-    control_strategy_h->ops[CTRL_STRAT_INTERLACED].reset = &strategy_interlaced_reset;
-    control_strategy_h->ops[CTRL_STRAT_STOP].prepare = &strategy_stop_prepare;
-    control_strategy_h->ops[CTRL_STRAT_STOP].startup = &strategy_stop_startup;
-    control_strategy_h->ops[CTRL_STRAT_STOP].init = &strategy_stop_init;
-    control_strategy_h->ops[CTRL_STRAT_STOP].loop = &strategy_stop_loop;
-    control_strategy_h->ops[CTRL_STRAT_STOP].reset = &strategy_stop_reset;
-    control_strategy_h->ops[CTRL_STRAT_IDENTIFICATION].prepare = &strategy_interlaced_prepare;
-    control_strategy_h->ops[CTRL_STRAT_IDENTIFICATION].startup = &strategy_interlaced_startup;
-    control_strategy_h->ops[CTRL_STRAT_IDENTIFICATION].init = &strategy_identification_init;
-    control_strategy_h->ops[CTRL_STRAT_IDENTIFICATION].loop = &strategy_identification_loop;
-    control_strategy_h->ops[CTRL_STRAT_IDENTIFICATION].reset = &strategy_interlaced_reset;
-    control_strategy_h->state = RESET;
+    (*ctx)->app_period_ns = app_period_ns;
+    (*ctx)->async = async;
+    (*ctx)->current_strategy = first_strategy;
+    (*ctx)->old_strategy = first_strategy;
+    (*ctx)->num_strategies = MAX_NUM_CONTROL_STRATEGIES;
+    (*ctx)->ops[CTRL_STRAT_SYNCHRONIZED].prepare = &strategy_generic_prepare;
+    (*ctx)->ops[CTRL_STRAT_SYNCHRONIZED].startup = &strategy_generic_startup;
+    (*ctx)->ops[CTRL_STRAT_SYNCHRONIZED].init = &strategy_synchronized_init;
+    (*ctx)->ops[CTRL_STRAT_SYNCHRONIZED].loop = &strategy_synchronized_loop;
+    (*ctx)->ops[CTRL_STRAT_SYNCHRONIZED].reset = &strategy_synchronized_reset;
+    (*ctx)->ops[CTRL_STRAT_FOLLOW].prepare = &strategy_generic_prepare;
+    (*ctx)->ops[CTRL_STRAT_FOLLOW].startup = &strategy_generic_startup;
+    (*ctx)->ops[CTRL_STRAT_FOLLOW].init = &strategy_follow_init;
+    (*ctx)->ops[CTRL_STRAT_FOLLOW].loop = &strategy_follow_loop;
+    (*ctx)->ops[CTRL_STRAT_FOLLOW].reset = &strategy_follow_reset;
+    (*ctx)->ops[CTRL_STRAT_HOLD_INDEX].prepare = &strategy_generic_prepare;
+    (*ctx)->ops[CTRL_STRAT_HOLD_INDEX].startup = &strategy_generic_startup;
+    (*ctx)->ops[CTRL_STRAT_HOLD_INDEX].init = &strategy_hold_index_init;
+    (*ctx)->ops[CTRL_STRAT_HOLD_INDEX].loop = &strategy_hold_index_loop;
+    (*ctx)->ops[CTRL_STRAT_HOLD_INDEX].reset = &strategy_hold_index_reset;
+    (*ctx)->ops[CTRL_STRAT_INTERLACED].prepare = &strategy_interlaced_prepare;
+    (*ctx)->ops[CTRL_STRAT_INTERLACED].startup = &strategy_interlaced_startup;
+    (*ctx)->ops[CTRL_STRAT_INTERLACED].init = &strategy_interlaced_init;
+    (*ctx)->ops[CTRL_STRAT_INTERLACED].loop = &strategy_interlaced_loop;
+    (*ctx)->ops[CTRL_STRAT_INTERLACED].reset = &strategy_interlaced_reset;
+    (*ctx)->ops[CTRL_STRAT_STOP].prepare = &strategy_stop_prepare;
+    (*ctx)->ops[CTRL_STRAT_STOP].startup = &strategy_stop_startup;
+    (*ctx)->ops[CTRL_STRAT_STOP].init = &strategy_stop_init;
+    (*ctx)->ops[CTRL_STRAT_STOP].loop = &strategy_stop_loop;
+    (*ctx)->ops[CTRL_STRAT_STOP].reset = &strategy_stop_reset;
+    (*ctx)->ops[CTRL_STRAT_IDENTIFICATION].prepare = &strategy_interlaced_prepare;
+    (*ctx)->ops[CTRL_STRAT_IDENTIFICATION].startup = &strategy_interlaced_startup;
+    (*ctx)->ops[CTRL_STRAT_IDENTIFICATION].init = &strategy_identification_init;
+    (*ctx)->ops[CTRL_STRAT_IDENTIFICATION].loop = &strategy_identification_loop;
+    (*ctx)->ops[CTRL_STRAT_IDENTIFICATION].reset = &strategy_interlaced_reset;
+    (*ctx)->state = RESET;
 
-    if (network_stats_open(&control_strategy_h->net_stats_ctx) < 0) {
+    if (network_stats_open(&(*ctx)->net_stats_ctx) < 0) {
         log_err("network_stats_open() failed\n");
         goto err;
     }
-
-    *ctx = control_strategy_h;
 
     log_info("Strategy successfuly initialized\n");
 
     return 0;
 
 err:
+    rtos_free(*ctx);
+
+err_malloc:
     return -1;
 }
 
