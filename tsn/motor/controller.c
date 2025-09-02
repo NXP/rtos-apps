@@ -331,6 +331,9 @@ void controller_exit(struct controller_ctx *ctx)
 {
     int i, j;
 
+    rtos_apps_user_button_unregister_queue(ctx->user_button, ctx->event_queue);
+    ctx->user_button = NULL;
+
     rtos_mqueue_destroy(ctx->event_queue);
 
     control_strategy_context_exit();
@@ -358,7 +361,8 @@ int controller_init(struct controller_ctx *ctx, struct cyclic_task *c_task, stru
         goto err;
     }
 
-    if (rtos_apps_user_button_register_queue(cfg->user_button, ctx->event_queue) < 0) {
+    ctx->user_button = cfg->user_button;
+    if (rtos_apps_user_button_register_queue(ctx->user_button, ctx->event_queue) < 0) {
         log_err("rtos_apps_user_button_register_queue() failed\n");
         goto err_del_queue;
     }

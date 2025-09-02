@@ -33,6 +33,11 @@ void rtos_apps_user_button_irq(struct rtos_apps_user_button *button);
 int rtos_apps_user_button_register_queue(struct rtos_apps_user_button *button, rtos_mqueue_t *queue);
 
 /*
+ * Unregister an event queue for user button events
+*/
+void rtos_apps_user_button_unregister_queue(struct rtos_apps_user_button *button, rtos_mqueue_t *queue);
+
+/*
  * Generate a user button event Through software
 */
 void rtos_apps_user_button_event(struct rtos_apps_user_button *button);

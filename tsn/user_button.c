@@ -65,6 +65,27 @@ void rtos_apps_user_button_irq(struct rtos_apps_user_button *button)
     rtos_yield_from_isr(yield);
 }
 
+void rtos_apps_user_button_unregister_queue(struct rtos_apps_user_button *button, rtos_mqueue_t *queue)
+{
+    int i;
+
+    rtos_mutex_lock(&button->mutex, RTOS_WAIT_FOREVER);
+
+    for (i = 0; i < MAX_EVENT_QUEUES; i++) {
+        if (!button->queue[i].used)
+            continue;
+
+        if (button->queue[i].handle == queue) {
+            button->queue[i].handle = NULL;
+            button->queue[i].used = false;
+            goto out;
+        }
+    }
+
+out:
+    rtos_mutex_unlock(&button->mutex);
+}
+
 int rtos_apps_user_button_register_queue(struct rtos_apps_user_button *button, rtos_mqueue_t *queue)
 {
     int i;

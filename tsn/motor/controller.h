@@ -72,6 +72,7 @@ struct controller_ctx {
     bool stopped;
     bool control_error;
     control_strategies_t last_control_strategy;
+    struct rtos_apps_user_button *user_button;
 };
 
 int controller_init(struct controller_ctx *ctx, struct cyclic_task *c_task, struct controller_config *cfg);
