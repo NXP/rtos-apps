@@ -130,6 +130,8 @@ int alarm_task_monitor_init(struct alarm_task *a_task, struct alarm_task_config 
         goto err;
     }
 
+    a_task->type = ALARM_MONITOR;
+
     log_info("success\n");
 
     return 0;
@@ -141,7 +143,7 @@ err:
     return -1;
 }
 
-void alarm_task_monitor_exit(struct alarm_task *a_task)
+static void alarm_task_monitor_exit(struct alarm_task *a_task)
 {
     tsn_task_unregister(&a_task->task);
 
@@ -173,13 +175,23 @@ int alarm_task_io_init(struct alarm_task *a_task, struct alarm_task_config *cfg,
         goto err;
     }
 
+    a_task->type = ALARM_IO_DEVICE;
+
     return 0;
 
 err:
     return -1;
 }
 
-void alarm_task_io_exit(struct alarm_task *a_task)
+static void alarm_task_io_exit(struct alarm_task *a_task)
 {
     tsn_task_unregister(&a_task->task);
+}
+
+void alarm_task_exit(struct alarm_task *a_task)
+{
+    if (a_task->type == ALARM_MONITOR)
+        alarm_task_monitor_exit(a_task);
+    else if (a_task->type == ALARM_IO_DEVICE)
+        alarm_task_io_exit(a_task);
 }
