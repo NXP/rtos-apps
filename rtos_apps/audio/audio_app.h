@@ -23,7 +23,7 @@ struct sai_active_config {
     uint32_t clk_freq;
     uint32_t masterSlave;
     uint32_t msel;
-    uint32_t audio_pll;
+    int32_t audio_pll;
     uint32_t audio_pll_mul;
     uint32_t audio_pll_div;
     uint32_t slot_count;        /* Number of words in audio frame: channels count */
