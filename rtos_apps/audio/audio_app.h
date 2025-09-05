@@ -43,7 +43,7 @@ extern const int audio_app_supported_period[AUDIO_APP_MAX_SUPPORTED_PERIOD];
 extern const struct play_pipeline_config *audio_app_play_config[AUDIO_APP_MAX_CFG];
 extern const struct play_pipeline_config *audio_app_play_alternate_config[AUDIO_APP_MAX_CFG];
 extern struct sai_active_config audio_app_sai_active_list[];
-extern int32_t audio_app_sai_active_list_nelems;
+extern uint32_t audio_app_sai_active_list_nelems;
 
 int audio_app_ctrl_send(void *ctrl_handle, void *data, uint32_t len);
 int audio_app_ctrl_recv(void *ctrl_handle, void *data, uint32_t *len);
