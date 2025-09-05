@@ -50,7 +50,7 @@ int audio_app_ctrl_recv(void *ctrl_handle, void *data, uint32_t *len);
 
 bool audio_app_check_params(uint32_t period, uint32_t rate);
 void audio_app_pin_mux_dynamic_config(bool use_alternate_config);
-void audio_app_sai_alternate_config(bool use_alternate_config, unsigned int rate);
+void audio_app_sai_alternate_config(bool use_alternate_config, uint32_t rate);
 
 int32_t audio_app_codec_setup(uint8_t codec_id);
 int32_t audio_app_codec_set_format(uint8_t codec_id, uint32_t mclk, uint32_t sample_rate, uint32_t bitwidth);
@@ -61,7 +61,7 @@ struct genavb_handle *audio_app_avb_init(void);
 void audio_app_avb_exit(void);
 
 void audio_app_sai_clock_setup(void);
-uint32_t audio_app_sai_select_audio_pll_mux(unsigned int index, int srate);
+uint32_t audio_app_sai_select_audio_pll_mux(unsigned int index, uint32_t srate);
 uint32_t audio_app_sai_get_clock_freq(unsigned int index);
 
 #endif /* _RTOS_APPS_AUDIO_APP_H_ */
