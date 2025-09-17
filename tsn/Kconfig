@@ -28,6 +28,10 @@ config MCUX_COMPONENT_component.rtos_apps.tsn
             bool "User button support"
             default n
 
+        config MCUX_COMPONENT_component.rtos_apps.tsn.serial
+            bool "Serial mode support"
+            default n
+
         config RTOS_APPS_LWIP
             bool
             default y if MCUX_COMPONENT_component.rtos_apps.tsn.lwip
@@ -35,6 +39,10 @@ config MCUX_COMPONENT_component.rtos_apps.tsn
         config RTOS_APPS_USER_BUTTON
             bool
             default y if MCUX_COMPONENT_component.rtos_apps.tsn.user_button
+
+        config RTOS_APPS_SERIAL
+            bool
+            default y if MCUX_COMPONENT_component.rtos_apps.tsn.serial
 
         config RTOS_APPS_MOTOR_CONTROLLER
             bool
