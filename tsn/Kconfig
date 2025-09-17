@@ -11,7 +11,6 @@ config MCUX_COMPONENT_component.rtos_apps.tsn
             bool "Use IP stack"
             default n
             select MCUX_COMPONENT_middleware.lwip
-            select MCUX_COMPONENT_middleware.lwip.sys_arch.dynamic
             select MCUX_COMPONENT_middleware.lwip.apps.lwiperf
             select MCUX_COMPONENT_middleware.lwip.empty_ethernetif
 
