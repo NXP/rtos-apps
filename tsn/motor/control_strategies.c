@@ -1357,6 +1357,8 @@ int control_strategy_context_init(struct control_strategy_ctx **ctx, control_str
     if (!*ctx)
         goto err_malloc;
 
+    memset(*ctx, 0, sizeof(struct control_strategy_ctx));
+
     slist_head_init(&(*ctx)->motor_list);
 
     (*ctx)->app_period_ns = app_period_ns;

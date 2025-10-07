@@ -104,7 +104,9 @@ int command_client_start(struct command_client_ctx **ctx)
     if (!*ctx)
         goto err_malloc;
 
-    // By default, the command is set to start
+    memset((*ctx), 0, sizeof(struct command_client_ctx));
+
+    /* By default, the command is set to start */
     (*ctx)->state = CMD_STATE_GO;
 
     if (rtos_thread_create(&(*ctx)->command_client_task, COMMAND_CLIENT_TASK_PRIO, 0, COMMAND_CLIENT_TASK_STACK_SIZE,
