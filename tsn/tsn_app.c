@@ -185,7 +185,7 @@ int rtos_apps_tsn_init(struct rtos_apps_tsn_config *config, struct tsn_app_ctx *
                 log_err("controller_init() failed\n");
                 goto err_init;
             }
-        }
+        } else
 #endif
 #ifdef CONFIG_RTOS_APPS_MOTOR_IO_DEVICE
         if (c_cfg->type == CYCLIC_IO_DEVICE) {
@@ -201,12 +201,14 @@ int rtos_apps_tsn_init(struct rtos_apps_tsn_config *config, struct tsn_app_ctx *
             }
 
             io_device_set_motor_offset(&ctx->io_device, 0, config->motor_offset);
-        }
+        } else
 #endif
-        if (c_cfg->type != CYCLIC_CONTROLLER && c_cfg->type != CYCLIC_IO_DEVICE) {
-            log_err("Unknown cyclic task type\n");
+        {
+            log_err("role(%u) not supported for mode(%u)\n", config->role, config->mode);
+
             goto err_init;
         }
+
     } else
 #endif
     {
@@ -217,14 +219,15 @@ int rtos_apps_tsn_init(struct rtos_apps_tsn_config *config, struct tsn_app_ctx *
                 log_err("serial_iodevice_init() failed\n");
                 goto err_init;
             }
-        } else if (config->mode == MOTOR_LOCAL) {
-            log_err("mode not supported\n");
-            goto err_init;
-        } else {
+        } else if (config->mode == NETWORK_ONLY) {
             if (cyclic_task_init(&ctx->c_task, c_cfg, NULL, &null_loop, &ctx->c_task) < 0) {
                 log_err("cyclic_task_init() failed\n");
                 goto err_init;
             }
+        } else {
+            log_err("mode(%u) not supported\n", config->mode);
+
+            goto err_init;
         }
     }
 
