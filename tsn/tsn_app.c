@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2025 NXP
+ * Copyright 2018-2026 NXP
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -93,7 +93,7 @@ int rtos_apps_tsn_init(struct rtos_apps_tsn_config *config, struct tsn_app_ctx *
     log_info("motor_offset     : %f\n", (double)config->motor_offset);
     log_info("control_strategy : %u\n", config->control_strategy);
     log_info("app period       : %u\n", config->period_ns);
-    log_info("app offset       : %u\n", (config->offset + 1) * config->period_ns / 2);
+    log_info("app offset       : %u\n", config->offset);
     log_info("network budget   : %u\n", config->network_budget_ns);
     if (config->tx_time_enabled) {
         log_info("tx time offset   : %u\n", config->tx_time_offset_ns);
