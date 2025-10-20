@@ -41,7 +41,6 @@ struct data_ctx {
     uint32_t sai_dev_irq_source;
     sai_sample_rate_t sample_rate;
     uint8_t period;
-    bool use_alternate_config;
 
     uint64_t callback_err;
     uint64_t callback;
@@ -360,43 +359,18 @@ static void audio_stats(struct data_ctx *ctx)
 
 static int audio_run(struct data_ctx *ctx, struct audio_cmd_run *run)
 {
+    const struct play_pipeline_config *play_cfg = NULL;
+    struct audio_app_run_config run_cfg = {0};
     int rc = AUDIO_RESP_STATUS_ERROR;
-    struct audio_config cfg;
-    const struct play_pipeline_config *play_cfg;
-    struct event e;
-    uint8_t pipeline_count = 0;
     size_t period = DEFAULT_PERIOD;
+    uint8_t pipeline_count = 0;
+    struct audio_config cfg;
+    struct event e;
     uint32_t rate;
     int i;
 
     if (ctx->handler)
         goto exit;
-
-    if (run->id >= AUDIO_APP_MAX_CFG)
-        goto exit;
-
-    if (run->use_alternate_config) {
-        play_cfg = audio_app_play_alternate_config[run->id];
-    } else {
-        play_cfg = audio_app_play_config[run->id];
-    }
-
-    if (!play_cfg)
-        goto exit;
-
-    /* Check the count of pipeline */
-    for (i = 0; i < ctx->thread_count; i++) {
-        if (play_cfg->cfg[i] == NULL)
-            break;
-        else
-            pipeline_count++;
-    }
-
-    if (pipeline_count == 0) {
-        log_err("Unsupported configuration: use_alternate_config(%d) pipeline id(%u)\n", run->use_alternate_config,
-                run->id);
-        goto exit;
-    }
 
     if (assign_nonzero_valid_val(period, run->period, audio_app_supported_period) != 0) {
         log_err("Unsupported period (%d frames)\n", run->period);
@@ -406,25 +380,39 @@ static int audio_run(struct data_ctx *ctx, struct audio_cmd_run *run)
     /* If user configured rate is zero, set to default */
     rate = (run->frequency == 0) ? DEFAULT_SAMPLE_RATE : run->frequency;
 
-    if (!audio_app_codec_is_rate_supported(rate, run->use_alternate_config)) {
-        log_err("Unsupported rate(%d Hz)\n", run->frequency);
+    run_cfg.index = run->config_idx;
+    run_cfg.rate = rate;
+    run_cfg.period = period;
+    run_cfg.mode = run->id;
+
+    if (audio_app_apply_config(&run_cfg, &play_cfg) < 0) {
+        log_err("Unable to apply configuration(%u): rate(%u) period(%u)\n", run->config_idx,
+                rate, period);
         goto exit;
     }
+
+    if (!play_cfg)
+        goto exit;
 
     ctx->callback_err = 0;
     ctx->callback = 0;
     ctx->sample_rate = (sai_sample_rate_t)rate;
     ctx->period = period;
-    ctx->use_alternate_config = run->use_alternate_config;
     cfg.rate = rate;
     cfg.period = period;
-
-    if (!audio_app_check_params(cfg.period, cfg.rate)) {
-        log_warn("Unsupported combination: rate(%d Hz)/period(%d)\n", cfg.period, cfg.rate);
+    /* Check the count of pipeline */
+    for (i = 0; i < ctx->thread_count; i++) {
+        if (play_cfg->cfg[i] == NULL)
+            break;
+        else
+            pipeline_count++;
     }
 
-    audio_app_pin_mux_dynamic_config(ctx->use_alternate_config);
-    audio_app_sai_alternate_config(ctx->use_alternate_config, ctx->sample_rate);
+    if (pipeline_count == 0) {
+        log_err("Unsupported: configuration(%d) pipeline id(%u)\n", run->config_idx,
+                run->id);
+        goto exit;
+    }
 
     for (i = 0; i < pipeline_count; i++) {
         cfg.data = (void *)play_cfg->cfg[i];

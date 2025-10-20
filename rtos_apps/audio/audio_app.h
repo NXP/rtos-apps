@@ -13,7 +13,6 @@
 #include "audio_pipeline.h"
 
 #define AUDIO_APP_MAX_SUPPORTED_PERIOD 10
-#define AUDIO_APP_MAX_CFG              9
 #define AUDIO_APP_MAX_DATA_THREADS     2
 
 struct sai_active_config {
@@ -39,18 +38,22 @@ struct play_pipeline_config {
     const struct audio_pipeline_config *cfg[AUDIO_APP_MAX_DATA_THREADS];
 };
 
+struct audio_app_run_config {
+   uint32_t rate;
+   uint32_t period;
+   uint32_t index;    /* Configuration index */
+   uint32_t mode;     /* Run mode identifier */
+};
+
 extern const int audio_app_supported_period[AUDIO_APP_MAX_SUPPORTED_PERIOD];
-extern const struct play_pipeline_config *audio_app_play_config[AUDIO_APP_MAX_CFG];
-extern const struct play_pipeline_config *audio_app_play_alternate_config[AUDIO_APP_MAX_CFG];
 extern struct sai_active_config audio_app_sai_active_list[];
 extern uint32_t audio_app_sai_active_list_nelems;
 
 int audio_app_ctrl_send(void *ctrl_handle, void *data, uint32_t len);
 int audio_app_ctrl_recv(void *ctrl_handle, void *data, uint32_t *len);
 
-bool audio_app_check_params(uint32_t period, uint32_t rate);
-void audio_app_pin_mux_dynamic_config(bool use_alternate_config);
-void audio_app_sai_alternate_config(bool use_alternate_config, uint32_t rate);
+int audio_app_apply_config(struct audio_app_run_config *run_config,
+                           const struct play_pipeline_config **play_cfg);
 
 int32_t audio_app_codec_setup(uint8_t codec_id);
 int32_t audio_app_codec_set_format(uint8_t codec_id, uint32_t mclk, uint32_t sample_rate, uint32_t bitwidth);
