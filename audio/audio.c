@@ -166,7 +166,6 @@ static int sai_setup(struct data_ctx *ctx)
 
     /* Configure each active SAI */
     for (i = 0; i < audio_app_sai_active_list_nelems; i++) {
-        uint32_t pll_id;
         uint8_t codec_id;
         int32_t ret;
 
@@ -231,8 +230,7 @@ static int sai_setup(struct data_ctx *ctx)
             goto out;
         }
 
-        pll_id = audio_app_sai_select_audio_pll_mux(i, sai_config.sample_rate);
-        pll_adjust_set_pll_id(ctx, pll_id);
+        pll_adjust_set_pll_id(ctx, audio_app_sai_active_list[i].audio_pll);
     }
 
     if (pll_disable)

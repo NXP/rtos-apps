@@ -61,7 +61,6 @@ struct genavb_handle *audio_app_avb_init(void);
 void audio_app_avb_exit(void);
 
 void audio_app_sai_clock_setup(void);
-uint32_t audio_app_sai_select_audio_pll_mux(unsigned int index, uint32_t srate);
 uint32_t audio_app_sai_get_clock_freq(unsigned int index);
 
 #endif /* _RTOS_APPS_AUDIO_APP_H_ */
