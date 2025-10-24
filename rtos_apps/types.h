@@ -13,8 +13,8 @@
 #define NSECS_PER_USEC  (1000)
 #define SECS_PER_MIN    (60.0)
 
-#define min(a, b) ((a) < (b) ? (a) : (b))
-#define max(a, b) ((a) > (b) ? (a) : (b))
+#define rtos_apps_min(a, b) ((a) < (b) ? (a) : (b))
+#define rtos_apps_max(a, b) ((a) > (b) ? (a) : (b))
 
 #define offset_of(type, member)           ((unsigned long)&(((type *)0)->member))
 #define container_of(entry, type, member) ((type *)((unsigned char *)(entry)-offset_of(type, member)))
