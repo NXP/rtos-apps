@@ -124,9 +124,9 @@ err_alloc_ctx:
 
 void play_pipeline_ctrl(void *handle)
 {
+#if defined(CONFIG_RTOS_APPS_AUDIO_GENAVB_ENABLE)
     struct pipeline_ctx *ctx = handle;
 
-#if defined(CONFIG_RTOS_APPS_AUDIO_GENAVB_ENABLE)
     if (ctx->avb.genavb_handle)
         audio_avb_ctrl(handle);
 #else
