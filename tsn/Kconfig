@@ -21,7 +21,7 @@ config MCUX_COMPONENT_component.rtos_apps.tsn
         config MCUX_COMPONENT_component.rtos_apps.tsn.motor.controller
             bool "Motor Controller support"
             default n
-            select MCUX_COMPONENT_component.rtos_apps.tsn.user_button
+            imply MCUX_COMPONENT_component.rtos_apps.tsn.user_button
 
         config MCUX_COMPONENT_component.rtos_apps.tsn.motor.iodevice
             bool "Motor IO-Device support"
