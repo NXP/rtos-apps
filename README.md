@@ -13,6 +13,31 @@ Supported application components
 
 Using the RTOS Application Layer
 ------------------------------
+
+#### FreeRTOS
+
+##### MCUX SDK vesions from 25.06 onward
+
+Components can be enabled through Kconfig configuration in your `prj.conf` file:
+
+```conf
+CONFIG_MCUX_COMPONENT_component.rtos_apps.async=y
+CONFIG_MCUX_COMPONENT_component.rtos_apps.audio=y
+CONFIG_MCUX_COMPONENT_component.rtos_apps.log=y
+CONFIG_MCUX_COMPONENT_component.rtos_apps.stats=y
+CONFIG_MCUX_COMPONENT_component.rtos_apps.tsn=y
+```
+
+Individual components may have additional configuration options. For example, the log component:
+
+```conf
+CONFIG_MCUX_COMPONENT_component.rtos_apps.log=y
+CONFIG_RTOS_APPS_LOG_STR="app "
+CONFIG_RTOS_APPS_LOG_TIMESTAMP=y
+```
+
+##### MCUX SDK versions 2.16 and below
+
 Each of the components provides:
 - A cmake submodule file: rtos_apps_\<component\>.cmake
 - One or more header file(s): rtos_apps/\<component\>.h or rtos_apps/\<component\>/\<file\>.h
@@ -20,6 +45,7 @@ Each of the components provides:
 On the applications' CMake, add the following lines:
 
 #### FreeRTOS
+
 ```cmake
 set(RTOS_APPS_DIR /path/to/rtos-apps)
 set(RTOS_APPS_TARGET <application target name>)
@@ -30,6 +56,13 @@ include(${RTOS_APPS_DIR}/rtos_apps_<component_b>.cmake)
 ```
 
 #### Zephyr
+
+Each of the components provides:
+- A cmake submodule file: rtos_apps_\<component\>.cmake
+- One or more header file(s): rtos_apps/\<component\>.h or rtos_apps/\<component\>/\<file\>.h
+
+On the applications' CMake, add the following lines:
+
 ```cmake
 set(RTOS_APPS_DIR /path/to/rtos-apps)
 set(RTOS_APPS_TARGET <application target name>)
