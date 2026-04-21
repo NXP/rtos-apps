@@ -11,7 +11,8 @@
 #include "genavb/hsr.h"
 #include "genavb/types.h"
 #include "storage.h"
-#include "hsr.h"
+
+#include "rtos_apps/shell/hsr.h"
 
 #include "shell_config.h"
 
@@ -77,7 +78,7 @@ static void hsr_mode_apply_permanent(shell_handle_t shell)
     shell_printf(shell, "HSR operation mode %u set success\n", mode);
 }
 
-static shell_status_t hsr_mode_set(shell_handle_t shell, int32_t argc, char **argv)
+shell_status_t cmd_hsr_mode_set(shell_handle_t shell, int32_t argc, char **argv)
 {
     struct genavb_handle *genavb_handle = get_genavb_handle();
     bool permanent = false;
@@ -127,7 +128,7 @@ err:
     return kStatus_SHELL_Error;
 }
 
-void hsr_init_shell(shell_handle_t shell)
+void cmd_hsr_init(shell_handle_t shell)
 {
     hsr_mode_apply_permanent(shell);
 }

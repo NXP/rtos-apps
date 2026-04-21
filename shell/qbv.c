@@ -18,6 +18,7 @@
 
 #include "storage.h"
 #include "shell_config.h"
+#include "rtos_apps/shell/qbv.h"
 #include "qbv.h"
 #include "genavb_sdk.h"
 
@@ -331,7 +332,7 @@ static void print_qbv_set_usage(shell_handle_t shell)
     shell_printf(shell, (SHELL_COMMAND(qbv_set))->pcHelpString);
 }
 
-static shell_status_t qbv_set(shell_handle_t shell, int32_t argc, char **argv)
+shell_status_t cmd_qbv_set(shell_handle_t shell, int32_t argc, char **argv)
 {
     struct genavb_st_gate_control_entry gate_list[QBV_LIST_MAX_ENTRIES];
     unsigned int gate_list_entry[3], num_entries = 0;
@@ -426,7 +427,7 @@ static void print_qbv_get_usage(shell_handle_t shell)
     shell_printf(shell, (SHELL_COMMAND(qbv_get))->pcHelpString);
 }
 
-static shell_status_t qbv_get(shell_handle_t shell, int32_t argc, char **argv)
+shell_status_t cmd_qbv_get(shell_handle_t shell, int32_t argc, char **argv)
 {
     struct genavb_st_config config = st_config_default;
     struct genavb_st_gate_control_entry gate_list[QBV_LIST_MAX_ENTRIES];
@@ -499,7 +500,7 @@ static void print_qbv_disable_usage(shell_handle_t shell)
     shell_printf(shell, (SHELL_COMMAND(qbv_disable))->pcHelpString);
 }
 
-static shell_status_t qbv_disable(shell_handle_t shell, int32_t argc, char **argv)
+shell_status_t cmd_qbv_disable(shell_handle_t shell, int32_t argc, char **argv)
 {
     struct genavb_st_config config = {
         .enable = 0
@@ -621,7 +622,7 @@ err:
     return -1;
 }
 
-static shell_status_t qbv_set_max_sdu(shell_handle_t shell, int32_t argc, char **argv)
+shell_status_t cmd_qbv_set_max_sdu(shell_handle_t shell, int32_t argc, char **argv)
 {
     unsigned int port_id;
     unsigned long tmp;
@@ -729,7 +730,7 @@ static void dump_genavb_st_max_sdu(shell_handle_t shell, unsigned int port_id, s
     shell_printf(shell, "\n");
 }
 
-static shell_status_t qbv_get_max_sdu(shell_handle_t shell, int32_t argc, char **argv)
+shell_status_t cmd_qbv_get_max_sdu(shell_handle_t shell, int32_t argc, char **argv)
 {
     struct genavb_st_max_sdu max_sdu[QOS_TRAFFIC_CLASS_MAX];
     unsigned int port_id;
@@ -809,7 +810,7 @@ err:
     return rc;
 }
 
-void qbv_init(shell_handle_t shell)
+void cmd_qbv_init(shell_handle_t shell)
 {
     unsigned int port_id;
 
@@ -823,7 +824,7 @@ void qbv_init(shell_handle_t shell)
 #else
 #include "qbv.h"
 
-void qbv_init(shell_handle_t shell) {return;}
+void cmd_qbv_init(shell_handle_t shell) {return;}
 int qbv_write_permanent(shell_handle_t shell, unsigned int port_id, struct genavb_st_config config) {return -1;}
 int qbv_apply_permanent(shell_handle_t shell, unsigned int port_id) {return -1;}
 #endif /* CONFIG_APP_QBV */

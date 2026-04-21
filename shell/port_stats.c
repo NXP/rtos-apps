@@ -13,8 +13,10 @@
 #include "rtos_apps/types.h"
 #include "rtos_apps/log.h"
 
-#include "shell_config.h"
 #include "storage.h"
+
+#include "shell_config.h"
+#include "rtos_apps/shell/port_stats.h"
 
 static int __port_stats(shell_handle_t shell, unsigned int port_id, int n)
 {
@@ -42,7 +44,7 @@ err:
    return -1;
 }
 
-static shell_status_t port_stats(shell_handle_t shell, int32_t argc, char **argv)
+shell_status_t cmd_port_stats(shell_handle_t shell, int32_t argc, char **argv)
 {
     unsigned int port_id;
     unsigned long tmp;

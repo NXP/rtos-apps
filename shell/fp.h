@@ -9,7 +9,6 @@
 
 #include "genavb/frame_preemption.h"
 
-void fp_init(shell_handle_t shell);
 int fp_write_802_1q_permanent(shell_handle_t shell, unsigned int port_id, struct genavb_fp_config config);
 int fp_write_802_3_permanent(shell_handle_t shell, unsigned int port_id, struct genavb_fp_config config);
 int fp_apply_permanent(shell_handle_t shell, unsigned int port_id);

@@ -11,8 +11,8 @@
 #include "genavb/helpers.h"
 
 #include "common.h"
-#include "fdb.h"
 #include "storage.h"
+#include "rtos_apps/shell/fdb.h"
 
 #include "shell_config.h"
 
@@ -229,7 +229,7 @@ static int fdb_delete_permanent(uint8_t *address, uint16_t vid)
     return fdb_delete_storage(address, vid);
 }
 
-static shell_status_t fdb_update(shell_handle_t shell, int32_t argc, char **argv)
+shell_status_t cmd_fdb_update(shell_handle_t shell, int32_t argc, char **argv)
 {
     struct genavb_fdb_port_map port_map = {0};
     uint8_t address[6];
@@ -316,7 +316,7 @@ static void print_fdb_read_usage(shell_handle_t shell)
     shell_printf(shell, (SHELL_COMMAND(fdb_read))->pcHelpString);
 }
 
-static shell_status_t fdb_read(shell_handle_t shell, int32_t argc, char **argv)
+shell_status_t cmd_fdb_read(shell_handle_t shell, int32_t argc, char **argv)
 {
     struct genavb_fdb_port_map port_map[CONFIG_APP_BR_NUM_PORTS] = {0};
     genavb_fdb_status_t status;
@@ -385,7 +385,7 @@ static void print_fdb_delete_usage(shell_handle_t shell)
     shell_printf(shell, (SHELL_COMMAND(fdb_delete))->pcHelpString);
 }
 
-static shell_status_t fdb_delete(shell_handle_t shell, int32_t argc, char **argv)
+shell_status_t cmd_fdb_delete(shell_handle_t shell, int32_t argc, char **argv)
 {
     bool permanent = false;
     unsigned long tmp;
@@ -448,7 +448,7 @@ static void print_fdb_dump_usage(shell_handle_t shell)
     shell_printf(shell, (SHELL_COMMAND(fdb_dump))->pcHelpString);
 }
 
-static shell_status_t fdb_dump(shell_handle_t shell, int32_t argc, char **argv)
+shell_status_t cmd_fdb_dump(shell_handle_t shell, int32_t argc, char **argv)
 {
     struct genavb_fdb_port_map port_map[CONFIG_APP_BR_NUM_PORTS] = {0};
     genavb_fdb_status_t status = GENAVB_FDB_STATUS_INVALID;
@@ -513,7 +513,7 @@ static int fdb_apply_permanent(shell_handle_t shell)
     return 0;
 }
 
-void fdb_init_shell(shell_handle_t shell)
+void cmd_fdb_init(shell_handle_t shell)
 {
     fdb_apply_permanent(shell);
 }

@@ -13,8 +13,8 @@
 
 #include "common.h"
 #include "storage.h"
-#include "stream_identification.h"
 #include "shell_config.h"
+#include "rtos_apps/shell/stream_identification.h"
 
 #define SI_DEFAULT_PORT_NUM     1
 #define SI_DEFAULT_PORT_SIZE    CONFIG_APP_LOGICAL_PORTS
@@ -366,7 +366,7 @@ static void si_update_print_usage(shell_handle_t shell)
     shell_printf(shell, (SHELL_COMMAND(si_update))->pcHelpString);
 }
 
-static shell_status_t si_update(shell_handle_t shell, int32_t argc, char **argv)
+shell_status_t cmd_si_update(shell_handle_t shell, int32_t argc, char **argv)
 {
     struct genavb_si_port ports[SI_DEFAULT_PORT_SIZE] = SI_DEFAULT_PORT;
     struct genavb_stream_identity entry = si_default_entry;
@@ -416,7 +416,7 @@ static void si_delete_print_usage(shell_handle_t shell)
     shell_printf(shell, (SHELL_COMMAND(si_delete))->pcHelpString);
 }
 
-static shell_status_t si_delete(shell_handle_t shell, int32_t argc, char **argv)
+shell_status_t cmd_si_delete(shell_handle_t shell, int32_t argc, char **argv)
 {
     bool permanent = false;
     unsigned long tmp;
@@ -467,7 +467,7 @@ static void si_read_print_usage(shell_handle_t shell)
     shell_printf(shell, (SHELL_COMMAND(si_read))->pcHelpString);
 }
 
-static shell_status_t si_read(shell_handle_t shell, int32_t argc, char **argv)
+shell_status_t cmd_si_read(shell_handle_t shell, int32_t argc, char **argv)
 {
     struct genavb_stream_identity entry = {0};
     struct genavb_si_port ports[CONFIG_APP_LOGICAL_PORTS];
@@ -545,7 +545,7 @@ static void si_apply_permanent(shell_handle_t shell)
     }
 }
 
-void stream_identification_init_shell(shell_handle_t shell)
+void cmd_stream_identification_init(shell_handle_t shell)
 {
     si_apply_permanent(shell);
 }

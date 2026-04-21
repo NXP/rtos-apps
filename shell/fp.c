@@ -8,11 +8,14 @@
 
 #include <stdio.h>
 
+#include "genavb/frame_preemption.h"
+
 #include "genavb/error.h"
 #include "genavb/helpers.h"
 
 #include "storage.h"
 #include "shell_config.h"
+#include "rtos_apps/shell/fp.h"
 #include "fp.h"
 
 #define PATH_SZ         30
@@ -215,7 +218,7 @@ err:
     return rc;
 }
 
-static shell_status_t fp_set(shell_handle_t shell, int32_t argc, char **argv)
+shell_status_t cmd_fp_set(shell_handle_t shell, int32_t argc, char **argv)
 {
     bool permanent = false, is_cf_8021 = false;
     struct genavb_fp_config config_8021q;
@@ -337,7 +340,7 @@ err:
     return kStatus_SHELL_Error;
 }
 
-static shell_status_t fp_get(shell_handle_t shell, int32_t argc, char **argv)
+shell_status_t cmd_fp_get(shell_handle_t shell, int32_t argc, char **argv)
 {
     struct genavb_fp_config config;
     bool permanent = false;
@@ -451,7 +454,7 @@ err:
     return rc;
 }
 
-void fp_init(shell_handle_t shell)
+void cmd_fp_init(shell_handle_t shell)
 {
     unsigned int port_id;
 
@@ -463,7 +466,7 @@ void fp_init(shell_handle_t shell)
 #else
 #include "fp.h"
 
-void fp_init(shell_handle_t shell) {return;}
+void cmd_fp_init_shell(shell_handle_t shell) {return;}
 int fp_write_802_1q_permanent(shell_handle_t shell, unsigned int port_id, struct genavb_fp_config config) {return -1;}
 int fp_write_802_3_permanent(shell_handle_t shell, unsigned int port_id, struct genavb_fp_config config) {return -1;}
 int fp_apply_permanent(shell_handle_t shell, unsigned int port_id) {return -1;}

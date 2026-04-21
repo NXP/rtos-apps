@@ -11,10 +11,10 @@
 #include "genavb/frer.h"
 #include "genavb/helpers.h"
 
-#include "frer.h"
 #include "storage.h"
 
 #include "shell_config.h"
+#include "rtos_apps/shell/frer.h"
 
 #define PATH_MAX_SIZE          50
 #define BUF_MAX_SIZE           31
@@ -236,7 +236,7 @@ static void seqg_print(shell_handle_t shell, uint32_t index, struct genavb_seque
     shell_printf(shell, " % 5s |\n", entry->reset ? "true" : "false");
 }
 
-static shell_status_t seqg_update(shell_handle_t shell, int32_t argc, char **argv)
+shell_status_t cmd_seqg_update(shell_handle_t shell, int32_t argc, char **argv)
 {
     struct genavb_sequence_generation entry = seqg_default;
     uint32_t stream[STREAM_HANDLE_MAX] = {STREAM_HANDLE_DEFAULT, };
@@ -300,7 +300,7 @@ err:
     return kStatus_SHELL_Error;
 }
 
-static shell_status_t seqg_delete(shell_handle_t shell, int32_t argc, char **argv)
+shell_status_t cmd_seqg_delete(shell_handle_t shell, int32_t argc, char **argv)
 {
     uint32_t index = 0;
     bool permanent = false;
@@ -339,7 +339,7 @@ err:
     return kStatus_SHELL_Error;
 }
 
-static shell_status_t seqg_read(shell_handle_t shell, int32_t argc, char **argv)
+shell_status_t cmd_seqg_read(shell_handle_t shell, int32_t argc, char **argv)
 {
     struct genavb_sequence_generation entry = seqg_default;
     uint32_t stream[STREAM_HANDLE_MAX] = {STREAM_HANDLE_DEFAULT, };
@@ -553,7 +553,7 @@ static void seqr_print(shell_handle_t shell, uint32_t index, struct genavb_seque
     shell_printf(shell, " % 19" PRIu32 " |\n", entry->latent_error_parameters.reset_period);
 }
 
-static shell_status_t seqr_update(shell_handle_t shell, int32_t argc, char **argv)
+shell_status_t cmd_seqr_update(shell_handle_t shell, int32_t argc, char **argv)
 {
     struct genavb_sequence_recovery entry = seqr_default;
     uint32_t stream[STREAM_HANDLE_MAX] = {STREAM_HANDLE_DEFAULT, };
@@ -633,7 +633,7 @@ err:
     return kStatus_SHELL_Error;
 }
 
-static shell_status_t seqr_delete(shell_handle_t shell, int32_t argc, char **argv)
+shell_status_t cmd_seqr_delete(shell_handle_t shell, int32_t argc, char **argv)
 {
     uint32_t index = 0;
     bool permanent = false;
@@ -672,7 +672,7 @@ err:
     return kStatus_SHELL_Error;
 }
 
-static shell_status_t seqr_read(shell_handle_t shell, int32_t argc, char **argv)
+shell_status_t cmd_seqr_read(shell_handle_t shell, int32_t argc, char **argv)
 {
     struct genavb_sequence_recovery entry = seqr_default;
     uint32_t stream[STREAM_HANDLE_MAX] = {STREAM_HANDLE_DEFAULT, };
@@ -845,7 +845,7 @@ static void seqi_print(shell_handle_t shell, unsigned int port_id, struct genavb
     shell_printf(shell, " % 14" PRIi8 " |\n", entry->path_id_lan_id);
 }
 
-static shell_status_t seqi_update(shell_handle_t shell, int32_t argc, char **argv)
+shell_status_t cmd_seqi_update(shell_handle_t shell, int32_t argc, char **argv)
 {
     struct genavb_sequence_identification entry = seqi_default;
     uint32_t stream[STREAM_HANDLE_MAX] = {STREAM_HANDLE_DEFAULT, };
@@ -909,7 +909,7 @@ err:
     return kStatus_SHELL_Error;
 }
 
-static shell_status_t seqi_delete(shell_handle_t shell, int32_t argc, char **argv)
+shell_status_t cmd_seqi_delete(shell_handle_t shell, int32_t argc, char **argv)
 {
     unsigned int port_id = 0;
     bool permanent = false;
@@ -948,7 +948,7 @@ err:
     return kStatus_SHELL_Error;
 }
 
-static shell_status_t seqi_read(shell_handle_t shell, int32_t argc, char **argv)
+shell_status_t cmd_seqi_read(shell_handle_t shell, int32_t argc, char **argv)
 {
     struct genavb_sequence_identification entry = seqi_default;
     uint32_t stream[STREAM_HANDLE_MAX] = {STREAM_HANDLE_DEFAULT, };
@@ -1000,7 +1000,7 @@ err:
     return kStatus_SHELL_Error;
 }
 
-void frer_init_shell(shell_handle_t shell)
+void cmd_frer_init(shell_handle_t shell)
 {
     seqi_apply_permanent(shell);
     seqr_apply_permanent(shell);

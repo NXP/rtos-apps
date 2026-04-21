@@ -12,17 +12,10 @@
 #include "genavb/vlan.h"
 
 #include "storage.h"
-#include "vlan.h"
 #include "shell_config.h"
+#include "rtos_apps/shell/vlan.h"
 
 #define VLAN_MAX_FILENAME 30
-
-static shell_status_t vlan_update(shell_handle_t shell, int32_t argc, char **argv);
-static shell_status_t vlan_delete(shell_handle_t shell, int32_t argc, char **argv);
-static shell_status_t vlan_read(shell_handle_t shell, int32_t argc, char **argv);
-static shell_status_t vlan_dump(shell_handle_t shell, int32_t argc, char **argv);
-static shell_status_t vlan_set_pvid(shell_handle_t shell, int32_t argc, char **argv);
-static shell_status_t vlan_get_pvid(shell_handle_t shell, int32_t argc, char **argv);
 
 static void vlan_dump_pvid(shell_handle_t shell, bool permanent);
 
@@ -301,7 +294,7 @@ static int vlan_delete_permanent(uint16_t vid)
     return vlan_delete_storage(vid);
 }
 
-static shell_status_t vlan_update(shell_handle_t shell, int32_t argc, char **argv)
+shell_status_t cmd_vlan_update(shell_handle_t shell, int32_t argc, char **argv)
 {
     struct genavb_vlan_port_map port_map = {0};
     bool permanent = false;
@@ -380,7 +373,7 @@ static void print_vlan_read_usage(shell_handle_t shell)
     shell_printf(shell, (SHELL_COMMAND(vlan_read))->pcHelpString);
 }
 
-static shell_status_t vlan_read(shell_handle_t shell, int32_t argc, char **argv)
+shell_status_t cmd_vlan_read(shell_handle_t shell, int32_t argc, char **argv)
 {
     struct genavb_vlan_port_map port_map[CONFIG_APP_BR_NUM_PORTS] = {0};
     bool permanent = false;
@@ -440,7 +433,7 @@ static void print_vlan_delete_usage(shell_handle_t shell)
     shell_printf(shell, (SHELL_COMMAND(vlan_delete))->pcHelpString);
 }
 
-static shell_status_t vlan_delete(shell_handle_t shell, int32_t argc, char **argv)
+shell_status_t cmd_vlan_delete(shell_handle_t shell, int32_t argc, char **argv)
 {
     bool permanent = false;
     unsigned long tmp;
@@ -495,7 +488,7 @@ static void print_vlan_dump_usage(shell_handle_t shell)
     shell_printf(shell, (SHELL_COMMAND(vlan_dump))->pcHelpString);
 }
 
-static shell_status_t vlan_dump(shell_handle_t shell, int32_t argc, char **argv)
+shell_status_t cmd_vlan_dump(shell_handle_t shell, int32_t argc, char **argv)
 {
     struct genavb_vlan_port_map port_map[CONFIG_APP_BR_NUM_PORTS] = {0};
     bool permanent = false;
@@ -628,7 +621,7 @@ static void print_vlan_set_pvid_usage(shell_handle_t shell)
     shell_printf(shell, (SHELL_COMMAND(vlan_set_pvid))->pcHelpString);
 }
 
-static shell_status_t vlan_set_pvid(shell_handle_t shell, int32_t argc, char **argv)
+shell_status_t cmd_vlan_set_pvid(shell_handle_t shell, int32_t argc, char **argv)
 {
     bool permanent = false;
     unsigned int port_id;
@@ -691,7 +684,7 @@ static void print_vlan_get_pvid_usage(shell_handle_t shell)
     shell_printf(shell, (SHELL_COMMAND(vlan_get_pvid))->pcHelpString);
 }
 
-static shell_status_t vlan_get_pvid(shell_handle_t shell, int32_t argc, char **argv)
+shell_status_t cmd_vlan_get_pvid(shell_handle_t shell, int32_t argc, char **argv)
 {
     bool permanent = false;
     unsigned int port_id;
@@ -815,7 +808,7 @@ static int vlan_apply_permanent(void)
     return 0;
 }
 
-void vlan_init_shell(shell_handle_t shell)
+void cmd_vlan_init(shell_handle_t shell)
 {
     vlan_apply_permanent();
 }

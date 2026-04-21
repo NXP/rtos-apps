@@ -14,7 +14,8 @@
 #include "rtos_apps/types.h"
 
 #include "storage.h"
-#include "psfp.h"
+
+#include "rtos_apps/shell/psfp.h"
 
 #include "shell_config.h"
 
@@ -291,7 +292,7 @@ static void print_sf_update_usage(shell_handle_t shell)
     shell_printf(shell, (SHELL_COMMAND(sf_update))->pcHelpString);
 }
 
-static shell_status_t sf_update(shell_handle_t shell, int32_t argc, char **argv)
+shell_status_t cmd_sf_update(shell_handle_t shell, int32_t argc, char **argv)
 {
     struct genavb_stream_filter_instance instance = stream_filter_default;
     bool permanent = false;
@@ -378,7 +379,7 @@ static void print_sf_delete_usage(shell_handle_t shell)
     shell_printf(shell, (SHELL_COMMAND(sf_delete))->pcHelpString);
 }
 
-static shell_status_t sf_delete(shell_handle_t shell, int32_t argc, char **argv)
+shell_status_t cmd_sf_delete(shell_handle_t shell, int32_t argc, char **argv)
 {
     uint32_t index;
     bool permanent = false;
@@ -432,7 +433,7 @@ static void print_sf_read_usage(shell_handle_t shell)
     shell_printf(shell, (SHELL_COMMAND(sf_read))->pcHelpString);
 }
 
-static shell_status_t sf_read(shell_handle_t shell, int32_t argc, char **argv)
+shell_status_t cmd_sf_read(shell_handle_t shell, int32_t argc, char **argv)
 {
     struct genavb_stream_filter_instance instance = stream_filter_default;
     bool permanent = false;
@@ -734,7 +735,7 @@ static void print_sg_update_usage(shell_handle_t shell)
     shell_printf(shell, (SHELL_COMMAND(sg_update))->pcHelpString);
 }
 
-static shell_status_t sg_update(shell_handle_t shell, int32_t argc, char **argv)
+shell_status_t cmd_sg_update(shell_handle_t shell, int32_t argc, char **argv)
 {
     struct genavb_stream_gate_instance instance;
     struct genavb_stream_gate_control_entry gate_list[genavb_stream_gate_control_get_max_entries()];
@@ -878,7 +879,7 @@ static void print_sg_delete_usage(shell_handle_t shell)
     shell_printf(shell, (SHELL_COMMAND(sg_delete))->pcHelpString);
 }
 
-static shell_status_t sg_delete(shell_handle_t shell, int32_t argc, char **argv)
+shell_status_t cmd_sg_delete(shell_handle_t shell, int32_t argc, char **argv)
 {
     bool permanent = false;
     unsigned long tmp;
@@ -934,7 +935,7 @@ static void print_sg_read_usage(shell_handle_t shell)
     shell_printf(shell, (SHELL_COMMAND(sg_read))->pcHelpString);
 }
 
-static shell_status_t sg_read(shell_handle_t shell, int32_t argc, char **argv)
+shell_status_t cmd_sg_read(shell_handle_t shell, int32_t argc, char **argv)
 {
     struct genavb_stream_gate_instance instance = {0};
     struct genavb_stream_gate_control_entry gate_list[genavb_stream_gate_control_get_max_entries()];
@@ -1119,7 +1120,7 @@ static void print_fm_update_usage(shell_handle_t shell)
     shell_printf(shell, (SHELL_COMMAND(fm_update))->pcHelpString);
 }
 
-static shell_status_t fm_update(shell_handle_t shell, int32_t argc, char **argv)
+shell_status_t cmd_fm_update(shell_handle_t shell, int32_t argc, char **argv)
 {
     struct genavb_flow_meter_instance instance = flow_meter_default;
     bool permanent = false;
@@ -1228,7 +1229,7 @@ static void print_fm_delete_usage(shell_handle_t shell)
     shell_printf(shell, (SHELL_COMMAND(fm_delete))->pcHelpString);
 }
 
-static shell_status_t fm_delete(shell_handle_t shell, int32_t argc, char **argv)
+shell_status_t cmd_fm_delete(shell_handle_t shell, int32_t argc, char **argv)
 {
     bool permanent = false;
     unsigned long tmp;
@@ -1284,7 +1285,7 @@ static void print_fm_read_usage(shell_handle_t shell)
     shell_printf(shell, (SHELL_COMMAND(fm_read))->pcHelpString);
 }
 
-static shell_status_t fm_read(shell_handle_t shell, int32_t argc, char **argv)
+shell_status_t cmd_fm_read(shell_handle_t shell, int32_t argc, char **argv)
 {
     struct genavb_flow_meter_instance instance = flow_meter_default;
     bool permanent = false;
@@ -1338,7 +1339,7 @@ err:
     return kStatus_SHELL_Error;
 }
 
-void psfp_init_shell(shell_handle_t shell)
+void cmd_psfp_init(shell_handle_t shell)
 {
     sf_apply_permanent(shell);
 
