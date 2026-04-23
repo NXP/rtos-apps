@@ -18,8 +18,8 @@
 	"    options:\n" \
 	"        -p: update mode in permanent database\n"
 
-void cmd_hsr_init(shell_handle_t shell);
+void cmd_hsr_init(void *shell);
 
-shell_status_t cmd_hsr_mode_set(shell_handle_t shell, int32_t argc, char **argv);
+int cmd_hsr_mode_set(void *shell, int32_t argc, char **argv);
 
 #endif /* __RTOS_APPS_SHELL_HSR_H__ */

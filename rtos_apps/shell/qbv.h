@@ -48,12 +48,12 @@
 	"    options:\n" \
 	"        -p: read from permanent database\n"
 
-void cmd_qbv_init(shell_handle_t shell);
+void cmd_qbv_init(void *shell);
 
-shell_status_t cmd_qbv_set(shell_handle_t shell, int32_t argc, char **argv);
-shell_status_t cmd_qbv_get(shell_handle_t shell, int32_t argc, char **argv);
-shell_status_t cmd_qbv_disable(shell_handle_t shell, int32_t argc, char **argv);
-shell_status_t cmd_qbv_set_max_sdu(shell_handle_t shell, int32_t argc, char **argv);
-shell_status_t cmd_qbv_get_max_sdu(shell_handle_t shell, int32_t argc, char **argv);
+int cmd_qbv_set(void *shell, int32_t argc, char **argv);
+int cmd_qbv_get(void *shell, int32_t argc, char **argv);
+int cmd_qbv_disable(void *shell, int32_t argc, char **argv);
+int cmd_qbv_set_max_sdu(void *shell, int32_t argc, char **argv);
+int cmd_qbv_get_max_sdu(void *shell, int32_t argc, char **argv);
 
 #endif /* __RTOS_APPS_SHELL_QBV_H__ */

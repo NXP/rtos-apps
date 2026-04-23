@@ -17,7 +17,7 @@
 
 #define VLAN_MAX_FILENAME 30
 
-static void vlan_dump_pvid(shell_handle_t shell, bool permanent);
+static void vlan_dump_pvid(void *shell, bool permanent);
 
 enum {
     COLUMN_TAGGED,
@@ -27,7 +27,7 @@ enum {
     COLUMN_MAX,
 };
 
-static void vlan_print_description(shell_handle_t shell)
+static void vlan_print_description(void *shell)
 {
     shell_printf(shell, "\n");
     shell_printf(shell, "  vid | dynamic |     tagged     |    untagged    |      fixed     |    forbidden   |\n");
@@ -35,7 +35,7 @@ static void vlan_print_description(shell_handle_t shell)
     /*                       2 |   false |        2, 3, 4 |              5 |     2, 3, 4, 5 |              6 | */
 }
 
-static void vlan_print_port_list(shell_handle_t shell, uint32_t port_mask)
+static void vlan_print_port_list(void *shell, uint32_t port_mask)
 {
     unsigned int port_id;
     char buf[15];
@@ -57,7 +57,7 @@ static void vlan_print_port_list(shell_handle_t shell, uint32_t port_mask)
     shell_printf(shell, " % 14s |", buf);
 }
 
-static void vlan_print_entry(shell_handle_t shell, uint16_t vid, bool dynamic, struct genavb_vlan_port_map port_map[CONFIG_APP_BR_NUM_PORTS])
+static void vlan_print_entry(void *shell, uint16_t vid, bool dynamic, struct genavb_vlan_port_map port_map[CONFIG_APP_BR_NUM_PORTS])
 {
     uint32_t port_mask[COLUMN_MAX] = {0};
     unsigned int port_id;
@@ -89,7 +89,7 @@ static void vlan_print_entry(shell_handle_t shell, uint16_t vid, bool dynamic, s
     shell_printf(shell, "\n");
 }
 
-static void print_vlan_update_usage(shell_handle_t shell)
+static void print_vlan_update_usage(void *shell)
 {
     shell_printf(shell, "Usage: ");
     shell_printf(shell, CMD_VLAN_UPDATE_HELP);
@@ -249,7 +249,7 @@ out:
     return rc;
 }
 
-static int vlan_update_permanent(shell_handle_t shell, uint16_t vid, struct genavb_vlan_port_map *map)
+static int vlan_update_permanent(void *shell, uint16_t vid, struct genavb_vlan_port_map *map)
 {
     uint32_t port_mask = 0, untagged_port_mask = 0;
 
@@ -284,7 +284,7 @@ static int vlan_delete_permanent(uint16_t vid)
     return vlan_delete_storage(vid);
 }
 
-shell_status_t cmd_vlan_update(shell_handle_t shell, int32_t argc, char **argv)
+int cmd_vlan_update(void *shell, int32_t argc, char **argv)
 {
     struct genavb_vlan_port_map port_map = {0};
     bool permanent = false;
@@ -349,21 +349,21 @@ shell_status_t cmd_vlan_update(shell_handle_t shell, int32_t argc, char **argv)
 
     shell_printf(shell, "VLAN update port(%u) vid(%u)\n", port_map.port_id, vid);
 
-    return kStatus_SHELL_Success;
+    return 0;
 
 err_usage:
     print_vlan_update_usage(shell);
 err:
-    return kStatus_SHELL_Error;
+    return -1;
 }
 
-static void print_vlan_read_usage(shell_handle_t shell)
+static void print_vlan_read_usage(void *shell)
 {
     shell_printf(shell, "Usage: ");
     shell_printf(shell, CMD_VLAN_READ_HELP);
 }
 
-shell_status_t cmd_vlan_read(shell_handle_t shell, int32_t argc, char **argv)
+int cmd_vlan_read(void *shell, int32_t argc, char **argv)
 {
     struct genavb_vlan_port_map port_map[CONFIG_APP_BR_NUM_PORTS] = {0};
     bool permanent = false;
@@ -409,21 +409,21 @@ shell_status_t cmd_vlan_read(shell_handle_t shell, int32_t argc, char **argv)
     vlan_print_description(shell);
     vlan_print_entry(shell, vid, dynamic, &port_map[0]);
 
-    return kStatus_SHELL_Success;
+    return 0;
 
 err_usage:
     print_vlan_read_usage(shell);
 err:
-    return kStatus_SHELL_Error;
+    return -1;
 }
 
-static void print_vlan_delete_usage(shell_handle_t shell)
+static void print_vlan_delete_usage(void *shell)
 {
     shell_printf(shell, "Usage: ");
     shell_printf(shell, CMD_VLAN_DELETE_HELP);
 }
 
-shell_status_t cmd_vlan_delete(shell_handle_t shell, int32_t argc, char **argv)
+int cmd_vlan_delete(void *shell, int32_t argc, char **argv)
 {
     bool permanent = false;
     unsigned long tmp;
@@ -464,21 +464,21 @@ shell_status_t cmd_vlan_delete(shell_handle_t shell, int32_t argc, char **argv)
         goto err;
     }
 
-    return kStatus_SHELL_Success;
+    return 0;
 
 err_usage:
     print_vlan_delete_usage(shell);
 err:
-    return kStatus_SHELL_Error;
+    return -1;
 }
 
-static void print_vlan_dump_usage(shell_handle_t shell)
+static void print_vlan_dump_usage(void *shell)
 {
     shell_printf(shell, "Usage: ");
     shell_printf(shell, CMD_VLAN_DUMP_HELP);
 }
 
-shell_status_t cmd_vlan_dump(shell_handle_t shell, int32_t argc, char **argv)
+int cmd_vlan_dump(void *shell, int32_t argc, char **argv)
 {
     struct genavb_vlan_port_map port_map[CONFIG_APP_BR_NUM_PORTS] = {0};
     bool permanent = false;
@@ -513,11 +513,11 @@ shell_status_t cmd_vlan_dump(shell_handle_t shell, int32_t argc, char **argv)
 
     vlan_dump_pvid(shell, permanent);
 
-    return kStatus_SHELL_Success;
+    return 0;
 
 err_usage:
     print_vlan_dump_usage(shell);
-    return kStatus_SHELL_Error;
+    return -1;
 }
 
 static int vlan_update_permanent_pvid(unsigned int port_id, uint16_t vid)
@@ -552,7 +552,7 @@ err:
     return -1;
 }
 
-static void vlan_dump_pvid(shell_handle_t shell, bool permanent)
+static void vlan_dump_pvid(void *shell, bool permanent)
 {
     uint16_t vid;
     int port_id;
@@ -605,13 +605,13 @@ static void vlan_dump_pvid(shell_handle_t shell, bool permanent)
     return;
 }
 
-static void print_vlan_set_pvid_usage(shell_handle_t shell)
+static void print_vlan_set_pvid_usage(void *shell)
 {
     shell_printf(shell, "Usage: ");
     shell_printf(shell, CMD_VLAN_SET_PVID_HELP);
 }
 
-shell_status_t cmd_vlan_set_pvid(shell_handle_t shell, int32_t argc, char **argv)
+int cmd_vlan_set_pvid(void *shell, int32_t argc, char **argv)
 {
     bool permanent = false;
     unsigned int port_id;
@@ -660,21 +660,21 @@ shell_status_t cmd_vlan_set_pvid(shell_handle_t shell, int32_t argc, char **argv
         goto err;
     }
 
-    return kStatus_SHELL_Success;
+    return 0;
 
 err_usage:
     print_vlan_set_pvid_usage(shell);
 err:
-    return kStatus_SHELL_Error;
+    return -1;
 }
 
-static void print_vlan_get_pvid_usage(shell_handle_t shell)
+static void print_vlan_get_pvid_usage(void *shell)
 {
     shell_printf(shell, "Usage: ");
     shell_printf(shell, CMD_VLAN_GET_PVID_HELP);
 }
 
-shell_status_t cmd_vlan_get_pvid(shell_handle_t shell, int32_t argc, char **argv)
+int cmd_vlan_get_pvid(void *shell, int32_t argc, char **argv)
 {
     bool permanent = false;
     unsigned int port_id;
@@ -718,12 +718,12 @@ shell_status_t cmd_vlan_get_pvid(shell_handle_t shell, int32_t argc, char **argv
 
     shell_printf(shell, "port %u PVID %u\n", port_id, vid);
 
-    return kStatus_SHELL_Success;
+    return 0;
 
 err_usage:
     print_vlan_get_pvid_usage(shell);
 err:
-    return kStatus_SHELL_Error;
+    return -1;
 }
 
 static int vlan_apply_permanent_pvid(void)
@@ -798,7 +798,7 @@ static int vlan_apply_permanent(void)
     return 0;
 }
 
-void cmd_vlan_init(shell_handle_t shell)
+void cmd_vlan_init(void *shell)
 {
     vlan_apply_permanent();
 }

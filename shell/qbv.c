@@ -98,7 +98,7 @@ static const struct genavb_st_gate_control_entry st_list_default = {
         .gate_states = 0xff
 };
 
-static void dump_genavb_st_config(shell_handle_t shell, unsigned int port_id, struct genavb_st_config *config)
+static void dump_genavb_st_config(void *shell, unsigned int port_id, struct genavb_st_config *config)
 {
     int i;
 
@@ -129,7 +129,7 @@ static void dump_genavb_st_config(shell_handle_t shell, unsigned int port_id, st
     shell_printf(shell, "\n");
 }
 
-static int qbv_read_permanent(shell_handle_t shell, unsigned int port_id, struct genavb_st_config *config)
+static int qbv_read_permanent(void *shell, unsigned int port_id, struct genavb_st_config *config)
 {
     struct genavb_st_gate_control_entry *gate_list;
     unsigned int entry_id;
@@ -175,7 +175,7 @@ err:
     return -1;
 }
 
-int qbv_write_permanent(shell_handle_t shell, unsigned int port_id, struct genavb_st_config config)
+int qbv_write_permanent(void *shell, unsigned int port_id, struct genavb_st_config config)
 {
     struct genavb_st_gate_control_entry *gate_list = config.control_list;
     char buf[20] = {0}, entry[10];
@@ -215,7 +215,7 @@ err:
     return -1;
 }
 
-static int qbv_set_enabled(shell_handle_t shell, unsigned int port_id, bool enabled)
+static int qbv_set_enabled(void *shell, unsigned int port_id, bool enabled)
 {
     char file[25] = {0};
     int old_state;
@@ -241,7 +241,7 @@ err:
 /**
  * return: 1 when config applied, 0 when qbv not enabled, -1 on error
  */
-int qbv_apply_permanent(shell_handle_t shell, unsigned int port_id)
+int qbv_apply_permanent(void *shell, unsigned int port_id)
 {
     struct genavb_st_gate_control_entry gate_list[QBV_LIST_MAX_ENTRIES];
     struct genavb_st_config config = st_config_default;
@@ -261,7 +261,7 @@ err_get_config:
     return rc;
 }
 
-int qbv_apply(shell_handle_t shell, unsigned int port_id, struct genavb_st_config *config)
+int qbv_apply(void *shell, unsigned int port_id, struct genavb_st_config *config)
 {
     genavb_clock_id_t clk_id;
     int rc = -1;
@@ -294,13 +294,13 @@ err_set_config:
     return rc;
 }
 
-static void print_qbv_set_usage(shell_handle_t shell)
+static void print_qbv_set_usage(void *shell)
 {
     shell_printf(shell, "Usage: ");
     shell_printf(shell, CMD_QBV_SET_HELP);
 }
 
-shell_status_t cmd_qbv_set(shell_handle_t shell, int32_t argc, char **argv)
+int cmd_qbv_set(void *shell, int32_t argc, char **argv)
 {
     struct genavb_st_gate_control_entry gate_list[QBV_LIST_MAX_ENTRIES];
     unsigned int gate_list_entry[3], num_entries = 0;
@@ -383,19 +383,19 @@ shell_status_t cmd_qbv_set(shell_handle_t shell, int32_t argc, char **argv)
     if (rc < 0)
         goto err;
 
-    return kStatus_SHELL_Success;
+    return 0;
 
 err:
-    return kStatus_SHELL_Error;
+    return -1;
 }
 
-static void print_qbv_get_usage(shell_handle_t shell)
+static void print_qbv_get_usage(void *shell)
 {
     shell_printf(shell, "Usage: ");
     shell_printf(shell, CMD_QBV_GET_HELP);
 }
 
-shell_status_t cmd_qbv_get(shell_handle_t shell, int32_t argc, char **argv)
+int cmd_qbv_get(void *shell, int32_t argc, char **argv)
 {
     struct genavb_st_config config = st_config_default;
     struct genavb_st_gate_control_entry gate_list[QBV_LIST_MAX_ENTRIES];
@@ -455,20 +455,20 @@ shell_status_t cmd_qbv_get(shell_handle_t shell, int32_t argc, char **argv)
 
     dump_genavb_st_config(shell, port_id, &config);
 
-    return kStatus_SHELL_Success;
+    return 0;
 
 err_get_config:
 err:
-    return kStatus_SHELL_Error;
+    return -1;
 }
 
-static void print_qbv_disable_usage(shell_handle_t shell)
+static void print_qbv_disable_usage(void *shell)
 {
     shell_printf(shell, "Usage: ");
     shell_printf(shell, CMD_QBV_DISABLE_HELP);
 }
 
-shell_status_t cmd_qbv_disable(shell_handle_t shell, int32_t argc, char **argv)
+int cmd_qbv_disable(void *shell, int32_t argc, char **argv)
 {
     struct genavb_st_config config = {
         .enable = 0
@@ -517,18 +517,18 @@ shell_status_t cmd_qbv_disable(shell_handle_t shell, int32_t argc, char **argv)
     else
         shell_printf(shell, "scheduled traffic disabled on port %u\n", port_id);
 
-    return kStatus_SHELL_Success;
+    return 0;
 err:
-    return kStatus_SHELL_Error;
+    return -1;
 }
 
-static void print_qbv_set_max_sdu_usage(shell_handle_t shell)
+static void print_qbv_set_max_sdu_usage(void *shell)
 {
     shell_printf(shell, "Usage: ");
     shell_printf(shell, CMD_QBV_SET_MAX_SDU_HELP);
 }
 
-static int qbv_write_sdu_permanent(shell_handle_t shell, unsigned int port_id, struct genavb_st_max_sdu *queue_max_sdu, unsigned int n)
+static int qbv_write_sdu_permanent(void *shell, unsigned int port_id, struct genavb_st_max_sdu *queue_max_sdu, unsigned int n)
 {
     char buf[QOS_MAX_SDU_BUF_SIZE], queue[3];
     int i;
@@ -558,7 +558,7 @@ err:
     return -1;
 }
 
-static int qbv_read_sdu_permanent(shell_handle_t shell, unsigned int port_id, struct genavb_st_max_sdu *queue_max_sdu)
+static int qbv_read_sdu_permanent(void *shell, unsigned int port_id, struct genavb_st_max_sdu *queue_max_sdu)
 {
     char buf[QOS_MAX_SDU_BUF_SIZE], queue[3];
     uint32_t sdu_value = QOS_MAX_SDU_DEFAULT;
@@ -590,7 +590,7 @@ err:
     return -1;
 }
 
-shell_status_t cmd_qbv_set_max_sdu(shell_handle_t shell, int32_t argc, char **argv)
+int cmd_qbv_set_max_sdu(void *shell, int32_t argc, char **argv)
 {
     unsigned int port_id;
     unsigned long tmp;
@@ -657,20 +657,20 @@ shell_status_t cmd_qbv_set_max_sdu(shell_handle_t shell, int32_t argc, char **ar
         shell_printf(shell, "traffic_clas %u : max_sdu %lu value set\n", max_sdu[i].traffic_class , max_sdu[i].queue_max_sdu);
     }
 
-    return kStatus_SHELL_Success;
+    return 0;
 
 err:
-    return kStatus_SHELL_Error;
+    return -1;
 }
 
-static void print_qbv_get_max_sdu_usage(shell_handle_t shell)
+static void print_qbv_get_max_sdu_usage(void *shell)
 {
     shell_printf(shell, "Usage: ");
 
     shell_printf(shell, CMD_QBV_GET_MAX_SDU_HELP);
 }
 
-static void dump_genavb_st_max_sdu(shell_handle_t shell, unsigned int port_id, struct genavb_st_max_sdu *queue_max_sdu, unsigned int n, bool permanent)
+static void dump_genavb_st_max_sdu(void *shell, unsigned int port_id, struct genavb_st_max_sdu *queue_max_sdu, unsigned int n, bool permanent)
 {
     int i;
 
@@ -698,7 +698,7 @@ static void dump_genavb_st_max_sdu(shell_handle_t shell, unsigned int port_id, s
     shell_printf(shell, "\n");
 }
 
-shell_status_t cmd_qbv_get_max_sdu(shell_handle_t shell, int32_t argc, char **argv)
+int cmd_qbv_get_max_sdu(void *shell, int32_t argc, char **argv)
 {
     struct genavb_st_max_sdu max_sdu[QOS_TRAFFIC_CLASS_MAX];
     unsigned int port_id;
@@ -747,13 +747,13 @@ shell_status_t cmd_qbv_get_max_sdu(shell_handle_t shell, int32_t argc, char **ar
 
     dump_genavb_st_max_sdu(shell, port_id, max_sdu, QOS_TRAFFIC_CLASS_MAX, permanent);
 
-    return kStatus_SHELL_Success;
+    return 0;
 
 err:
-    return kStatus_SHELL_Error;
+    return -1;
 }
 
-static int qbv_apply_max_sdu_permanent(shell_handle_t shell, unsigned int port_id)
+static int qbv_apply_max_sdu_permanent(void *shell, unsigned int port_id)
 {
     struct genavb_st_max_sdu max_sdu[QOS_TRAFFIC_CLASS_MAX];
     int rc, i;
@@ -778,7 +778,7 @@ err:
     return rc;
 }
 
-void cmd_qbv_init(shell_handle_t shell)
+void cmd_qbv_init(void *shell)
 {
     unsigned int port_id;
 
@@ -792,7 +792,7 @@ void cmd_qbv_init(shell_handle_t shell)
 #else
 #include "qbv.h"
 
-void cmd_qbv_init(shell_handle_t shell) {return;}
-int qbv_write_permanent(shell_handle_t shell, unsigned int port_id, struct genavb_st_config config) {return -1;}
-int qbv_apply_permanent(shell_handle_t shell, unsigned int port_id) {return -1;}
+void cmd_qbv_init(void *shell) {return;}
+int qbv_write_permanent(void *shell, unsigned int port_id, struct genavb_st_config config) {return -1;}
+int qbv_apply_permanent(void *shell, unsigned int port_id) {return -1;}
 #endif /* CONFIG_APP_QBV */

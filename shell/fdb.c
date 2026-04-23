@@ -16,14 +16,14 @@
 
 #include "shell_config.h"
 
-static void fdb_print_description(shell_handle_t shell)
+static void fdb_print_description(void *shell)
 {
     shell_printf(shell, "\n");
     shell_printf(shell, "        mac        |  vid | dynamic | status |   forwarding   |    filtering   |\n");
     shell_printf(shell, "-------------------+------+---------+--------+----------------+----------------+\n");
 }
 
-static void fdb_print_entry(shell_handle_t shell, uint8_t *address, uint16_t vid, bool dynamic,
+static void fdb_print_entry(void *shell, uint8_t *address, uint16_t vid, bool dynamic,
         struct genavb_fdb_port_map *port_map, genavb_fdb_status_t status)
 {
     char buf[15];
@@ -63,7 +63,7 @@ static void fdb_print_entry(shell_handle_t shell, uint8_t *address, uint16_t vid
     shell_printf(shell, " % 14s |\n", buf);
 }
 
-static void print_fdb_update_usage(shell_handle_t shell)
+static void print_fdb_update_usage(void *shell)
 {
     shell_printf(shell, "Usage: ");
     shell_printf(shell, CMD_FDB_UPDATE_HELP);
@@ -189,7 +189,7 @@ out:
     return rc;
 }
 
-static int fdb_update_permanent(shell_handle_t shell, uint8_t *address, uint16_t vid, struct genavb_fdb_port_map *map)
+static int fdb_update_permanent(void *shell, uint8_t *address, uint16_t vid, struct genavb_fdb_port_map *map)
 {
     uint32_t port_mask = 0;
 
@@ -221,7 +221,7 @@ static int fdb_delete_permanent(uint8_t *address, uint16_t vid)
     return fdb_delete_storage(address, vid);
 }
 
-shell_status_t cmd_fdb_update(shell_handle_t shell, int32_t argc, char **argv)
+int cmd_fdb_update(void *shell, int32_t argc, char **argv)
 {
     struct genavb_fdb_port_map port_map = {0};
     uint8_t address[6];
@@ -294,21 +294,21 @@ shell_status_t cmd_fdb_update(shell_handle_t shell, int32_t argc, char **argv)
         MAC_STR(address),
         vid, port_map.control, permanent);
 
-    return kStatus_SHELL_Success;
+    return 0;
 
 err_usage:
         print_fdb_update_usage(shell);
 err:
-    return kStatus_SHELL_Error;
+    return -1;
 }
 
-static void print_fdb_read_usage(shell_handle_t shell)
+static void print_fdb_read_usage(void *shell)
 {
     shell_printf(shell, "Usage: ");
     shell_printf(shell, CMD_FDB_READ_HELP);
 }
 
-shell_status_t cmd_fdb_read(shell_handle_t shell, int32_t argc, char **argv)
+int cmd_fdb_read(void *shell, int32_t argc, char **argv)
 {
     struct genavb_fdb_port_map port_map[CONFIG_APP_BR_NUM_PORTS] = {0};
     genavb_fdb_status_t status;
@@ -363,21 +363,21 @@ shell_status_t cmd_fdb_read(shell_handle_t shell, int32_t argc, char **argv)
     fdb_print_description(shell);
     fdb_print_entry(shell, address, vid, dynamic, port_map, status);
 
-    return kStatus_SHELL_Success;
+    return 0;
 
 err_usage:
     print_fdb_read_usage(shell);
 err:
-    return kStatus_SHELL_Error;
+    return -1;
 }
 
-static void print_fdb_delete_usage(shell_handle_t shell)
+static void print_fdb_delete_usage(void *shell)
 {
     shell_printf(shell, "Usage: ");
     shell_printf(shell, CMD_FDB_DELETE_HELP);
 }
 
-shell_status_t cmd_fdb_delete(shell_handle_t shell, int32_t argc, char **argv)
+int cmd_fdb_delete(void *shell, int32_t argc, char **argv)
 {
     bool permanent = false;
     unsigned long tmp;
@@ -426,21 +426,21 @@ shell_status_t cmd_fdb_delete(shell_handle_t shell, int32_t argc, char **argv)
         goto err;
     }
 
-    return kStatus_SHELL_Success;
+    return 0;
 
 err_usage:
     print_fdb_delete_usage(shell);
 err:
-    return kStatus_SHELL_Error;
+    return -1;
 }
 
-static void print_fdb_dump_usage(shell_handle_t shell)
+static void print_fdb_dump_usage(void *shell)
 {
     shell_printf(shell, "Usage: ");
     shell_printf(shell, CMD_FDB_DUMP_HELP);
 }
 
-shell_status_t cmd_fdb_dump(shell_handle_t shell, int32_t argc, char **argv)
+int cmd_fdb_dump(void *shell, int32_t argc, char **argv)
 {
     struct genavb_fdb_port_map port_map[CONFIG_APP_BR_NUM_PORTS] = {0};
     genavb_fdb_status_t status = GENAVB_FDB_STATUS_INVALID;
@@ -475,14 +475,14 @@ shell_status_t cmd_fdb_dump(shell_handle_t shell, int32_t argc, char **argv)
             fdb_print_entry(shell, address, vid, dynamic, port_map, status);
     }
 
-    return kStatus_SHELL_Success;
+    return 0;
 
 err_usage:
     print_fdb_dump_usage(shell);
-    return kStatus_SHELL_Error;
+    return -1;
 }
 
-static int fdb_apply_permanent(shell_handle_t shell)
+static int fdb_apply_permanent(void *shell)
 {
     struct genavb_fdb_port_map port_map[CONFIG_APP_BR_NUM_PORTS] = {0};
     genavb_fdb_status_t status = GENAVB_FDB_STATUS_INVALID;
@@ -505,7 +505,7 @@ static int fdb_apply_permanent(shell_handle_t shell)
     return 0;
 }
 
-void cmd_fdb_init(shell_handle_t shell)
+void cmd_fdb_init(void *shell)
 {
     fdb_apply_permanent(shell);
 }

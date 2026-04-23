@@ -105,18 +105,18 @@
 	"        options:\n" \
 	"                -p: read entry from permanent database\n"
 
-void cmd_psfp_init(shell_handle_t shell);
+void cmd_psfp_init(void *shell);
 
-shell_status_t cmd_sf_update(shell_handle_t shell, int32_t argc, char **argv);
-shell_status_t cmd_sf_delete(shell_handle_t shell, int32_t argc, char **argv);
-shell_status_t cmd_sf_read(shell_handle_t shell, int32_t argc, char **argv);
+int cmd_sf_update(void *shell, int32_t argc, char **argv);
+int cmd_sf_delete(void *shell, int32_t argc, char **argv);
+int cmd_sf_read(void *shell, int32_t argc, char **argv);
 
-shell_status_t cmd_sg_update(shell_handle_t shell, int32_t argc, char **argv);
-shell_status_t cmd_sg_delete(shell_handle_t shell, int32_t argc, char **argv);
-shell_status_t cmd_sg_read(shell_handle_t shell, int32_t argc, char **argv);
+int cmd_sg_update(void *shell, int32_t argc, char **argv);
+int cmd_sg_delete(void *shell, int32_t argc, char **argv);
+int cmd_sg_read(void *shell, int32_t argc, char **argv);
 
-shell_status_t cmd_fm_update(shell_handle_t shell, int32_t argc, char **argv);
-shell_status_t cmd_fm_delete(shell_handle_t shell, int32_t argc, char **argv);
-shell_status_t cmd_fm_read(shell_handle_t shell, int32_t argc, char **argv);
+int cmd_fm_update(void *shell, int32_t argc, char **argv);
+int cmd_fm_delete(void *shell, int32_t argc, char **argv);
+int cmd_fm_read(void *shell, int32_t argc, char **argv);
 
 #endif /* __RTOS_APPS_SHELL_PSFP_H__ */

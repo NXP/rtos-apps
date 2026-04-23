@@ -65,7 +65,7 @@ static const struct genavb_flow_meter_instance flow_meter_default = {
     .mark_all_frames_red_enable = FLOW_METER_DEFAULT_MREN,
 };
 
-static void sf_print_entry_counters(shell_handle_t shell, struct genavb_stream_filter_instance *instance)
+static void sf_print_entry_counters(void *shell, struct genavb_stream_filter_instance *instance)
 {
     shell_printf(shell, "matching frames count     %"PRIu64"\n", instance->matching_frames_count);
     shell_printf(shell, "passing frames count      %"PRIu64"\n", instance->passing_frames_count);
@@ -75,7 +75,7 @@ static void sf_print_entry_counters(shell_handle_t shell, struct genavb_stream_f
     shell_printf(shell, "not passing sdu count     %"PRIu64"\n", instance->not_passing_sdu_count);
 }
 
-static void sf_print_entry(shell_handle_t shell, uint32_t index, struct genavb_stream_filter_instance *instance)
+static void sf_print_entry(void *shell, uint32_t index, struct genavb_stream_filter_instance *instance)
 {
     shell_printf(shell, "\n");
     shell_printf(shell, "Stream Filter %"PRIu32"\n", index);
@@ -171,7 +171,7 @@ err:
     return rc;
 }
 
-static void sf_apply_permanent(shell_handle_t shell)
+static void sf_apply_permanent(void *shell)
 {
     struct genavb_stream_filter_instance instance;
     unsigned int i, index;
@@ -193,12 +193,12 @@ static void sf_apply_permanent(shell_handle_t shell)
     }
 }
 
-static void print_sf_update_usage(shell_handle_t shell)
+static void print_sf_update_usage(void *shell)
 {
     shell_printf(shell, "Usage: ");
 }
 
-shell_status_t cmd_sf_update(shell_handle_t shell, int32_t argc, char **argv)
+int cmd_sf_update(void *shell, int32_t argc, char **argv)
 {
     struct genavb_stream_filter_instance instance = stream_filter_default;
     bool permanent = false;
@@ -271,21 +271,21 @@ shell_status_t cmd_sf_update(shell_handle_t shell, int32_t argc, char **argv)
         goto err;
     }
 
-    return kStatus_SHELL_Success;
+    return 0;
 
 err_usage:
     print_sf_update_usage(shell);
 err:
-    return kStatus_SHELL_Error;
+    return -1;
 }
 
-static void print_sf_delete_usage(shell_handle_t shell)
+static void print_sf_delete_usage(void *shell)
 {
     shell_printf(shell, "Usage: ");
     shell_printf(shell, CMD_SF_DELETE_HELP);
 }
 
-shell_status_t cmd_sf_delete(shell_handle_t shell, int32_t argc, char **argv)
+int cmd_sf_delete(void *shell, int32_t argc, char **argv)
 {
     uint32_t index;
     bool permanent = false;
@@ -325,21 +325,21 @@ shell_status_t cmd_sf_delete(shell_handle_t shell, int32_t argc, char **argv)
         goto err;
     }
 
-    return kStatus_SHELL_Success;
+    return 0;
 
 err_usage:
     print_sf_delete_usage(shell);
 err:
-    return kStatus_SHELL_Error;
+    return -1;
 }
 
-static void print_sf_read_usage(shell_handle_t shell)
+static void print_sf_read_usage(void *shell)
 {
     shell_printf(shell, "Usage: ");
     shell_printf(shell, CMD_SF_READ_HELP);
 }
 
-shell_status_t cmd_sf_read(shell_handle_t shell, int32_t argc, char **argv)
+int cmd_sf_read(void *shell, int32_t argc, char **argv)
 {
     struct genavb_stream_filter_instance instance = stream_filter_default;
     bool permanent = false;
@@ -390,12 +390,12 @@ shell_status_t cmd_sf_read(shell_handle_t shell, int32_t argc, char **argv)
     }
 
 no_entry:
-    return kStatus_SHELL_Success;
+    return 0;
 
 err_usage:
     print_sf_read_usage(shell);
 err:
-    return kStatus_SHELL_Error;
+    return -1;
 }
 
 static int sg_read_entry_from_storage(const char *filename, uint8_t *state, uint8_t *ipv, uint32_t *interval, uint32_t *octet_max)
@@ -431,7 +431,7 @@ static int sg_write_entry_to_storage(const char *filename, uint8_t mask, uint8_t
     return storage_write(filename, str, strlen(str) + 1);
 }
 
-static void sg_print_entry(shell_handle_t shell, uint32_t index, struct genavb_stream_gate_instance *instance)
+static void sg_print_entry(void *shell, uint32_t index, struct genavb_stream_gate_instance *instance)
 {
     struct genavb_stream_gate_control_entry *entry;
     int i;
@@ -491,7 +491,7 @@ static void sg_print_entry(shell_handle_t shell, uint32_t index, struct genavb_s
     shell_printf(shell, "\n");
 }
 
-static int sg_update_permanent(shell_handle_t shell, uint32_t index, struct genavb_stream_gate_instance *instance, bool endpoint)
+static int sg_update_permanent(void *shell, uint32_t index, struct genavb_stream_gate_instance *instance, bool endpoint)
 {
     struct genavb_stream_gate_control_entry *entry;
     char path[30] = {0};
@@ -543,7 +543,7 @@ static int sg_delete_permanent(uint32_t index, bool endpoint)
     return storage_rm(filename, true, true);
 }
 
-static int sg_read_permanent(shell_handle_t shell, uint32_t index, struct genavb_stream_gate_instance *instance, bool endpoint)
+static int sg_read_permanent(void *shell, uint32_t index, struct genavb_stream_gate_instance *instance, bool endpoint)
 {
     struct genavb_stream_gate_control_entry *gate_list;
     unsigned int num_entries = 0;
@@ -609,7 +609,7 @@ static void sg_set_default_parameters(struct genavb_stream_gate_instance *instan
     instance->control_list[0].interval_octet_max = 0xFFFFFFFF;
 }
 
-static void sg_apply_permanent(shell_handle_t shell)
+static void sg_apply_permanent(void *shell)
 {
     struct genavb_stream_gate_instance instance;
     struct genavb_stream_gate_control_entry gate_list[genavb_stream_gate_control_get_max_entries()];
@@ -635,13 +635,13 @@ static void sg_apply_permanent(shell_handle_t shell)
     }
 }
 
-static void print_sg_update_usage(shell_handle_t shell)
+static void print_sg_update_usage(void *shell)
 {
     shell_printf(shell, "Usage: ");
     shell_printf(shell, CMD_SG_UPDATE_HELP);
 }
 
-shell_status_t cmd_sg_update(shell_handle_t shell, int32_t argc, char **argv)
+int cmd_sg_update(void *shell, int32_t argc, char **argv)
 {
     struct genavb_stream_gate_instance instance;
     struct genavb_stream_gate_control_entry gate_list[genavb_stream_gate_control_get_max_entries()];
@@ -770,22 +770,22 @@ shell_status_t cmd_sg_update(shell_handle_t shell, int32_t argc, char **argv)
         }
     }
 
-    return kStatus_SHELL_Success;
+    return 0;
 
 err_usage:
     print_sg_update_usage(shell);
 
 err:
-    return kStatus_SHELL_Error;
+    return -1;
 }
 
-static void print_sg_delete_usage(shell_handle_t shell)
+static void print_sg_delete_usage(void *shell)
 {
     shell_printf(shell, "Usage: ");
     shell_printf(shell, CMD_SG_DELETE_HELP);
 }
 
-shell_status_t cmd_sg_delete(shell_handle_t shell, int32_t argc, char **argv)
+int cmd_sg_delete(void *shell, int32_t argc, char **argv)
 {
     bool permanent = false;
     unsigned long tmp;
@@ -826,22 +826,22 @@ shell_status_t cmd_sg_delete(shell_handle_t shell, int32_t argc, char **argv)
         goto err;
     }
 
-    return kStatus_SHELL_Success;
+    return 0;
 
 err_usage:
     print_sg_delete_usage(shell);
 
 err:
-    return kStatus_SHELL_Error;
+    return -1;
 }
 
-static void print_sg_read_usage(shell_handle_t shell)
+static void print_sg_read_usage(void *shell)
 {
     shell_printf(shell, "Usage: ");
     shell_printf(shell, CMD_SG_READ_HELP);
 }
 
-shell_status_t cmd_sg_read(shell_handle_t shell, int32_t argc, char **argv)
+int cmd_sg_read(void *shell, int32_t argc, char **argv)
 {
     struct genavb_stream_gate_instance instance = {0};
     struct genavb_stream_gate_control_entry gate_list[genavb_stream_gate_control_get_max_entries()];
@@ -896,15 +896,15 @@ shell_status_t cmd_sg_read(shell_handle_t shell, int32_t argc, char **argv)
     sg_print_entry(shell, index, &instance);
 
 no_entry:
-    return kStatus_SHELL_Success;
+    return 0;
 
 err_usage:
     print_sg_read_usage(shell);
 
-    return kStatus_SHELL_Error;
+    return -1;
 }
 
-static void fm_print_entry(shell_handle_t shell, uint32_t index, struct genavb_flow_meter_instance *instance)
+static void fm_print_entry(void *shell, uint32_t index, struct genavb_flow_meter_instance *instance)
 {
     shell_printf(shell, "\n");
     shell_printf(shell, "Flow Meter %"PRIu32"\n", index);
@@ -925,7 +925,7 @@ static void fm_print_entry(shell_handle_t shell, uint32_t index, struct genavb_f
     shell_printf(shell, "\n");
 }
 
-static int fm_update_permanent(shell_handle_t shell, uint32_t index, struct genavb_flow_meter_instance *instance, bool endpoint)
+static int fm_update_permanent(void *shell, uint32_t index, struct genavb_flow_meter_instance *instance, bool endpoint)
 {
     char path[MAX_FILENAME_LENGTH];
     int rc = 0;
@@ -967,7 +967,7 @@ static int fm_delete_permanent(uint32_t index, bool endpoint)
     return storage_rm(filename, true, true);
 }
 
-static int fm_read_permanent(shell_handle_t shell, uint32_t index, struct genavb_flow_meter_instance *instance, bool endpoint)
+static int fm_read_permanent(void *shell, uint32_t index, struct genavb_flow_meter_instance *instance, bool endpoint)
 {
     char path[MAX_FILENAME_LENGTH];
     int rc = -1; 
@@ -996,7 +996,7 @@ err:
     return rc;
 }
 
-static void fm_apply_permanent(shell_handle_t shell)
+static void fm_apply_permanent(void *shell)
 {
     struct genavb_flow_meter_instance instance;
     unsigned int i, index;
@@ -1020,13 +1020,13 @@ static void fm_apply_permanent(shell_handle_t shell)
     }
 }
 
-static void print_fm_update_usage(shell_handle_t shell)
+static void print_fm_update_usage(void *shell)
 {
     shell_printf(shell, "Usage: ");
     shell_printf(shell, CMD_FM_UPDATE_HELP);
 }
 
-shell_status_t cmd_fm_update(shell_handle_t shell, int32_t argc, char **argv)
+int cmd_fm_update(void *shell, int32_t argc, char **argv)
 {
     struct genavb_flow_meter_instance instance = flow_meter_default;
     bool permanent = false;
@@ -1120,22 +1120,22 @@ shell_status_t cmd_fm_update(shell_handle_t shell, int32_t argc, char **argv)
         }
     }
 
-    return kStatus_SHELL_Success;
+    return 0;
 
 err_usage:
     print_fm_update_usage(shell);
 
 err:
-    return kStatus_SHELL_Error;
+    return -1;
 }
 
-static void print_fm_delete_usage(shell_handle_t shell)
+static void print_fm_delete_usage(void *shell)
 {
     shell_printf(shell, "Usage: ");
     shell_printf(shell, CMD_FM_DELETE_HELP);
 }
 
-shell_status_t cmd_fm_delete(shell_handle_t shell, int32_t argc, char **argv)
+int cmd_fm_delete(void *shell, int32_t argc, char **argv)
 {
     bool permanent = false;
     unsigned long tmp;
@@ -1176,22 +1176,22 @@ shell_status_t cmd_fm_delete(shell_handle_t shell, int32_t argc, char **argv)
         goto err;
     }
 
-    return kStatus_SHELL_Success;
+    return 0;
 
 err_usage:
     print_fm_delete_usage(shell);
 
 err:
-    return kStatus_SHELL_Error;
+    return -1;
 }
 
-static void print_fm_read_usage(shell_handle_t shell)
+static void print_fm_read_usage(void *shell)
 {
     shell_printf(shell, "Usage: ");
     shell_printf(shell, CMD_FM_READ_HELP);
 }
 
-shell_status_t cmd_fm_read(shell_handle_t shell, int32_t argc, char **argv)
+int cmd_fm_read(void *shell, int32_t argc, char **argv)
 {
     struct genavb_flow_meter_instance instance = flow_meter_default;
     bool permanent = false;
@@ -1236,16 +1236,16 @@ shell_status_t cmd_fm_read(shell_handle_t shell, int32_t argc, char **argv)
     fm_print_entry(shell, index, &instance);
 
 no_entry:
-    return kStatus_SHELL_Success;
+    return 0;
 
 err_usage:
     print_fm_read_usage(shell);
 
 err:
-    return kStatus_SHELL_Error;
+    return -1;
 }
 
-void cmd_psfp_init(shell_handle_t shell)
+void cmd_psfp_init(void *shell)
 {
     sf_apply_permanent(shell);
 

@@ -29,9 +29,9 @@
 	"   options:\n" \
 	"       -p: read configuration from permanent database\n"
 
-void cmd_fp_init(shell_handle_t shell);
+void cmd_fp_init(void *shell);
 
-shell_status_t cmd_fp_set(shell_handle_t shell, int32_t argc, char **argv);
-shell_status_t cmd_fp_get(shell_handle_t shell, int32_t argc, char **argv);
+int cmd_fp_set(void *shell, int32_t argc, char **argv);
+int cmd_fp_get(void *shell, int32_t argc, char **argv);
 
 #endif /* __RTOS_APPS_SHELL_FP_H__ */

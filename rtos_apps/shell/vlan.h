@@ -51,13 +51,13 @@
 	"    options:\n" \
 	"        -p: read entry from permanent database\n"
 
-void cmd_vlan_init(shell_handle_t shell);
+void cmd_vlan_init(void *shell);
 
-shell_status_t cmd_vlan_update(shell_handle_t shell, int32_t argc, char **argv);
-shell_status_t cmd_vlan_delete(shell_handle_t shell, int32_t argc, char **argv);
-shell_status_t cmd_vlan_read(shell_handle_t shell, int32_t argc, char **argv);
-shell_status_t cmd_vlan_dump(shell_handle_t shell, int32_t argc, char **argv);
-shell_status_t cmd_vlan_set_pvid(shell_handle_t shell, int32_t argc, char **argv);
-shell_status_t cmd_vlan_get_pvid(shell_handle_t shell, int32_t argc, char **argv);
+int cmd_vlan_update(void *shell, int32_t argc, char **argv);
+int cmd_vlan_delete(void *shell, int32_t argc, char **argv);
+int cmd_vlan_read(void *shell, int32_t argc, char **argv);
+int cmd_vlan_dump(void *shell, int32_t argc, char **argv);
+int cmd_vlan_set_pvid(void *shell, int32_t argc, char **argv);
+int cmd_vlan_get_pvid(void *shell, int32_t argc, char **argv);
 
 #endif /* __RTOS_APPS_SHELL_VLAN_H__ */

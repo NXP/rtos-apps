@@ -18,12 +18,7 @@
 
 #define BUF_MAX_SIZE 5
 
-void help_config_hsr(shell_handle_t shell)
-{
-    shell_printf(shell, (SHELL_COMMAND(hsr_mode_set))->pcHelpString);
-}
-
-static void print_hsr_mode_set_usage(shell_handle_t shell)
+static void print_hsr_mode_set_usage(void *shell)
 {
     shell_printf(shell, "Usage: ");
     shell_printf(shell, CMD_HSR_MODE_SET_HELP);
@@ -52,7 +47,7 @@ err:
     return -1;
 }
 
-static void hsr_mode_apply_permanent(shell_handle_t shell)
+static void hsr_mode_apply_permanent(void *shell)
 {
     struct genavb_handle *genavb_handle = get_genavb_handle();
     genavb_hsr_mode_t mode;
@@ -78,7 +73,7 @@ static void hsr_mode_apply_permanent(shell_handle_t shell)
     shell_printf(shell, "HSR operation mode %u set success\n", mode);
 }
 
-shell_status_t cmd_hsr_mode_set(shell_handle_t shell, int32_t argc, char **argv)
+int cmd_hsr_mode_set(void *shell, int32_t argc, char **argv)
 {
     struct genavb_handle *genavb_handle = get_genavb_handle();
     bool permanent = false;
@@ -120,15 +115,15 @@ shell_status_t cmd_hsr_mode_set(shell_handle_t shell, int32_t argc, char **argv)
 
     shell_printf(shell, "HSR operation mode %u set success\n", mode);
 
-    return kStatus_SHELL_Success;
+    return 0;
 
 err_usage:
     print_hsr_mode_set_usage(shell);
 err:
-    return kStatus_SHELL_Error;
+    return -1;
 }
 
-void cmd_hsr_init(shell_handle_t shell)
+void cmd_hsr_init(void *shell)
 {
     hsr_mode_apply_permanent(shell);
 }

@@ -20,13 +20,13 @@
 
 #define PATH_SZ         30
 
-static void print_fp_set_usage(shell_handle_t shell)
+static void print_fp_set_usage(void *shell)
 {
     shell_printf(shell, "Usage: ");
     shell_printf(shell, CMD_FP_SET_HELP);
 }
 
-static void print_fp_get_usage(shell_handle_t shell)
+static void print_fp_get_usage(void *shell)
 {
     shell_printf(shell, "Usage: ");
     shell_printf(shell, CMD_FP_GET_HELP);
@@ -45,7 +45,7 @@ static void read_fp_status_table(uint8_t status_fp, genavb_fp_admin_status_t *st
     }
 }
 
-static void fp_config_print(shell_handle_t shell, unsigned int port_id, unsigned int type, struct genavb_fp_config *config, bool fs)
+static void fp_config_print(void *shell, unsigned int port_id, unsigned int type, struct genavb_fp_config *config, bool fs)
 {
     char status[QOS_PRIORITY_MAX + 1] = {0};
     int i, off = 0;
@@ -85,7 +85,7 @@ static void fp_config_print(shell_handle_t shell, unsigned int port_id, unsigned
     }
 }
 
-static int fp_read_permanent(shell_handle_t shell, unsigned int port_id, struct genavb_fp_config *config, unsigned int type)
+static int fp_read_permanent(void *shell, unsigned int port_id, struct genavb_fp_config *config, unsigned int type)
 {
     uint32_t enable_tx = 0, verify_disable_tx = 0, verify_time = 10, add_frag_size = 0;
     char path[PATH_SZ];
@@ -143,7 +143,7 @@ static int fp_read_permanent(shell_handle_t shell, unsigned int port_id, struct 
     return rc;
 }
 
-int fp_write_802_1q_permanent(shell_handle_t shell, unsigned int port_id, struct genavb_fp_config config)
+int fp_write_802_1q_permanent(void *shell, unsigned int port_id, struct genavb_fp_config config)
 {
     char path[PATH_SZ], str_tmp[5];
     int i, rc = 0;
@@ -176,7 +176,7 @@ err:
     return rc;
 }
 
-int fp_write_802_3_permanent(shell_handle_t shell, unsigned int port_id, struct genavb_fp_config config)
+int fp_write_802_3_permanent(void *shell, unsigned int port_id, struct genavb_fp_config config)
 {
     char path[PATH_SZ] = {0};
     int rc = 0;
@@ -206,7 +206,7 @@ err:
     return rc;
 }
 
-shell_status_t cmd_fp_set(shell_handle_t shell, int32_t argc, char **argv)
+int cmd_fp_set(void *shell, int32_t argc, char **argv)
 {
     bool permanent = false, is_cf_8021 = false;
     struct genavb_fp_config config_8021q;
@@ -323,12 +323,12 @@ shell_status_t cmd_fp_set(shell_handle_t shell, int32_t argc, char **argv)
         }
     }
 
-    return kStatus_SHELL_Success;
+    return 0;
 err:
-    return kStatus_SHELL_Error;
+    return -1;
 }
 
-shell_status_t cmd_fp_get(shell_handle_t shell, int32_t argc, char **argv)
+int cmd_fp_get(void *shell, int32_t argc, char **argv)
 {
     struct genavb_fp_config config;
     bool permanent = false;
@@ -391,14 +391,14 @@ shell_status_t cmd_fp_get(shell_handle_t shell, int32_t argc, char **argv)
 
     fp_config_print(shell, port_id, GENAVB_FP_CONFIG_802_3, &config, permanent);
 
-    return kStatus_SHELL_Success;
+    return 0;
 err_usage:
     print_fp_get_usage(shell);
 err:
-    return kStatus_SHELL_Error;
+    return -1;
 }
 
-int fp_apply_permanent(shell_handle_t shell, unsigned int port_id)
+int fp_apply_permanent(void *shell, unsigned int port_id)
 {
     struct genavb_fp_config cfg;
     int rc = 0;
@@ -422,7 +422,7 @@ err:
     return rc;
 }
 
-int fp_apply(shell_handle_t shell, unsigned int port_id, struct genavb_fp_config *config_fp_8021q, struct genavb_fp_config *config_fp_8023)
+int fp_apply(void *shell, unsigned int port_id, struct genavb_fp_config *config_fp_8021q, struct genavb_fp_config *config_fp_8023)
 {
     int rc;
 
@@ -442,7 +442,7 @@ err:
     return rc;
 }
 
-void cmd_fp_init(shell_handle_t shell)
+void cmd_fp_init(void *shell)
 {
     unsigned int port_id;
 
@@ -454,8 +454,8 @@ void cmd_fp_init(shell_handle_t shell)
 #else
 #include "fp.h"
 
-void cmd_fp_init_shell(shell_handle_t shell) {return;}
-int fp_write_802_1q_permanent(shell_handle_t shell, unsigned int port_id, struct genavb_fp_config config) {return -1;}
-int fp_write_802_3_permanent(shell_handle_t shell, unsigned int port_id, struct genavb_fp_config config) {return -1;}
-int fp_apply_permanent(shell_handle_t shell, unsigned int port_id) {return -1;}
+void cmd_fp_init_shell(void *shell) {return;}
+int fp_write_802_1q_permanent(void *shell, unsigned int port_id, struct genavb_fp_config config) {return -1;}
+int fp_write_802_3_permanent(void *shell, unsigned int port_id, struct genavb_fp_config config) {return -1;}
+int fp_apply_permanent(void *shell, unsigned int port_id) {return -1;}
 #endif /* CONFIG_APP_FP */

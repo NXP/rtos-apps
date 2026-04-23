@@ -87,21 +87,21 @@
 	"    options:\n" \
 	"        -p: read entry from permanent database\n"
 
-void cmd_frer_init(shell_handle_t shell);
+void cmd_frer_init(void *shell);
 
 /* Sequence generation */
-shell_status_t cmd_seqg_update(shell_handle_t shell, int32_t argc, char **argv);
-shell_status_t cmd_seqg_delete(shell_handle_t shell, int32_t argc, char **argv);
-shell_status_t cmd_seqg_read(shell_handle_t shell, int32_t argc, char **argv);
+int cmd_seqg_update(void *shell, int32_t argc, char **argv);
+int cmd_seqg_delete(void *shell, int32_t argc, char **argv);
+int cmd_seqg_read(void *shell, int32_t argc, char **argv);
 
 /* Sequence recovery */
-shell_status_t cmd_seqr_update(shell_handle_t shell, int32_t argc, char **argv);
-shell_status_t cmd_seqr_delete(shell_handle_t shell, int32_t argc, char **argv);
-shell_status_t cmd_seqr_read(shell_handle_t shell, int32_t argc, char **argv);
+int cmd_seqr_update(void *shell, int32_t argc, char **argv);
+int cmd_seqr_delete(void *shell, int32_t argc, char **argv);
+int cmd_seqr_read(void *shell, int32_t argc, char **argv);
 
 /* Sequence identification */
-shell_status_t cmd_seqi_update(shell_handle_t shell, int32_t argc, char **argv);
-shell_status_t cmd_seqi_delete(shell_handle_t shell, int32_t argc, char **argv);
-shell_status_t cmd_seqi_read(shell_handle_t shell, int32_t argc, char **argv);
+int cmd_seqi_update(void *shell, int32_t argc, char **argv);
+int cmd_seqi_delete(void *shell, int32_t argc, char **argv);
+int cmd_seqi_read(void *shell, int32_t argc, char **argv);
 
 #endif /* __RTOS_APPS_SHELL_FRER_H__ */

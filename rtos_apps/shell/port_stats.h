@@ -12,6 +12,6 @@
 	"    parameters:\n" \
 	"        port_id: logical port index\n"
 
-shell_status_t cmd_port_stats(shell_handle_t shell, int32_t argc, char **argv);
+int cmd_port_stats(void *shell, int32_t argc, char **argv);
 
 #endif /* __RTOS_APPS_SHELL_PORT_STATS_H__ */

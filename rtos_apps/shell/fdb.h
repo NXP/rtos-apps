@@ -38,11 +38,11 @@
 	"    options:\n" \
 	"        -p: print permanent entries\n"
 
-void cmd_fdb_init(shell_handle_t shell);
+void cmd_fdb_init(void *shell);
 
-shell_status_t cmd_fdb_update(shell_handle_t shell, int32_t argc, char **argv);
-shell_status_t cmd_fdb_delete(shell_handle_t shell, int32_t argc, char **argv);
-shell_status_t cmd_fdb_read(shell_handle_t shell, int32_t argc, char **argv);
-shell_status_t cmd_fdb_dump(shell_handle_t shell, int32_t argc, char **argv);
+int cmd_fdb_update(void *shell, int32_t argc, char **argv);
+int cmd_fdb_delete(void *shell, int32_t argc, char **argv);
+int cmd_fdb_read(void *shell, int32_t argc, char **argv);
+int cmd_fdb_dump(void *shell, int32_t argc, char **argv);
 
 #endif /* __RTOS_APPS_SHELL_FDB_H__ */

@@ -41,10 +41,10 @@
 	"    options:\n" \
 	"        -p: delete entry from permanent database\n"
 
-void cmd_stream_identification_init(shell_handle_t shell);
+void cmd_stream_identification_init(void *shell);
 
-shell_status_t cmd_si_update(shell_handle_t shell, int32_t argc, char **argv);
-shell_status_t cmd_si_read(shell_handle_t shell, int32_t argc, char **argv);
-shell_status_t cmd_si_delete(shell_handle_t shell, int32_t argc, char **argv);
+int cmd_si_update(void *shell, int32_t argc, char **argv);
+int cmd_si_read(void *shell, int32_t argc, char **argv);
+int cmd_si_delete(void *shell, int32_t argc, char **argv);
 
 #endif /* __RTOS_APPS_SHELL_STREAM_IDENTIFICATION_H__ */

@@ -61,7 +61,7 @@ static void si_parse_port_list(char *str, struct genavb_stream_identity *entry, 
         *n = port_n;
 }
 
-static void si_print_entry(shell_handle_t shell, uint32_t index, struct genavb_stream_identity *entry)
+static void si_print_entry(void *shell, uint32_t index, struct genavb_stream_identity *entry)
 {
     char buf[15];
     int i, count;
@@ -132,7 +132,7 @@ static uint32_t get_port_id(void *data, unsigned int i)
     return entry->port[i].id;
 }
 
-static int si_update_permanent(shell_handle_t shell, uint32_t index, struct genavb_stream_identity *entry)
+static int si_update_permanent(void *shell, uint32_t index, struct genavb_stream_identity *entry)
 {
     char filename[MAX_FILENAME_LENGTH];
     char tmp_str[MAX_FILE_SIZE];
@@ -186,7 +186,7 @@ err:
     return -1;
 }
 
-static int si_delete_permanent(shell_handle_t shell, uint32_t index)
+static int si_delete_permanent(void *shell, uint32_t index)
 {
     char filename[MAX_FILENAME_LENGTH];
 
@@ -196,7 +196,7 @@ static int si_delete_permanent(shell_handle_t shell, uint32_t index)
     return storage_rm(filename, true, true);
 }
 
-static int si_read_permanent(shell_handle_t shell, uint32_t index, struct genavb_stream_identity *entry)
+static int si_read_permanent(void *shell, uint32_t index, struct genavb_stream_identity *entry)
 {
     char filename[MAX_FILENAME_LENGTH];
     char tmp_str[MAX_FILE_SIZE];
@@ -251,7 +251,7 @@ err:
     return -1;
 }
 
-static int si_update_parse_optional_arguments(shell_handle_t shell, int32_t argc, char **argv, bool *permanent, struct genavb_stream_identity *entry)
+static int si_update_parse_optional_arguments(void *shell, int32_t argc, char **argv, bool *permanent, struct genavb_stream_identity *entry)
 {
     genavb_si_vlan_tag_t tagged;
     genavb_si_t type;
@@ -353,13 +353,13 @@ static int si_update_parse_optional_arguments(shell_handle_t shell, int32_t argc
     return 0;
 }
 
-static void si_update_print_usage(shell_handle_t shell)
+static void si_update_print_usage(void *shell)
 {
     shell_printf(shell, "Usage:");
     shell_printf(shell, CMD_SI_UPDATE_HELP);
 }
 
-shell_status_t cmd_si_update(shell_handle_t shell, int32_t argc, char **argv)
+int cmd_si_update(void *shell, int32_t argc, char **argv)
 {
     struct genavb_si_port ports[SI_DEFAULT_PORT_SIZE] = SI_DEFAULT_PORT;
     struct genavb_stream_identity entry = si_default_entry;
@@ -394,22 +394,22 @@ shell_status_t cmd_si_update(shell_handle_t shell, int32_t argc, char **argv)
         goto err;
     }
 
-    return kStatus_SHELL_Success;
+    return 0;
 
 err_usage:
     si_update_print_usage(shell);
 
 err:
-    return kStatus_SHELL_Error;
+    return -1;
 }
 
-static void si_delete_print_usage(shell_handle_t shell)
+static void si_delete_print_usage(void *shell)
 {
     shell_printf(shell, "Usage:");
     shell_printf(shell, CMD_SI_DELETE_HELP);
 }
 
-shell_status_t cmd_si_delete(shell_handle_t shell, int32_t argc, char **argv)
+int cmd_si_delete(void *shell, int32_t argc, char **argv)
 {
     bool permanent = false;
     unsigned long tmp;
@@ -446,21 +446,21 @@ shell_status_t cmd_si_delete(shell_handle_t shell, int32_t argc, char **argv)
         goto err;
     }
 
-    return kStatus_SHELL_Success;
+    return 0;
 
 err_usage:
     si_delete_print_usage(shell);
 err:
-    return kStatus_SHELL_Error;
+    return -1;
 }
 
-static void si_read_print_usage(shell_handle_t shell)
+static void si_read_print_usage(void *shell)
 {
     shell_printf(shell, "Usage:");
     shell_printf(shell, CMD_SI_READ_HELP);
 }
 
-shell_status_t cmd_si_read(shell_handle_t shell, int32_t argc, char **argv)
+int cmd_si_read(void *shell, int32_t argc, char **argv)
 {
     struct genavb_stream_identity entry = {0};
     struct genavb_si_port ports[CONFIG_APP_LOGICAL_PORTS];
@@ -503,15 +503,15 @@ shell_status_t cmd_si_read(shell_handle_t shell, int32_t argc, char **argv)
 
     si_print_entry(shell, index, &entry);
 
-    return kStatus_SHELL_Success;
+    return 0;
 
 err_usage:
     si_read_print_usage(shell);
 err:
-    return kStatus_SHELL_Error;
+    return -1;
 }
 
-static void si_apply_permanent(shell_handle_t shell)
+static void si_apply_permanent(void *shell)
 {
     struct genavb_si_port ports[SI_DEFAULT_PORT_SIZE] = SI_DEFAULT_PORT;
     struct genavb_stream_identity entry;
@@ -538,7 +538,7 @@ static void si_apply_permanent(shell_handle_t shell)
     }
 }
 
-void cmd_stream_identification_init(shell_handle_t shell)
+void cmd_stream_identification_init(void *shell)
 {
     si_apply_permanent(shell);
 }

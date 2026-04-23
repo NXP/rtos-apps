@@ -18,7 +18,7 @@
 #include "shell_config.h"
 #include "rtos_apps/shell/port_stats.h"
 
-static int __port_stats(shell_handle_t shell, unsigned int port_id, int n)
+static int __port_stats(void *shell, unsigned int port_id, int n)
 {
     const char *names[n];
     uint64_t values[n];
@@ -44,7 +44,7 @@ err:
    return -1;
 }
 
-shell_status_t cmd_port_stats(shell_handle_t shell, int32_t argc, char **argv)
+int cmd_port_stats(void *shell, int32_t argc, char **argv)
 {
     unsigned int port_id;
     unsigned long tmp;
@@ -62,5 +62,5 @@ shell_status_t cmd_port_stats(shell_handle_t shell, int32_t argc, char **argv)
     __port_stats(shell, port_id, n);
 
 exit:
-    return kStatus_SHELL_Success;
+    return 0;
 }
