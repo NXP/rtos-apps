@@ -8,6 +8,7 @@ Supported application components
 - asynchronous processing (component name: async)
 - audio pipeline (component name: audio)
 - logging (component name: log)
+- shell (component name: shell)
 - statistics (component name: stats)
 - tsn endpoint (component name: tsn)
 
