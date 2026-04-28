@@ -54,7 +54,7 @@ static void vlan_print_port_list(void *shell, uint32_t port_mask)
         }
     }
 
-    shell_printf(shell, " % 14s |", buf);
+    shell_printf(shell, " %14s |", buf);
 }
 
 static void vlan_print_entry(void *shell, uint16_t vid, bool dynamic, struct genavb_vlan_port_map port_map[CONFIG_APP_BR_NUM_PORTS])
@@ -63,8 +63,8 @@ static void vlan_print_entry(void *shell, uint16_t vid, bool dynamic, struct gen
     unsigned int port_id;
     int port, column;
 
-    shell_printf(shell, " % 4u |", vid);
-    shell_printf(shell, " % 7s |", dynamic ? " true": "false");
+    shell_printf(shell, " %4u |", vid);
+    shell_printf(shell, " %7s |", dynamic ? " true": "false");
 
     /* create port mask for each column */
     for (port = 0; port < CONFIG_APP_BR_NUM_PORTS; port++) {
@@ -570,7 +570,7 @@ static void vlan_dump_pvid(void *shell, bool permanent)
     shell_printf(shell, " port ");
     for (i = 0; i < CONFIG_APP_BR_NUM_PORTS; i++) {
         port_id = br_port_list[i];
-        shell_printf(shell, "| % 4u ", port_id);
+        shell_printf(shell, "| %4u ", port_id);
     }
     shell_printf(shell, "\n");
 
@@ -598,7 +598,7 @@ static void vlan_dump_pvid(void *shell, bool permanent)
             }
         }
 
-        shell_printf(shell, "| % 4u ", vid);
+        shell_printf(shell, "| %4u ", vid);
     }
     shell_printf(shell, "\n");
 

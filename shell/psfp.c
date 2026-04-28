@@ -441,26 +441,26 @@ static void sg_print_entry(void *shell, uint32_t index, struct genavb_stream_gat
 
     shell_printf(shell, " index  |      enable       | admin state | admin ipv |       base time        |       cycle time       | cycle_time ext  | list length |\n");
     shell_printf(shell, "--------+-------------------+-------------+-----------+------------------------+------------------------+-----------------|-------------+\n");
-    shell_printf(shell, " % 6" PRIu32 " |", index);
-    shell_printf(shell, " % 17u |", instance->gate_enable);
-    shell_printf(shell, " % 11u |", instance->admin_gate_state);
+    shell_printf(shell, " %6" PRIu32 " |", index);
+    shell_printf(shell, " %17u |", instance->gate_enable);
+    shell_printf(shell, " %11u |", instance->admin_gate_state);
     if (instance->admin_ipv != GENAVB_IPV_SPEC_NULL)
-        shell_printf(shell, " % 9u |", instance->admin_ipv);
+        shell_printf(shell, " %9u |", instance->admin_ipv);
     else
         shell_printf(shell, "    0xff   |");
-    shell_printf(shell, " % 22" PRIu64 " |", instance->base_time);
-    shell_printf(shell, " % 22" PRIu32 " |", (NSECS_PER_SEC * (uint64_t)instance->cycle_time_p) / instance->cycle_time_q);
-    shell_printf(shell, " % 15" PRIu32 " |", instance->cycle_time_extension);
-    shell_printf(shell, " % 11" PRIu32 " |", instance->list_length);
+    shell_printf(shell, " %22" PRIu64 " |", instance->base_time);
+    shell_printf(shell, " %22" PRIu64 " |", (NSECS_PER_SEC * (uint64_t)instance->cycle_time_p) / instance->cycle_time_q);
+    shell_printf(shell, " %15" PRIu32 " |", instance->cycle_time_extension);
+    shell_printf(shell, " %11" PRIu32 " |", instance->list_length);
     shell_printf(shell, "\n");
 
     shell_printf(shell, "        +-------------------+-------------+-----------+------------------------+------------------------+-----------------+-------------+\n");
     shell_printf(shell, "        | invalid rx enable |        invalid rx       | octets exceeded enable |      octets exceeded   |\n");
     shell_printf(shell, "        +-------------------+-------------------------+------------------------+------------------------+\n");
-    shell_printf(shell, "        | % 17u |", instance->gate_closed_due_to_invalid_rx_enable);
-    shell_printf(shell, " % 23u |", instance->gate_closed_due_to_invalid_rx);
-    shell_printf(shell, " % 22u |", instance->gate_closed_due_to_octets_exceeded_enable);
-    shell_printf(shell, " % 22u |", instance->gate_closed_due_to_octets_exceeded);
+    shell_printf(shell, "        | %17u |", instance->gate_closed_due_to_invalid_rx_enable);
+    shell_printf(shell, " %23u |", instance->gate_closed_due_to_invalid_rx);
+    shell_printf(shell, " %22u |", instance->gate_closed_due_to_octets_exceeded_enable);
+    shell_printf(shell, " %22u |", instance->gate_closed_due_to_octets_exceeded);
     shell_printf(shell, "\n");
 
     if (instance->list_length > genavb_stream_gate_control_get_max_entries()) {
@@ -476,15 +476,15 @@ static void sg_print_entry(void *shell, uint32_t index, struct genavb_stream_gat
         shell_printf(shell, "-------+------+-------+-------+---------------+--------------------+\n");
         for (i = 0; i < instance->list_length; i++) {
             entry = &instance->control_list[i];
-            shell_printf(shell, " % 5u |", i);
-            shell_printf(shell, " % 4u |", entry->operation_name);
-            shell_printf(shell, " % 5u |", entry->gate_state_value);
+            shell_printf(shell, " %5u |", i);
+            shell_printf(shell, " %4u |", entry->operation_name);
+            shell_printf(shell, " %5u |", entry->gate_state_value);
             if (entry->ipv_spec != GENAVB_IPV_SPEC_NULL)
-                shell_printf(shell, " % 5u |", entry->ipv_spec);
+                shell_printf(shell, " %5u |", entry->ipv_spec);
             else
                 shell_printf(shell, "  0xff |");
-            shell_printf(shell, " % 13" PRIu32 " |", entry->time_interval_value);
-            shell_printf(shell, " % 18" PRIu32 " |", entry->interval_octet_max);
+            shell_printf(shell, " %13" PRIu32 " |", entry->time_interval_value);
+            shell_printf(shell, " %18" PRIu32 " |", entry->interval_octet_max);
             shell_printf(shell, "\n");
         }
     }
@@ -911,15 +911,15 @@ static void fm_print_entry(void *shell, uint32_t index, struct genavb_flow_meter
 
     shell_printf(shell, "           cir         |    cbs     |          eir          |    ebs     |  cflag  |  cmode  |  dropy  | mren |  mr  |\n");
     shell_printf(shell, "-----------------------+------------+-----------------------+------------+---------+---------+---------+------+------|\n");
-    shell_printf(shell, " % 21" PRIu64 " |", instance->committed_information_rate);
-    shell_printf(shell, " % 10" PRIu32 " |", instance->committed_burst_size);
-    shell_printf(shell, " % 21" PRIu64 " |", instance->excess_information_rate);
-    shell_printf(shell, " % 10" PRIu32 " |", instance->excess_burst_size);
-    shell_printf(shell, " % 7" PRIu32 " |", instance->coupling_flag);
-    shell_printf(shell, " % 7" PRIu32 " |", instance->color_mode);
-    shell_printf(shell, " % 7" PRIu32 " |", instance->drop_on_yellow);
-    shell_printf(shell, " % 4" PRIu32 " |", instance->mark_all_frames_red_enable);
-    shell_printf(shell, " % 4" PRIu32 " |", instance->mark_all_frames_red);
+    shell_printf(shell, " %21" PRIu64 " |", instance->committed_information_rate);
+    shell_printf(shell, " %10" PRIu32 " |", instance->committed_burst_size);
+    shell_printf(shell, " %21" PRIu64 " |", instance->excess_information_rate);
+    shell_printf(shell, " %10" PRIu32 " |", instance->excess_burst_size);
+    shell_printf(shell, " %7" PRIu32 " |", instance->coupling_flag);
+    shell_printf(shell, " %7" PRIu32 " |", instance->color_mode);
+    shell_printf(shell, " %7" PRIu32 " |", instance->drop_on_yellow);
+    shell_printf(shell, " %4" PRIu32 " |", instance->mark_all_frames_red_enable);
+    shell_printf(shell, " %4" PRIu32 " |", instance->mark_all_frames_red);
     shell_printf(shell, "\n");
 
     shell_printf(shell, "\n");

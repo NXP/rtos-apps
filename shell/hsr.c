@@ -111,7 +111,7 @@ int cmd_hsr_mode_set(void *shell, int32_t argc, char **argv)
 
     if (permanent)
         if (hsr_mode_update_permanent(tmp) < 0)
-            shell_printf(shell, "hsr_mode_update_permanent(%u) failed\n", tmp);
+            shell_printf(shell, "hsr_mode_update_permanent(%lu) failed\n", tmp);
 
     shell_printf(shell, "HSR operation mode %u set success\n", mode);
 

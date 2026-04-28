@@ -30,8 +30,8 @@ static void fdb_print_entry(void *shell, uint8_t *address, uint16_t vid, bool dy
     int i, count;
 
     shell_printf(shell, " " MAC_STR_FMT " |", MAC_STR(address));
-    shell_printf(shell, " % 4u |", vid);
-    shell_printf(shell, " % 7s |", dynamic ? " true": "false");
+    shell_printf(shell, " %4u |", vid);
+    shell_printf(shell, " %7s |", dynamic ? " true": "false");
     shell_printf(shell, " % 6d |", status);
 
     /* forwarding column */
@@ -46,7 +46,7 @@ static void fdb_print_entry(void *shell, uint8_t *address, uint16_t vid, bool dy
         }
     }
 
-    shell_printf(shell, " % 14s |", buf);
+    shell_printf(shell, " %14s |", buf);
 
     /* filtering column */
     count = 0;
@@ -60,7 +60,7 @@ static void fdb_print_entry(void *shell, uint8_t *address, uint16_t vid, bool dy
         }
     }
 
-    shell_printf(shell, " % 14s |\n", buf);
+    shell_printf(shell, " %14s |\n", buf);
 }
 
 static void print_fdb_update_usage(void *shell)

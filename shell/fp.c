@@ -248,7 +248,7 @@ int cmd_fp_set(void *shell, int32_t argc, char **argv)
             h_strtoul(&tmp, optarg, NULL, 0);
             config_8023.u.cfg_802_3.enable_tx = tmp;
             if (config_8023.u.cfg_802_3.enable_tx > 2) {
-                shell_printf(shell, "Bad argument enable preemption %lu\n", config_8023.u.cfg_802_3.enable_tx);
+                shell_printf(shell, "Bad argument enable preemption %u\n", config_8023.u.cfg_802_3.enable_tx);
                 goto err;
             }
             break;
@@ -257,7 +257,7 @@ int cmd_fp_set(void *shell, int32_t argc, char **argv)
             h_strtoul(&tmp, optarg, NULL, 0);
             config_8023.u.cfg_802_3.verify_disable_tx = tmp;
             if (config_8023.u.cfg_802_3.verify_disable_tx > 1) {
-                shell_printf(shell, "Bad argument verify_disable_tx %lu\n", config_8023.u.cfg_802_3.verify_disable_tx);
+                shell_printf(shell, "Bad argument verify_disable_tx %u\n", config_8023.u.cfg_802_3.verify_disable_tx);
                 goto err;
             }
             break;
@@ -266,7 +266,7 @@ int cmd_fp_set(void *shell, int32_t argc, char **argv)
             h_strtoul(&tmp, optarg, NULL, 0);
             config_8023.u.cfg_802_3.verify_time = tmp;
             if (config_8023.u.cfg_802_3.verify_time < 1 || config_8023.u.cfg_802_3.verify_time > 128) {
-                shell_printf(shell, "Bad argument verify_time %lu\n", config_8023.u.cfg_802_3.verify_time);
+                shell_printf(shell, "Bad argument verify_time %u\n", config_8023.u.cfg_802_3.verify_time);
                 goto err;
             }
             break;
@@ -275,7 +275,7 @@ int cmd_fp_set(void *shell, int32_t argc, char **argv)
             h_strtoul(&tmp, optarg, NULL, 0);
             config_8023.u.cfg_802_3.add_frag_size = tmp;
             if (config_8023.u.cfg_802_3.add_frag_size > 3) {
-                shell_printf(shell, "Bad argument add_frag_size %lu\n", config_8023.u.cfg_802_3.add_frag_size);
+                shell_printf(shell, "Bad argument add_frag_size %u\n", config_8023.u.cfg_802_3.add_frag_size);
                 goto err;
             }
             break;

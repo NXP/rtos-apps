@@ -69,8 +69,8 @@ static void si_print_entry(void *shell, uint32_t index, struct genavb_stream_ide
     shell_printf(shell, "\n");
     shell_printf(shell, " index | handle |      port      |     type     |\n");
     shell_printf(shell, "-------+--------+----------------+--------------+\n");
-    shell_printf(shell, " % 5" PRIu32 " |", index);
-    shell_printf(shell, " % 6u |", entry->handle);
+    shell_printf(shell, " %5" PRIu32 " |", index);
+    shell_printf(shell, " %6u |", entry->handle);
 
     // TODO add port position
 
@@ -83,7 +83,7 @@ static void si_print_entry(void *shell, uint32_t index, struct genavb_stream_ide
             count += h_snprintf(buf + count, 15 - count, ", %u", entry->port[i].id);
     }
 
-    shell_printf(shell, " % 14s |", buf);
+    shell_printf(shell, " %14s |", buf);
 
     switch (entry->type) {
     case GENAVB_SI_NULL:
@@ -92,8 +92,8 @@ static void si_print_entry(void *shell, uint32_t index, struct genavb_stream_ide
         shell_printf(shell, "       |       dst mac      |  tagged  |  vlan  |\n");
         shell_printf(shell, "       +--------------------+----------+--------+\n");
         shell_printf(shell, "       |  " MAC_STR_FMT " |", MAC_STR(entry->parameters.null.destination_mac));
-        shell_printf(shell, " % 8u |", entry->parameters.null.tagged);
-        shell_printf(shell, " % 6u |\n", entry->parameters.null.vlan);
+        shell_printf(shell, " %8u |", entry->parameters.null.tagged);
+        shell_printf(shell, " %6u |\n", entry->parameters.null.vlan);
         break;
 
     case GENAVB_SI_SRC_MAC_VLAN:
@@ -102,8 +102,8 @@ static void si_print_entry(void *shell, uint32_t index, struct genavb_stream_ide
         shell_printf(shell, "       |       src mac      |  tagged  |  vlan  |\n");
         shell_printf(shell, "       +--------------------+----------+--------+\n");
         shell_printf(shell, "       |  " MAC_STR_FMT " |", MAC_STR(entry->parameters.smac_vlan.source_mac));
-        shell_printf(shell, " % 8u |", entry->parameters.smac_vlan.tagged);
-        shell_printf(shell, " % 6u |\n", entry->parameters.smac_vlan.vlan);
+        shell_printf(shell, " %8u |", entry->parameters.smac_vlan.tagged);
+        shell_printf(shell, " %6u |\n", entry->parameters.smac_vlan.vlan);
         break;
 
     case GENAVB_SI_DST_MAC_VLAN:

@@ -215,10 +215,10 @@ static void seqg_print(void *shell, uint32_t index, struct genavb_sequence_gener
     shell_printf(shell, "\n");
     shell_printf(shell, " index |             handle              | direction_out_facing | reset | \n");
     shell_printf(shell, "-------+---------------------------------+----------------------+-------+\n");
-    shell_printf(shell, " % 5" PRIu32 " |", index);
-    shell_printf(shell, " % 31s |", buf);
-    shell_printf(shell, " % 20s |", entry->direction_out_facing ? "true" : "false");
-    shell_printf(shell, " % 5s |\n", entry->reset ? "true" : "false");
+    shell_printf(shell, " %5" PRIu32 " |", index);
+    shell_printf(shell, " %31s |", buf);
+    shell_printf(shell, " %20s |", entry->direction_out_facing ? "true" : "false");
+    shell_printf(shell, " %5s |\n", entry->reset ? "true" : "false");
 }
 
 int cmd_seqg_update(void *shell, int32_t argc, char **argv)
@@ -505,37 +505,37 @@ static void seqr_print(void *shell, uint32_t index, struct genavb_sequence_recov
     shell_printf(shell, " index |              handle             |      port     |  direction_out_facing  |     algorithm    |    history_length   |\n");
     shell_printf(shell, "-------+---------------------------------+---------------+------------------------+------------------+---------------------+\n");
 
-    shell_printf(shell, " % 5" PRIu32 " |", index);
+    shell_printf(shell, " %5" PRIu32 " |", index);
 
     list_u32_to_buf(entry->stream, entry->stream_n, buf, BUF_MAX_SIZE);
-    shell_printf(shell, " % 31s |", buf);
+    shell_printf(shell, " %31s |", buf);
 
     list_uint_to_buf(entry->port, entry->port_n, buf, BUF_MAX_SIZE);
-    shell_printf(shell, " % 13s |", buf);
+    shell_printf(shell, " %13s |", buf);
 
-    shell_printf(shell, " % 22s |", entry->direction_out_facing ? "true" : "false");
+    shell_printf(shell, " %22s |", entry->direction_out_facing ? "true" : "false");
     shell_printf(shell, " % 16d |", entry->algorithm);
-    shell_printf(shell, " % 19u |\n", entry->history_length);
+    shell_printf(shell, " %19u |\n", entry->history_length);
 
     shell_printf(shell, "       +---------------------------------+---------------+------------------------+------------------+---------------------+\n");
     shell_printf(shell, "       |               reset             | reset_timeout | invalid_sequence_value | take_no_sequence | individual_recovery |\n");
     shell_printf(shell, "       +---------------------------------+---------------+------------------------+------------------+---------------------+\n");
 
-    shell_printf(shell, "       | % 31s |", entry->reset ? "true" : "false");
-    shell_printf(shell, " % 13u |", entry->reset_timeout);
-    shell_printf(shell, " % 22u |", entry->invalid_sequence_value);
-    shell_printf(shell, " % 16s |", entry->take_no_sequence ? "true" : "false");
-    shell_printf(shell, " % 19s |\n", entry->individual_recovery ? "true" : "false");
+    shell_printf(shell, "       | %31s |", entry->reset ? "true" : "false");
+    shell_printf(shell, " %13u |", entry->reset_timeout);
+    shell_printf(shell, " %22u |", entry->invalid_sequence_value);
+    shell_printf(shell, " %16s |", entry->take_no_sequence ? "true" : "false");
+    shell_printf(shell, " %19s |\n", entry->individual_recovery ? "true" : "false");
 
     shell_printf(shell, "       +---------------------------------+---------------+------------------------+------------------+---------------------+\n");
     shell_printf(shell, "       |      latent_error_detection     |   difference  |         period         |       paths      |     reset_period    |\n");
     shell_printf(shell, "       +---------------------------------+---------------+------------------------+------------------+---------------------+\n");
 
-    shell_printf(shell, "       | % 31s |", entry->latent_error_detection ? "true" : "false");
+    shell_printf(shell, "       | %31s |", entry->latent_error_detection ? "true" : "false");
     shell_printf(shell, " % 13" PRIi32 " |", entry->latent_error_parameters.difference);
-    shell_printf(shell, " % 22" PRIu32 " |", entry->latent_error_parameters.period);
-    shell_printf(shell, " % 16" PRIu16 " |", entry->latent_error_parameters.paths);
-    shell_printf(shell, " % 19" PRIu32 " |\n", entry->latent_error_parameters.reset_period);
+    shell_printf(shell, " %22" PRIu32 " |", entry->latent_error_parameters.period);
+    shell_printf(shell, " %16" PRIu16 " |", entry->latent_error_parameters.paths);
+    shell_printf(shell, " %19" PRIu32 " |\n", entry->latent_error_parameters.reset_period);
 }
 
 int cmd_seqr_update(void *shell, int32_t argc, char **argv)
@@ -820,12 +820,12 @@ static void seqi_print(void *shell, unsigned int port_id, struct genavb_sequence
     shell_printf(shell, "  port |              handle             | active | encapsulation | path_id_lan_id |\n");
     shell_printf(shell, "-------+---------------------------------+--------+---------------+----------------+\n");
 
-    shell_printf(shell, " % 5u |", port_id);
+    shell_printf(shell, " %5u |", port_id);
 
     list_u32_to_buf(entry->stream, entry->stream_n, buf, BUF_MAX_SIZE);
-    shell_printf(shell, " % 31s |", buf);
+    shell_printf(shell, " %31s |", buf);
 
-    shell_printf(shell, " % 6s |", entry->active ? "true" : "false");
+    shell_printf(shell, " %6s |", entry->active ? "true" : "false");
     shell_printf(shell, " % 13d |", entry->encapsulation);
     shell_printf(shell, " % 14" PRIi8 " |\n", entry->path_id_lan_id);
 }

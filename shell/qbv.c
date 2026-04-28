@@ -106,7 +106,7 @@ static void dump_genavb_st_config(void *shell, unsigned int port_id, struct gena
     shell_printf(shell, "port_id        %u\n", port_id);
     shell_printf(shell, "enable         %d\n", config->enable);
     shell_printf(shell, "base_time      %llu (ns)\n", config->base_time);
-    shell_printf(shell, "cycle_time     %d (ns)\n", (NSECS_PER_SEC * (uint64_t)config->cycle_time_p) / config->cycle_time_q);
+    shell_printf(shell, "cycle_time     %llu (ns)\n", (NSECS_PER_SEC * (uint64_t)config->cycle_time_p) / config->cycle_time_q);
     shell_printf(shell, "cycle_time_ext %d (ns)\n", config->cycle_time_ext);
     shell_printf(shell, "list_length    %d\n", config->list_length);
 
@@ -120,7 +120,7 @@ static void dump_genavb_st_config(void *shell, unsigned int port_id, struct gena
         shell_printf(shell, " entry | oper | gate | interval (ns) |\n");
         shell_printf(shell, "-------+------+------+---------------+\n");
         for (i = 0; i < config->list_length; i++) {
-            shell_printf(shell, " % 5u |", i);
+            shell_printf(shell, " %5u |", i);
             shell_printf(shell, " 0x%02x |", config->control_list[i].operation);
             shell_printf(shell, " 0x%02x |", config->control_list[i].gate_states);
             shell_printf(shell, " % 13d |\n", config->control_list[i].time_interval);
@@ -621,7 +621,7 @@ int cmd_qbv_set_max_sdu(void *shell, int32_t argc, char **argv)
     while ((opt = getopt(argc, argv, "l:p")) != -1) {
         switch (opt) {
         case 'l':
-            if (sscanf(optarg, "%u,%lu", &tc, &sdu_value) != 2) {
+            if (sscanf(optarg, "%u,%"SCNu32, &tc, &sdu_value) != 2) {
                 goto err;
             }
 
@@ -654,7 +654,7 @@ int cmd_qbv_set_max_sdu(void *shell, int32_t argc, char **argv)
 
     shell_printf(shell, "port %u :\n", port_id);
     for (i = 0; i < n; i++) {
-        shell_printf(shell, "traffic_clas %u : max_sdu %lu value set\n", max_sdu[i].traffic_class , max_sdu[i].queue_max_sdu);
+        shell_printf(shell, "traffic_clas %u : max_sdu %u value set\n", max_sdu[i].traffic_class , max_sdu[i].queue_max_sdu);
     }
 
     return 0;
@@ -681,17 +681,17 @@ static void dump_genavb_st_max_sdu(void *shell, unsigned int port_id, struct gen
         shell_printf(shell, " traffic class | max sdu |\n");
         shell_printf(shell, "---------------+---------+\n");
         for (i = 0; i < n; i++) {
-            shell_printf(shell, " % 13u |", queue_max_sdu[i].traffic_class);
-            shell_printf(shell, " % 7"PRIu32" |", queue_max_sdu[i].queue_max_sdu);
+            shell_printf(shell, " %13u |", queue_max_sdu[i].traffic_class);
+            shell_printf(shell, " %7"PRIu32" |", queue_max_sdu[i].queue_max_sdu);
             shell_printf(shell, "\n");
         }
     } else {
         shell_printf(shell, " traffic class | max sdu | transmission overrun |\n");
         shell_printf(shell, "---------------+---------+----------------------+\n");
         for (i = 0; i < n; i++) {
-            shell_printf(shell, " % 13u |", queue_max_sdu[i].traffic_class);
-            shell_printf(shell, " % 7"PRIu32" |", queue_max_sdu[i].queue_max_sdu);
-            shell_printf(shell, " % 20"PRIu64" |", queue_max_sdu[i].transmission_overrun);
+            shell_printf(shell, " %13u |", queue_max_sdu[i].traffic_class);
+            shell_printf(shell, " %7"PRIu32" |", queue_max_sdu[i].queue_max_sdu);
+            shell_printf(shell, " %20"PRIu64" |", queue_max_sdu[i].transmission_overrun);
             shell_printf(shell, "\n");
         }
     }
