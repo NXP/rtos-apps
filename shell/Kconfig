@@ -1,0 +1,11 @@
+# Copyright 2026 NXP
+#
+# SPDX-License-Identifier: BSD-3-Clause
+
+config MCUX_COMPONENT_component.rtos_apps.shell
+    bool "Shell component"
+    default n
+
+    if MCUX_COMPONENT_component.rtos_apps.shell
+    endif
+

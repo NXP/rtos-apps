@@ -1,4 +1,4 @@
-# Copyright 2025 NXP
+# Copyright 2025-2026 NXP
 #
 # SPDX-License-Identifier: BSD-3-Clause
 
@@ -8,4 +8,5 @@ menu "RTOS Application components"
   rsource "./audio/Kconfig"
   rsource "./tsn/Kconfig"
   rsource "./async/Kconfig"
+  rsource "./shell/Kconfig"
 endmenu
