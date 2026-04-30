@@ -11,7 +11,7 @@
 #include "genavb/frer.h"
 #include "genavb/helpers.h"
 
-#include "storage.h"
+#include "rtos_apps/storage.h"
 
 #include "shell_config.h"
 #include "rtos_apps/shell/frer.h"

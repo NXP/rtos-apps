@@ -13,7 +13,7 @@
 
 #include "rtos_apps/types.h"
 
-#include "storage.h"
+#include "rtos_apps/storage.h"
 
 #include "rtos_apps/shell/psfp.h"
 

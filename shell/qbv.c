@@ -16,7 +16,7 @@
 
 #include "rtos_apps/types.h"
 
-#include "storage.h"
+#include "rtos_apps/storage.h"
 #include "shell_config.h"
 #include "rtos_apps/shell/qbv.h"
 #include "qbv.h"
