@@ -6,9 +6,7 @@
 
 #ifdef CONFIG_APP_QBV
 
-#include "shell.h"
 #include <stdio.h>
-#include <getopt.h>
 #include <string.h>
 #include <inttypes.h>
 
@@ -19,7 +17,7 @@
 #include "rtos_apps/types.h"
 
 #include "storage.h"
-#include "genavb.h"
+#include "shell_config.h"
 #include "qbv.h"
 #include "genavb_sdk.h"
 

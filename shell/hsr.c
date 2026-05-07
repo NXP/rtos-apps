@@ -5,15 +5,15 @@
  */
 
 #include <stdio.h>
-#include <ctype.h>
-#include <getopt.h>
 
 #include "genavb/helpers.h"
 #include "genavb/error.h"
 #include "genavb/hsr.h"
+#include "genavb/types.h"
 #include "storage.h"
-#include "genavb.h"
 #include "hsr.h"
+
+#include "shell_config.h"
 
 #define BUF_MAX_SIZE 5
 

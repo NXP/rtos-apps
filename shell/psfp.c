@@ -5,8 +5,6 @@
  */
 
 #include <stdio.h>
-#include <ctype.h>
-#include <getopt.h>
 
 #include "genavb/helpers.h"
 #include "genavb/qos.h"
@@ -16,8 +14,9 @@
 #include "rtos_apps/types.h"
 
 #include "storage.h"
-#include "genavb.h"
 #include "psfp.h"
+
+#include "shell_config.h"
 
 #define STREAM_FILTER_DEFAULT_STREAM_HANDLE (0)
 #define STREAM_FILTER_NULL_FLOW_METER_REF (0xFFFFFFFF)

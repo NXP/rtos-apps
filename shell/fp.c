@@ -7,17 +7,13 @@
 #ifdef CONFIG_APP_FP
 
 #include <stdio.h>
-#include <ctype.h>
-#include <getopt.h>
 
 #include "genavb/error.h"
 #include "genavb/helpers.h"
 
 #include "storage.h"
-#include "genavb.h"
+#include "shell_config.h"
 #include "fp.h"
-#include "board.h"
-#include "log.h"
 
 #define PATH_SZ         30
 

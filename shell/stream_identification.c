@@ -5,20 +5,16 @@
  */
 
 #include <stdio.h>
-#include <ctype.h>
-#include <getopt.h>
 #include <string.h>
 
 #include "genavb/error.h"
 #include "genavb/stream_identification.h"
 #include "genavb/helpers.h"
 
-#include "board.h"
 #include "common.h"
-#include "genavb.h"
-#include "log.h"
 #include "storage.h"
 #include "stream_identification.h"
+#include "shell_config.h"
 
 #define SI_DEFAULT_PORT_NUM     1
 #define SI_DEFAULT_PORT_SIZE    CONFIG_APP_LOGICAL_PORTS

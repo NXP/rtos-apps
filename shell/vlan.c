@@ -5,8 +5,6 @@
  */
 
 #include <stdio.h>
-#include <ctype.h>
-#include <getopt.h>
 
 #include "genavb/error.h"
 #include "genavb/ether.h"
@@ -14,9 +12,8 @@
 #include "genavb/vlan.h"
 
 #include "storage.h"
-#include "genavb.h"
 #include "vlan.h"
-#include "log.h"
+#include "shell_config.h"
 
 #define VLAN_MAX_FILENAME 30
 

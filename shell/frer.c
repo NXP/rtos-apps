@@ -4,7 +4,6 @@
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
-#include <getopt.h>
 #include <stdint.h>
 #include <stdio.h>
 
@@ -13,8 +12,9 @@
 #include "genavb/helpers.h"
 
 #include "frer.h"
-#include "shell.h"
 #include "storage.h"
+
+#include "shell_config.h"
 
 #define PATH_MAX_SIZE          50
 #define BUF_MAX_SIZE           31

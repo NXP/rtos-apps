@@ -5,19 +5,16 @@
  */
 
 #include <stdio.h>
-#include <ctype.h>
-#include <getopt.h>
 
 #include "genavb/error.h"
 #include "genavb/fdb.h"
 #include "genavb/helpers.h"
 
-#include "board.h"
 #include "common.h"
 #include "fdb.h"
-#include "genavb.h"
-#include "log.h"
 #include "storage.h"
+
+#include "shell_config.h"
 
 void help_config_fdb(shell_handle_t shell)
 {

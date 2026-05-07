@@ -4,11 +4,16 @@
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
+#include <stdint.h>
 #include <string.h>
 
 #include "genavb/helpers.h"
 #include "genavb/stats.h"
 
+#include "rtos_apps/types.h"
+#include "rtos_apps/log.h"
+
+#include "shell_config.h"
 #include "storage.h"
 
 static int __port_stats(shell_handle_t shell, unsigned int port_id, int n)
