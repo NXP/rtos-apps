@@ -49,7 +49,7 @@ err:
 
 static void hsr_mode_apply_permanent(void *shell)
 {
-    struct genavb_handle *genavb_handle = get_genavb_handle();
+    struct genavb_handle *genavb_handle = gavb_stack_handle();
     genavb_hsr_mode_t mode;
     uint32_t tmp = 0;
     int ret;
@@ -75,7 +75,7 @@ static void hsr_mode_apply_permanent(void *shell)
 
 int cmd_hsr_mode_set(void *shell, int32_t argc, char **argv)
 {
-    struct genavb_handle *genavb_handle = get_genavb_handle();
+    struct genavb_handle *genavb_handle = gavb_stack_handle();
     bool permanent = false;
     genavb_hsr_mode_t mode;
     unsigned long tmp;
