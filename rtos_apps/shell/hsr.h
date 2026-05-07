@@ -7,6 +7,17 @@
 #ifndef __RTOS_APPS_SHELL_HSR_H__
 #define __RTOS_APPS_SHELL_HSR_H__
 
+#define CMD_HSR_MODE_SET_HELP \
+	"\nhsr_mode_set <mode> [-p]\n" \
+	"    parameters:\n" \
+	"        mode: HSR node operation mode\n" \
+	"        	    0: Mode H(HSR-tagged forwarding)\n" \
+	"        	    1: Mode N(No forwarding)\n" \
+	"        	    2: Mode T(Transparent forwarding)\n" \
+	"        	    3: Mode U(Unicast forwarding)\n" \
+	"    options:\n" \
+	"        -p: update mode in permanent database\n"
+
 void cmd_hsr_init(shell_handle_t shell);
 
 shell_status_t cmd_hsr_mode_set(shell_handle_t shell, int32_t argc, char **argv);

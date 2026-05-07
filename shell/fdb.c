@@ -16,14 +16,6 @@
 
 #include "shell_config.h"
 
-void help_config_fdb(shell_handle_t shell)
-{
-    shell_printf(shell, (SHELL_COMMAND(fdb_update))->pcHelpString);
-    shell_printf(shell, (SHELL_COMMAND(fdb_delete))->pcHelpString);
-    shell_printf(shell, (SHELL_COMMAND(fdb_read))->pcHelpString);
-    shell_printf(shell, (SHELL_COMMAND(fdb_dump))->pcHelpString);
-}
-
 static void fdb_print_description(shell_handle_t shell)
 {
     shell_printf(shell, "\n");
@@ -74,7 +66,7 @@ static void fdb_print_entry(shell_handle_t shell, uint8_t *address, uint16_t vid
 static void print_fdb_update_usage(shell_handle_t shell)
 {
     shell_printf(shell, "Usage: ");
-    shell_printf(shell, (SHELL_COMMAND(fdb_update))->pcHelpString);
+    shell_printf(shell, CMD_FDB_UPDATE_HELP);
 }
 
 static int fdb_port_mask_2_port_map(uint32_t port_mask, struct genavb_fdb_port_map *map)
@@ -313,7 +305,7 @@ err:
 static void print_fdb_read_usage(shell_handle_t shell)
 {
     shell_printf(shell, "Usage: ");
-    shell_printf(shell, (SHELL_COMMAND(fdb_read))->pcHelpString);
+    shell_printf(shell, CMD_FDB_READ_HELP);
 }
 
 shell_status_t cmd_fdb_read(shell_handle_t shell, int32_t argc, char **argv)
@@ -382,7 +374,7 @@ err:
 static void print_fdb_delete_usage(shell_handle_t shell)
 {
     shell_printf(shell, "Usage: ");
-    shell_printf(shell, (SHELL_COMMAND(fdb_delete))->pcHelpString);
+    shell_printf(shell, CMD_FDB_DELETE_HELP);
 }
 
 shell_status_t cmd_fdb_delete(shell_handle_t shell, int32_t argc, char **argv)
@@ -445,7 +437,7 @@ err:
 static void print_fdb_dump_usage(shell_handle_t shell)
 {
     shell_printf(shell, "Usage: ");
-    shell_printf(shell, (SHELL_COMMAND(fdb_dump))->pcHelpString);
+    shell_printf(shell, CMD_FDB_DUMP_HELP);
 }
 
 shell_status_t cmd_fdb_dump(shell_handle_t shell, int32_t argc, char **argv)

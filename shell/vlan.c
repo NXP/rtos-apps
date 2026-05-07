@@ -19,16 +19,6 @@
 
 static void vlan_dump_pvid(shell_handle_t shell, bool permanent);
 
-void help_config_vlan(shell_handle_t shell)
-{
-    shell_printf(shell, (SHELL_COMMAND(vlan_update))->pcHelpString);
-    shell_printf(shell, (SHELL_COMMAND(vlan_delete))->pcHelpString);
-    shell_printf(shell, (SHELL_COMMAND(vlan_read))->pcHelpString);
-    shell_printf(shell, (SHELL_COMMAND(vlan_dump))->pcHelpString);
-    shell_printf(shell, (SHELL_COMMAND(vlan_set_pvid))->pcHelpString);
-    shell_printf(shell, (SHELL_COMMAND(vlan_get_pvid))->pcHelpString);
-}
-
 enum {
     COLUMN_TAGGED,
     COLUMN_UNTAGGED,
@@ -102,7 +92,7 @@ static void vlan_print_entry(shell_handle_t shell, uint16_t vid, bool dynamic, s
 static void print_vlan_update_usage(shell_handle_t shell)
 {
     shell_printf(shell, "Usage: ");
-    shell_printf(shell, (SHELL_COMMAND(vlan_update))->pcHelpString);
+    shell_printf(shell, CMD_VLAN_UPDATE_HELP);
 }
 
 static int vlan_port_mask_2_port_map(uint32_t port_mask, uint32_t untagged_port_mask, struct genavb_vlan_port_map map[CONFIG_APP_BR_NUM_PORTS])
@@ -370,7 +360,7 @@ err:
 static void print_vlan_read_usage(shell_handle_t shell)
 {
     shell_printf(shell, "Usage: ");
-    shell_printf(shell, (SHELL_COMMAND(vlan_read))->pcHelpString);
+    shell_printf(shell, CMD_VLAN_READ_HELP);
 }
 
 shell_status_t cmd_vlan_read(shell_handle_t shell, int32_t argc, char **argv)
@@ -430,7 +420,7 @@ err:
 static void print_vlan_delete_usage(shell_handle_t shell)
 {
     shell_printf(shell, "Usage: ");
-    shell_printf(shell, (SHELL_COMMAND(vlan_delete))->pcHelpString);
+    shell_printf(shell, CMD_VLAN_DELETE_HELP);
 }
 
 shell_status_t cmd_vlan_delete(shell_handle_t shell, int32_t argc, char **argv)
@@ -485,7 +475,7 @@ err:
 static void print_vlan_dump_usage(shell_handle_t shell)
 {
     shell_printf(shell, "Usage: ");
-    shell_printf(shell, (SHELL_COMMAND(vlan_dump))->pcHelpString);
+    shell_printf(shell, CMD_VLAN_DUMP_HELP);
 }
 
 shell_status_t cmd_vlan_dump(shell_handle_t shell, int32_t argc, char **argv)
@@ -618,7 +608,7 @@ static void vlan_dump_pvid(shell_handle_t shell, bool permanent)
 static void print_vlan_set_pvid_usage(shell_handle_t shell)
 {
     shell_printf(shell, "Usage: ");
-    shell_printf(shell, (SHELL_COMMAND(vlan_set_pvid))->pcHelpString);
+    shell_printf(shell, CMD_VLAN_SET_PVID_HELP);
 }
 
 shell_status_t cmd_vlan_set_pvid(shell_handle_t shell, int32_t argc, char **argv)
@@ -681,7 +671,7 @@ err:
 static void print_vlan_get_pvid_usage(shell_handle_t shell)
 {
     shell_printf(shell, "Usage: ");
-    shell_printf(shell, (SHELL_COMMAND(vlan_get_pvid))->pcHelpString);
+    shell_printf(shell, CMD_VLAN_GET_PVID_HELP);
 }
 
 shell_status_t cmd_vlan_get_pvid(shell_handle_t shell, int32_t argc, char **argv)

@@ -35,13 +35,6 @@ static const struct genavb_stream_identity si_default_entry = {
     .parameters.null.vlan = 0,
 };
 
-void help_config_si(shell_handle_t shell)
-{
-    shell_printf(shell, (SHELL_COMMAND(si_update))->pcHelpString);
-    shell_printf(shell, (SHELL_COMMAND(si_delete))->pcHelpString);
-    shell_printf(shell, (SHELL_COMMAND(si_read))->pcHelpString);
-}
-
 /* converts "1,2,3" type string into entry->port array */
 static void si_parse_port_list(char *str, struct genavb_stream_identity *entry, unsigned int *n, unsigned int max)
 {
@@ -363,7 +356,7 @@ static int si_update_parse_optional_arguments(shell_handle_t shell, int32_t argc
 static void si_update_print_usage(shell_handle_t shell)
 {
     shell_printf(shell, "Usage:");
-    shell_printf(shell, (SHELL_COMMAND(si_update))->pcHelpString);
+    shell_printf(shell, CMD_SI_UPDATE_HELP);
 }
 
 shell_status_t cmd_si_update(shell_handle_t shell, int32_t argc, char **argv)
@@ -413,7 +406,7 @@ err:
 static void si_delete_print_usage(shell_handle_t shell)
 {
     shell_printf(shell, "Usage:");
-    shell_printf(shell, (SHELL_COMMAND(si_delete))->pcHelpString);
+    shell_printf(shell, CMD_SI_DELETE_HELP);
 }
 
 shell_status_t cmd_si_delete(shell_handle_t shell, int32_t argc, char **argv)
@@ -464,7 +457,7 @@ err:
 static void si_read_print_usage(shell_handle_t shell)
 {
     shell_printf(shell, "Usage:");
-    shell_printf(shell, (SHELL_COMMAND(si_read))->pcHelpString);
+    shell_printf(shell, CMD_SI_READ_HELP);
 }
 
 shell_status_t cmd_si_read(shell_handle_t shell, int32_t argc, char **argv)

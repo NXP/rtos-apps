@@ -23,21 +23,6 @@
 #define PORT_MAX               6
 #define PORT_DEFAULT           2
 
-void help_config_frer(shell_handle_t shell)
-{
-    shell_printf(shell, (SHELL_COMMAND(seqg_update))->pcHelpString);
-    shell_printf(shell, (SHELL_COMMAND(seqg_delete))->pcHelpString);
-    shell_printf(shell, (SHELL_COMMAND(seqg_read))->pcHelpString);
-
-    shell_printf(shell, (SHELL_COMMAND(seqr_update))->pcHelpString);
-    shell_printf(shell, (SHELL_COMMAND(seqr_delete))->pcHelpString);
-    shell_printf(shell, (SHELL_COMMAND(seqr_read))->pcHelpString);
-
-    shell_printf(shell, (SHELL_COMMAND(seqi_update))->pcHelpString);
-    shell_printf(shell, (SHELL_COMMAND(seqi_delete))->pcHelpString);
-    shell_printf(shell, (SHELL_COMMAND(seqi_read))->pcHelpString);
-}
-
 static const struct genavb_sequence_generation seqg_default = {
     .stream_n = 1,
     .stream = NULL,
@@ -295,7 +280,7 @@ shell_status_t cmd_seqg_update(shell_handle_t shell, int32_t argc, char **argv)
     return kStatus_SHELL_Success;
 
 err:
-    usage(shell, (SHELL_COMMAND(seqg_update))->pcHelpString);
+    shell_printf(shell, CMD_SEQG_UPDATE_HELP);
 
     return kStatus_SHELL_Error;
 }
@@ -334,7 +319,7 @@ shell_status_t cmd_seqg_delete(shell_handle_t shell, int32_t argc, char **argv)
     return kStatus_SHELL_Success;
 
 err:
-    usage(shell, (SHELL_COMMAND(seqg_delete))->pcHelpString);
+    shell_printf(shell, CMD_SEQG_DELETE_HELP);
 
     return kStatus_SHELL_Error;
 }
@@ -385,7 +370,7 @@ shell_status_t cmd_seqg_read(shell_handle_t shell, int32_t argc, char **argv)
     return kStatus_SHELL_Success;
 
 err_usage:
-    usage(shell, (SHELL_COMMAND(seqg_read))->pcHelpString);
+    shell_printf(shell, CMD_SEQG_READ_HELP);
 
 err:
     return kStatus_SHELL_Error;
@@ -628,7 +613,7 @@ shell_status_t cmd_seqr_update(shell_handle_t shell, int32_t argc, char **argv)
     return kStatus_SHELL_Success;
 
 err:
-    usage(shell, (SHELL_COMMAND(seqr_update))->pcHelpString);
+    shell_printf(shell, CMD_SEQR_UPDATE_HELP);
 
     return kStatus_SHELL_Error;
 }
@@ -667,7 +652,7 @@ shell_status_t cmd_seqr_delete(shell_handle_t shell, int32_t argc, char **argv)
     return kStatus_SHELL_Success;
 
 err:
-    usage(shell, (SHELL_COMMAND(seqr_delete))->pcHelpString);
+    shell_printf(shell, CMD_SEQR_DELETE_HELP);
 
     return kStatus_SHELL_Error;
 }
@@ -721,7 +706,7 @@ shell_status_t cmd_seqr_read(shell_handle_t shell, int32_t argc, char **argv)
     return kStatus_SHELL_Success;
 
 err_usage:
-    usage(shell, (SHELL_COMMAND(seqr_read))->pcHelpString);
+    shell_printf(shell, CMD_SEQI_READ_HELP);
 
 err:
     return kStatus_SHELL_Error;
@@ -904,7 +889,7 @@ shell_status_t cmd_seqi_update(shell_handle_t shell, int32_t argc, char **argv)
     return kStatus_SHELL_Success;
 
 err:
-    usage(shell, (SHELL_COMMAND(seqi_update))->pcHelpString);
+    shell_printf(shell, CMD_SEQI_UPDATE_HELP);
 
     return kStatus_SHELL_Error;
 }
@@ -943,7 +928,7 @@ shell_status_t cmd_seqi_delete(shell_handle_t shell, int32_t argc, char **argv)
     return kStatus_SHELL_Success;
 
 err:
-    usage(shell, (SHELL_COMMAND(seqi_delete))->pcHelpString);
+    shell_printf(shell, CMD_SEQI_DELETE_HELP);
 
     return kStatus_SHELL_Error;
 }
@@ -994,7 +979,7 @@ shell_status_t cmd_seqi_read(shell_handle_t shell, int32_t argc, char **argv)
     return kStatus_SHELL_Success;
 
 err_usage:
-    usage(shell, (SHELL_COMMAND(seqi_read))->pcHelpString);
+    shell_printf(shell, CMD_SEQR_READ_HELP);
 
 err:
     return kStatus_SHELL_Error;

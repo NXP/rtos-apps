@@ -26,7 +26,7 @@ void help_config_hsr(shell_handle_t shell)
 static void print_hsr_mode_set_usage(shell_handle_t shell)
 {
     shell_printf(shell, "Usage: ");
-    shell_printf(shell, (SHELL_COMMAND(hsr_mode_set))->pcHelpString);
+    shell_printf(shell, CMD_HSR_MODE_SET_HELP);
 }
 
 static int hsr_mode_update_permanent(unsigned long mode)

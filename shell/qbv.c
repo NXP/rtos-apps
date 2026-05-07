@@ -84,38 +84,6 @@ static const genavb_clock_id_t port_clock_id[CONFIG_APP_LOGICAL_PORTS] = {
 #endif
 };
 
-void help_config_qbv(shell_handle_t shell)
-{
-    shell_printf(shell, "qbv config\n\n");
-    shell_printf(shell, "path: /qbv\n");
-    shell_printf(shell, "    description: directory used by qbv_set/qbv_get commands\n");
-    shell_printf(shell, "path: /qbv/portN (N: logical port index, 0 to %u)\n", CONFIG_APP_LOGICAL_PORTS - 1);
-    shell_printf(shell, "parameters (logical port N):\n");
-    shell_printf(shell, "    base_time:\n");
-    shell_printf(shell, "        value: 0 to (2^64 - 1)\n");
-    shell_printf(shell, "        description: 64 bit absolute gPTP time. If in the past, actual base time' = base time + N * cycle_time\n");
-    shell_printf(shell, "    cycle_time:\n");
-    shell_printf(shell, "        value: 0 to 4294967295\n");
-    shell_printf(shell, "        description: 32bit cycle time in nanoseconds\n");
-    shell_printf(shell, "    cycle_time_ext:\n");
-    shell_printf(shell, "        value: 0 to 4294967295\n");
-    shell_printf(shell, "        description: 32bit cycle time extension in nanoseconds\n");
-    shell_printf(shell, "    entryM: (M: entry id, 0 to %u)\n", QBV_LIST_MAX_ENTRIES - 1);
-    shell_printf(shell, "        format: mask,interval<,operation> (e.g f4,20000<,0>)\n");
-    shell_printf(shell, "        value: 00 to ff, 0 to 4294967295<, 0 to 2>\n");
-    shell_printf(shell, "        description: gate list entry\n");
-    shell_printf(shell, "            mask: gate state bitmask in hexadecimal\n");
-    shell_printf(shell, "            interval: 32bit gate interval in nanoseconds\n");
-    shell_printf(shell, "            <operation>: gate operation, 0: SetGateStates, 1: Set-And-Hold-MAC, 2: Set-And-Release-MAC, default: 0\n");
-    shell_printf(shell, "\n");
-    shell_printf(shell, "path: /qbv/portN/max_sdu\n");
-    shell_printf(shell, "    description: directory used by qbv_set_max_sdu/qbv_get_max_sdu commands\n");
-    shell_printf(shell, "parameters (logical port N):\n");
-    shell_printf(shell, "    qM (M: traffic class number, 0 to %u):\n", QOS_TRAFFIC_CLASS_MAX - 1);
-    shell_printf(shell, "        value: 0 to 2000\n");
-    shell_printf(shell, "        description: 32bit traffic class maximum Service Data Unit size for each queue\n");
-}
-
 static const struct genavb_st_config st_config_default = {
         .enable = 0,
         .base_time = 0,
@@ -329,7 +297,7 @@ err_set_config:
 static void print_qbv_set_usage(shell_handle_t shell)
 {
     shell_printf(shell, "Usage: ");
-    shell_printf(shell, (SHELL_COMMAND(qbv_set))->pcHelpString);
+    shell_printf(shell, CMD_QBV_SET_HELP);
 }
 
 shell_status_t cmd_qbv_set(shell_handle_t shell, int32_t argc, char **argv)
@@ -424,7 +392,7 @@ err:
 static void print_qbv_get_usage(shell_handle_t shell)
 {
     shell_printf(shell, "Usage: ");
-    shell_printf(shell, (SHELL_COMMAND(qbv_get))->pcHelpString);
+    shell_printf(shell, CMD_QBV_GET_HELP);
 }
 
 shell_status_t cmd_qbv_get(shell_handle_t shell, int32_t argc, char **argv)
@@ -497,7 +465,7 @@ err:
 static void print_qbv_disable_usage(shell_handle_t shell)
 {
     shell_printf(shell, "Usage: ");
-    shell_printf(shell, (SHELL_COMMAND(qbv_disable))->pcHelpString);
+    shell_printf(shell, CMD_QBV_DISABLE_HELP);
 }
 
 shell_status_t cmd_qbv_disable(shell_handle_t shell, int32_t argc, char **argv)
@@ -557,7 +525,7 @@ err:
 static void print_qbv_set_max_sdu_usage(shell_handle_t shell)
 {
     shell_printf(shell, "Usage: ");
-    shell_printf(shell, (SHELL_COMMAND(qbv_set_max_sdu))->pcHelpString);
+    shell_printf(shell, CMD_QBV_SET_MAX_SDU_HELP);
 }
 
 static int qbv_write_sdu_permanent(shell_handle_t shell, unsigned int port_id, struct genavb_st_max_sdu *queue_max_sdu, unsigned int n)
@@ -699,7 +667,7 @@ static void print_qbv_get_max_sdu_usage(shell_handle_t shell)
 {
     shell_printf(shell, "Usage: ");
 
-    shell_printf(shell, (SHELL_COMMAND(qbv_get_max_sdu))->pcHelpString);
+    shell_printf(shell, CMD_QBV_GET_MAX_SDU_HELP);
 }
 
 static void dump_genavb_st_max_sdu(shell_handle_t shell, unsigned int port_id, struct genavb_st_max_sdu *queue_max_sdu, unsigned int n, bool permanent)

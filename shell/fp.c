@@ -20,28 +20,16 @@
 
 #define PATH_SZ         30
 
-void help_config_fp(shell_handle_t shell) {
-    shell_printf(shell, "fp config\n\n");
-    shell_printf(shell, "path: /fp\n");
-    shell_printf(shell, "   description: directory used by fp_set/fp_get commands\n");
-    shell_printf(shell, "path: /fp/portN (N: logical port index, 0 to %u)\n", CONFIG_APP_LOGICAL_PORTS - 1);
-    shell_printf(shell, "   commands (logical port N):\n");
-    shell_printf(shell, "   ");
-    shell_printf(shell, (SHELL_COMMAND(fp_set))->pcHelpString);
-    shell_printf(shell, "   ");
-    shell_printf(shell, (SHELL_COMMAND(fp_get))->pcHelpString);
-}
-
 static void print_fp_set_usage(shell_handle_t shell)
 {
     shell_printf(shell, "Usage: ");
-    shell_printf(shell, (SHELL_COMMAND(fp_set))->pcHelpString);
+    shell_printf(shell, CMD_FP_SET_HELP);
 }
 
 static void print_fp_get_usage(shell_handle_t shell)
 {
     shell_printf(shell, "Usage: ");
-    shell_printf(shell, (SHELL_COMMAND(fp_get))->pcHelpString);
+    shell_printf(shell, CMD_FP_GET_HELP);
 }
 
 static void read_fp_status_table(uint8_t status_fp, genavb_fp_admin_status_t *status_admin)

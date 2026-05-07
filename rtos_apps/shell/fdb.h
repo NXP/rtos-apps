@@ -7,6 +7,37 @@
 #ifndef __RTOS_APPS_SHELL_FDB_H__
 #define __RTOS_APPS_SHELL_FDB_H__
 
+#define CMD_FDB_UPDATE_HELP \
+	"\nfdb_update <mac> <vid> <port_id> [-c <control>] [-p]\n" \
+	"    parameters:\n" \
+	"        mac: mac address\n" \
+	"        vid: vlan id\n" \
+	"        port_id: logical port id\n" \
+	"    options:\n" \
+	"        -c <control>: filtering control, 0: filtering, 1: forwarding (default)\n" \
+	"        -p: update entry in permanent database\n"
+
+#define CMD_FDB_DELETE_HELP \
+	"\nfdb_delete <mac> <vid> [-p]\n" \
+	"    parameters:\n" \
+	"        mac: mac address\n" \
+	"        vid: vlan id\n" \
+	"    options:\n" \
+	"        -p: delete entry from permanent database\n"
+
+#define CMD_FDB_READ_HELP \
+	"\nfdb_read <mac> <vid> [-p]\n" \
+	"    parameters:\n" \
+	"        mac: mac address\n" \
+	"        vid: vlan id\n" \
+	"    options:\n" \
+	"        -p: read entry from permanent database\n"
+
+#define CMD_FDB_DUMP_HELP \
+	"\nfdb_dump [-p]\n" \
+	"    options:\n" \
+	"        -p: print permanent entries\n"
+
 void cmd_fdb_init(shell_handle_t shell);
 
 shell_status_t cmd_fdb_update(shell_handle_t shell, int32_t argc, char **argv);
