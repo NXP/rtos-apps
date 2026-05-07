@@ -16,6 +16,7 @@ target_sources(${RTOS_APPS_TARGET} PRIVATE
     ${CMAKE_CURRENT_LIST_DIR}/shell/port_stats.c
     ${CMAKE_CURRENT_LIST_DIR}/shell/psfp.c
     ${CMAKE_CURRENT_LIST_DIR}/shell/qbv.c
+    ${CMAKE_CURRENT_LIST_DIR}/shell/shell.c
     ${CMAKE_CURRENT_LIST_DIR}/shell/stream_identification.c
     ${CMAKE_CURRENT_LIST_DIR}/shell/vlan.c
 )

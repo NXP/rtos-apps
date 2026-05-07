@@ -13,6 +13,7 @@ mcux_add_source(
     ./shell/port_stats.c
     ./shell/psfp.c
     ./shell/qbv.c
+    ./shell/shell.c
     ./shell/stream_identification.c
     ./shell/vlan.c
 )

@@ -4,6 +4,16 @@
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
+#include <stdint.h>
+#include <string.h>
+
+#include "genavb/log.h"
+
+#include "rtos_apps/log.h"
+#include "rtos_apps/shell/shell.h"
+
+#include "shell_config.h"
+
 static int gavb_log_level(char *component_str, char *level_str)
 {
     genavb_log_component_id_t component;
@@ -78,7 +88,7 @@ int app_log_level_set(char *level_str)
     return 0;
 }
 
-static shell_status_t log(shell_handle_t shell, int32_t argc, char **argv)
+int cmd_shell_log(void *shell, int32_t argc, char **argv)
 {
     if (!strcmp(argv[1], "app") || !strcmp(argv[1], "all")) {
         if (app_log_level_set(argv[2]) < 0)
@@ -92,10 +102,10 @@ static shell_status_t log(shell_handle_t shell, int32_t argc, char **argv)
             goto usage;
     }
 
-    return kStatus_SHELL_Success;
+    return 0;
 
 usage:
-    shell_printf(shell, (SHELL_COMMAND(log))->pcHelpString);
+    shell_printf(shell, CMD_SHELL_LOG_HELP);
 
-    return kStatus_SHELL_Success;
+    return -1;
 }
