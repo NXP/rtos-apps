@@ -786,9 +786,9 @@ void cmd_qbv_init(void *shell)
     unsigned int port_id;
 
     for (port_id = 0; port_id < CONFIG_APP_LOGICAL_PORTS; port_id++) {
-        qbv_apply_permanent(NULL, port_id);
+        qbv_apply_permanent(shell, port_id);
 
-        qbv_apply_max_sdu_permanent(NULL, port_id);
+        qbv_apply_max_sdu_permanent(shell, port_id);
     }
 }
 
