@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 NXP
+ * Copyright 2019-2026 NXP
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -10,15 +10,6 @@
 #include "genavb/stats.h"
 
 #include "storage.h"
-
-static shell_status_t port_stats(shell_handle_t shell, int32_t argc, char **argv);
-
-SHELL_COMMAND_DEFINE(port_stats,
-                     "\nport_stats <port_id>\n"
-                     "    parameters:\n"
-                     "        port_id: logical port index\n",
-                     &port_stats,
-                     1);
 
 static int __port_stats(shell_handle_t shell, unsigned int port_id, int n)
 {

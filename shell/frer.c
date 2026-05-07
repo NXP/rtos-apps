@@ -1,5 +1,5 @@
 /*
- * Copyright 2023-2025 NXP
+ * Copyright 2023-2026 NXP
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -22,125 +22,6 @@
 #define STREAM_HANDLE_DEFAULT  0
 #define PORT_MAX               6
 #define PORT_DEFAULT           2
-
-/* Sequence generation */
-static shell_status_t seqg_update(shell_handle_t shell, int32_t argc, char **argv);
-static shell_status_t seqg_delete(shell_handle_t shell, int32_t argc, char **argv);
-static shell_status_t seqg_read(shell_handle_t shell, int32_t argc, char **argv);
-
-/* Sequence recovery */
-static shell_status_t seqr_update(shell_handle_t shell, int32_t argc, char **argv);
-static shell_status_t seqr_delete(shell_handle_t shell, int32_t argc, char **argv);
-static shell_status_t seqr_read(shell_handle_t shell, int32_t argc, char **argv);
-
-/* Sequence identification */
-static shell_status_t seqi_update(shell_handle_t shell, int32_t argc, char **argv);
-static shell_status_t seqi_delete(shell_handle_t shell, int32_t argc, char **argv);
-static shell_status_t seqi_read(shell_handle_t shell, int32_t argc, char **argv);
-
-SHELL_COMMAND_DEFINE(seqg_update,
-                     "\nseqg_update <index> [-h <h1>[,<h2>,..,<hn>]] [-r] [-p]\n"
-                     "    parameters:\n"
-                     "        index: entry index\n"
-                     "    options:\n"
-                     "        -h <h1>: list of stream handles (comma separated)\n"
-                     "        -p: update entry in permanent database\n"
-                     "\nseqg_update <index> [-r]\n"
-                     "    parameters:\n"
-                     "        index: entry index\n"
-                     "    options:\n"
-                     "        -r: reset sequence generation\n",
-                     &seqg_update,
-                     SHELL_IGNORE_PARAMETER_COUNT);
-
-SHELL_COMMAND_DEFINE(seqg_delete,
-                     "\nseqg_delete <index> [-p]\n"
-                     "    parameters:\n"
-                     "        index: entry index\n"
-                     "    options:\n"
-                     "        -p: delete entry from permanent database\n",
-                     &seqg_delete,
-                     SHELL_IGNORE_PARAMETER_COUNT);
-
-SHELL_COMMAND_DEFINE(seqg_read,
-                     "\nseqg_read <index> [-p]\n"
-                     "    parameters:\n"
-                     "        index: entry index\n"
-                     "    options:\n"
-                     "        -p: read entry from permanent database\n",
-                     &seqg_read,
-                     SHELL_IGNORE_PARAMETER_COUNT);
-
-SHELL_COMMAND_DEFINE(seqr_update,
-                     "\nseqr_update <index> [-h <h1>[,<h2>,..,<hn>]] [-P <p1>[,<p2>,..,<pn>]] [-a <algorithm>] [-r] [-H <history>] [-s <enable>] [-i <enable>] [-p]\n"
-                     "    parameters:\n"
-                     "        index: entry index\n"
-                     "    options:\n"
-                     "        -h <h1>: list of stream handles (comma separated)\n"
-                     "        -P <p1>: list of logical port ids (comma separated)\n"
-                     "        -a <algorithm>: recovery algorithm, 0: Vector, 1: Match\n"
-                     "        -r: reset sequence recovery\n"
-                     "        -H <history>: history length\n"
-                     "        -s <enable>: take no sequence, 0: disable (default), 1: enable\n"
-                     "        -i <enable>: individual recovery, 0: disable (default), 1: enable\n"
-                     "        -p: update entry in permanent database\n",
-                     &seqr_update,
-                     SHELL_IGNORE_PARAMETER_COUNT);
-
-SHELL_COMMAND_DEFINE(seqr_delete,
-                     "\nseqr_delete <index> [-p]\n"
-                     "    parameters:\n"
-                     "        index: entry index\n"
-                     "    options:\n"
-                     "        -p: delete entry from permanent database\n",
-                     &seqr_delete,
-                     SHELL_IGNORE_PARAMETER_COUNT);
-
-SHELL_COMMAND_DEFINE(seqr_read,
-                     "\nseqr_read <index> [-p]\n"
-                     "    parameters:\n"
-                     "        index: entry index\n"
-                     "    options:\n"
-                     "        -p: read entry from permanent database\n",
-                     &seqr_read,
-                     SHELL_IGNORE_PARAMETER_COUNT);
-
-SHELL_COMMAND_DEFINE(seqi_update,
-                     "\nseqi_update <port_id> [-h h1[,<h2>,..,<hn>]] [-a] [-e <encapsulation>] [-i <id>] [-p]\n"
-                     "    parameters:\n"
-                     "        port_id: logical port id\n"
-                     "    options:\n"
-                     "        -h <h1>: list of stream handles (comma separated)\n"
-                     "        -a: active\n"
-                     "        -e <encapsulation>: encapsulation tag, 1: R-TAG, 2: HSR, 3: PRP (not supported), 4: R-TAG (draft 2.0)\n"
-                     "        -i <id>: path id (HSR) or lan id (PRP)\n"
-                     "        -p: update entry in permanent database\n",
-                     &seqi_update,
-                     SHELL_IGNORE_PARAMETER_COUNT);
-
-SHELL_COMMAND_DEFINE(seqi_delete,
-                     "\nseqi_delete <port_id> [-p]\n"
-                     "    parameters:\n"
-                     "        port_id: logical port id\n"
-                     "    options:\n"
-                     "        -p: delete entry from permanent database\n",
-                     &seqi_delete,
-                     SHELL_IGNORE_PARAMETER_COUNT);
-
-SHELL_COMMAND_DEFINE(seqi_read,
-                     "\nseqi_read <port_id> [-p]\n"
-                     "    parameters:\n"
-                     "        port_id: logical port id\n"
-                     "    options:\n"
-                     "        -p: read entry from permanent database\n",
-                     &seqi_read,
-                     SHELL_IGNORE_PARAMETER_COUNT);
-
-static inline void usage(shell_handle_t shell, const char *str)
-{
-    shell_printf(shell, "Usage:");
-    shell_printf(shell, "%s", str);
-}
 
 void help_config_frer(shell_handle_t shell)
 {
@@ -1121,18 +1002,6 @@ err:
 
 void frer_init_shell(shell_handle_t shell)
 {
-    SHELL_RegisterCommand(shell, SHELL_COMMAND(seqg_update));
-    SHELL_RegisterCommand(shell, SHELL_COMMAND(seqg_delete));
-    SHELL_RegisterCommand(shell, SHELL_COMMAND(seqg_read));
-
-    SHELL_RegisterCommand(shell, SHELL_COMMAND(seqr_update));
-    SHELL_RegisterCommand(shell, SHELL_COMMAND(seqr_delete));
-    SHELL_RegisterCommand(shell, SHELL_COMMAND(seqr_read));
-
-    SHELL_RegisterCommand(shell, SHELL_COMMAND(seqi_update));
-    SHELL_RegisterCommand(shell, SHELL_COMMAND(seqi_delete));
-    SHELL_RegisterCommand(shell, SHELL_COMMAND(seqi_read));
-
     seqi_apply_permanent(shell);
     seqr_apply_permanent(shell);
     seqg_apply_permanent(shell);

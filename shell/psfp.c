@@ -1,5 +1,5 @@
 /*
- * Copyright 2023-2025 NXP
+ * Copyright 2023-2026 NXP
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -42,129 +42,6 @@
 #define FLOW_METER_DEFAULT_CM  (0)
 #define FLOW_METER_DEFAULT_DROPY (0)
 #define FLOW_METER_DEFAULT_MREN (0)
-
-static shell_status_t sf_update(shell_handle_t shell, int32_t argc, char **argv);
-static shell_status_t sf_delete(shell_handle_t shell, int32_t argc, char **argv);
-static shell_status_t sf_read(shell_handle_t shell, int32_t argc, char **argv);
-
-static shell_status_t sg_update(shell_handle_t shell, int32_t argc, char **argv);
-static shell_status_t sg_delete(shell_handle_t shell, int32_t argc, char **argv);
-static shell_status_t sg_read(shell_handle_t shell, int32_t argc, char **argv);
-
-static shell_status_t fm_update(shell_handle_t shell, int32_t argc, char **argv);
-static shell_status_t fm_delete(shell_handle_t shell, int32_t argc, char **argv);
-static shell_status_t fm_read(shell_handle_t shell, int32_t argc, char **argv);
-
-SHELL_COMMAND_DEFINE(sf_update,
-                     "\nsf_update <index> [-h <stream_handle>] [-P <priority_spec>] [-m <flow_meter_ref>] [-M <flow_meter_enable>] [-g <stream_gate_ref>] [-S <max_sdu_size>] [-p]\n"
-                     "        parameters:\n"
-                     "                <index>: 32bits, user defined stream filter identifier\n"
-
-                     "        options:\n"
-                     "                -h <stream_handle>: stream handle\n"
-                     "                -P <priority>: vlan tag priority code point  value (wildcarded if not specified)\n"
-                     "                -m <flow_meter_ref>: flow meter instance identifier\n"
-                     "                -M <flow_meter_enable>: flow meter enable, 0: disable, 1: enable, default: 0\n"
-                     "                -g <stream_gate_ref>: stream gate instance identifier\n"
-                     "                -S <max_sdu_size>: maximum service data unit in bytes\n"
-                     "                -p: update entry in permanent database\n",
-                     &sf_update,
-                     SHELL_IGNORE_PARAMETER_COUNT);
-SHELL_COMMAND_DEFINE(sf_delete,
-                     "\nsf_delete <index> [-p]\n"
-                     "        parameters:\n"
-                     "                <index>: user defined stream filter identifier\n"
-                     "        options:\n"
-                     "                -p: delete entry from permanent database\n",
-                     &sf_delete,
-                     SHELL_IGNORE_PARAMETER_COUNT);
-SHELL_COMMAND_DEFINE(sf_read,
-                     "\nsf_read <index> [-p]\n"
-                     "        parameters:\n"
-                     "                <index>: user defined stream filter identifier\n"
-                     "        options:\n"
-                     "                -p: read entry from permanent database\n",
-                     &sf_read,
-                     SHELL_IGNORE_PARAMETER_COUNT);
-
-SHELL_COMMAND_DEFINE(sg_update,
-                     "\nsg_update <index> [-e <enable>] [-s <admin_state>] [-P <admin_ipv>] [-c <cycle_time>] [-C <cycle_time_ext>] [-b <base_time>] [-l <state,ipv,interval,octet>] [-l ...] [-I <enable>] [-X <enable>] [-p]\n"
-                     "        parameters:\n"
-                     "                <index>: user defined stream gate identifier\n"
-                     "        options:\n"
-                     "                -e <enable>: gate enable, 0: disabled (default), 1: enabled\n"
-                     "                -s <admin_state>: administrative gate state, 0: closed, 1: open (default)\n"
-                     "                -P <admin_ipv>: administrative IPV, 0 to 7, 0xff:null (default)\n"
-                     "                -c <cycle_time>: gate cycle time in ns, default: 100000\n"
-                     "                -C <cycle_time_ext>: gate cycle time extension in ns, 0 to 4294967295, default: 0\n"
-                     "                -b <base_time>: gate base time in ns, 0 to (2^64 - 1), default: 0\n"
-                     "                -l <state,ipv,interval,octet>: gate control list, default: 0,0,100000,0 (one option per list entry)\n"
-                     "                -I <enable>: gate closed due to invalid rx enable 0: disabled (default), 1: enabled\n"
-                     "                -X <enable>: gate closed due to octets exceeded enable, 0: disabled (default), 1: enabled\n"
-                     "                -p: update entry in permanent database\n"
-                     "\nsg_update <index> [-i] [-x]\n"
-                     "        parameters:\n"
-                     "                <index>: user defined stream gate identifier\n"
-                     "        options:\n"
-                     "                -i: reset gate closed due to invalid rx\n"
-                     "                -x: reset gate closed due to octets exceeded\n",
-                     &sg_update,
-                     SHELL_IGNORE_PARAMETER_COUNT);
-SHELL_COMMAND_DEFINE(sg_delete,
-                     "\nsg_delete <index> [-p]\n"
-                     "        parameters:\n"
-                     "                <index>: user defined stream gate identifier\n"
-                     "        options:\n"
-                     "                -p: delete entry from permanent database\n",
-                     &sg_delete,
-                     SHELL_IGNORE_PARAMETER_COUNT);
-SHELL_COMMAND_DEFINE(sg_read,
-                     "\nsg_read <index> [-p] [-t <type>]\n"
-                     "        parameters:\n"
-                     "                <index>: user defined stream gate identifier\n"
-                     "        options:\n"
-                     "                -p: read entry from permanent database\n"
-                     "                -t <type>: configuration type, 0: operational, 1: administrative, default: 0\n",
-                     &sg_read,
-                     SHELL_IGNORE_PARAMETER_COUNT);
-
-SHELL_COMMAND_DEFINE(fm_update,
-                     "\nfm_update <index> -r <cir> -b <cbs> -R <eir> -B <ebs> -f <cflag> -c <cmode> -y <dropy> -m <markre> [-p]\n"
-                     "        parameters:\n"
-                     "                <index>: user defined flow meter identifier\n"
-                     "        options:\n"
-                     "                -r <cir>: committed rate in unit of bits per sec, default: 10000000\n"
-                     "                -b <cbs>: committed burst size in bytes, default: 2000\n"
-                     "                -R <eir>: excess rate in unit of bits per sec, default: 0\n"
-                     "                -B <ebs>: excess burst size in bytes, default: 0\n"
-                     "                -f <cflag>: coupling flag, 0: CIR and EIR buckets not coupled, 1: CIR and EIR buckets coupled, default:0\n"
-                     "                -c <cmode>: color mode, 0: color-blind, 1: color-aware, default: 0\n"
-                     "                -y <dropy>: drop on yellow, 0: yellow frames eligible to drop, 1: yellow frames are dropped, default: 0\n"
-                     "                -m <markre>: mark all frames red enable, default: 0\n"
-                     "                -p: update entry in permanent database\n"
-                     "\nfm_update <index> -M \n"
-                     "        parameters:\n"
-                     "                <index>: user defined flow meter identifier\n"
-                     "        options:\n"
-                     "                -M: reset mark all frames red\n",
-                     &fm_update,
-                     SHELL_IGNORE_PARAMETER_COUNT);
-SHELL_COMMAND_DEFINE(fm_delete,
-                     "\nfm_delete <index> [-p]\n"
-                     "        parameters:\n"
-                     "                <index>: user defined flow meter identifier\n"
-                     "        options:\n"
-                     "                -p: delete entry from permanent database\n",
-                     &fm_delete,
-                     SHELL_IGNORE_PARAMETER_COUNT);
-SHELL_COMMAND_DEFINE(fm_read,
-                     "\nfm_read <index> [-p]\n"
-                     "        parameters:\n"
-                     "                <index>: user defined flow meter identifier\n"
-                     "        options:\n"
-                     "                -p: read entry from permanent database\n",
-                     &fm_read,
-                     SHELL_IGNORE_PARAMETER_COUNT);
 
 void help_config_sg_storage(shell_handle_t shell)
 {
@@ -1464,21 +1341,9 @@ err:
 
 void psfp_init_shell(shell_handle_t shell)
 {
-    SHELL_RegisterCommand(shell, SHELL_COMMAND(sf_update));
-    SHELL_RegisterCommand(shell, SHELL_COMMAND(sf_delete));
-    SHELL_RegisterCommand(shell, SHELL_COMMAND(sf_read));
-
     sf_apply_permanent(shell);
 
-    SHELL_RegisterCommand(shell, SHELL_COMMAND(sg_update));
-    SHELL_RegisterCommand(shell, SHELL_COMMAND(sg_delete));
-    SHELL_RegisterCommand(shell, SHELL_COMMAND(sg_read));
-
     sg_apply_permanent(shell);
-
-    SHELL_RegisterCommand(shell, SHELL_COMMAND(fm_update));
-    SHELL_RegisterCommand(shell, SHELL_COMMAND(fm_delete));
-    SHELL_RegisterCommand(shell, SHELL_COMMAND(fm_read));
 
     fm_apply_permanent(shell);
 }

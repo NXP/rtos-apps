@@ -1,5 +1,5 @@
 /*
- * Copyright 2023-2025 NXP
+ * Copyright 2023-2026 NXP
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -16,21 +16,6 @@
 #include "hsr.h"
 
 #define BUF_MAX_SIZE 5
-
-static shell_status_t hsr_mode_set(shell_handle_t shell, int32_t argc, char **argv);
-
-SHELL_COMMAND_DEFINE(hsr_mode_set,
-                     "\nhsr_mode_set <mode> [-p]\n"
-                     "    parameters:\n"
-                     "        mode: HSR node operation mode\n"
-                     "        	    0: Mode H(HSR-tagged forwarding)\n"
-                     "        	    1: Mode N(No forwarding)\n"
-                     "        	    2: Mode T(Transparent forwarding)\n"
-                     "        	    3: Mode U(Unicast forwarding)\n"
-                     "    options:\n"
-                     "        -p: update mode in permanent database\n",
-                     &hsr_mode_set,
-                     SHELL_IGNORE_PARAMETER_COUNT);
 
 void help_config_hsr(shell_handle_t shell)
 {
@@ -144,7 +129,5 @@ err:
 
 void hsr_init_shell(shell_handle_t shell)
 {
-    SHELL_RegisterCommand(shell, SHELL_COMMAND(hsr_mode_set));
-
     hsr_mode_apply_permanent(shell);
 }

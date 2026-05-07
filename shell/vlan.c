@@ -1,5 +1,5 @@
 /*
- * Copyright 2022-2025 NXP
+ * Copyright 2022-2026 NXP
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -28,57 +28,6 @@ static shell_status_t vlan_set_pvid(shell_handle_t shell, int32_t argc, char **a
 static shell_status_t vlan_get_pvid(shell_handle_t shell, int32_t argc, char **argv);
 
 static void vlan_dump_pvid(shell_handle_t shell, bool permanent);
-
-SHELL_COMMAND_DEFINE(vlan_update,
-                     "\nvlan_update <vid> <port_id> [-c <control>] [-u] [-p]\n"
-                     "    parameters:\n"
-                     "        vid: vlan id\n"
-                     "        port_id: logical port id\n"
-                     "    options:\n"
-                     "        -c <control>: registrar-admin-control, 0: forbidden, 1: fixed (default)\n"
-                     "        -u: untagged transmit\n"
-                     "        -p: update entry in permanent database\n",
-                     &vlan_update,
-                     SHELL_IGNORE_PARAMETER_COUNT);
-SHELL_COMMAND_DEFINE(vlan_delete,
-                     "\nvlan_delete <vid> [-p]\n"
-                     "    parameters:\n"
-                     "        vid: vlan id\n"
-                     "    options:\n"
-                     "        -p: delete entry in permanent database\n",
-                     &vlan_delete,
-                     SHELL_IGNORE_PARAMETER_COUNT);
-SHELL_COMMAND_DEFINE(vlan_read,
-                     "\nvlan_read <vid> [-p]\n"
-                     "    parameters:\n"
-                     "        vid: vlan id\n"
-                     "    options:\n"
-                     "        -p: read entry from permanent database\n",
-                     &vlan_read,
-                     SHELL_IGNORE_PARAMETER_COUNT);
-SHELL_COMMAND_DEFINE(vlan_dump,
-                     "\nvlan_dump [-p]\n"
-                     "    options:\n"
-                     "        -p: print permanent database\n",
-                     &vlan_dump,
-                     SHELL_IGNORE_PARAMETER_COUNT);
-SHELL_COMMAND_DEFINE(vlan_set_pvid,
-                     "\nvlan_set_pvid <port_id> <vid> [-p]\n"
-                     "    parameters:\n"
-                     "        port_id: logical port id\n"
-                     "        vid: port defaut vlan id (PVID)\n"
-                     "    options:\n"
-                     "        -p: update entry in permanent database\n",
-                     &vlan_set_pvid,
-                     SHELL_IGNORE_PARAMETER_COUNT);
-SHELL_COMMAND_DEFINE(vlan_get_pvid,
-                     "\nvlan_get_pvid <port_id> [-p]\n"
-                     "    parameters:\n"
-                     "        port_id: logical port id\n"
-                     "    options:\n"
-                     "        -p: read entry from permanent database\n",
-                     &vlan_get_pvid,
-                     SHELL_IGNORE_PARAMETER_COUNT);
 
 void help_config_vlan(shell_handle_t shell)
 {
@@ -871,12 +820,5 @@ static int vlan_apply_permanent(void)
 
 void vlan_init_shell(shell_handle_t shell)
 {
-    SHELL_RegisterCommand(shell, SHELL_COMMAND(vlan_update));
-    SHELL_RegisterCommand(shell, SHELL_COMMAND(vlan_delete));
-    SHELL_RegisterCommand(shell, SHELL_COMMAND(vlan_read));
-    SHELL_RegisterCommand(shell, SHELL_COMMAND(vlan_dump));
-    SHELL_RegisterCommand(shell, SHELL_COMMAND(vlan_set_pvid));
-    SHELL_RegisterCommand(shell, SHELL_COMMAND(vlan_get_pvid));
-
     vlan_apply_permanent();
 }

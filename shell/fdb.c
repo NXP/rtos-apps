@@ -1,5 +1,5 @@
 /*
- * Copyright 2022-2025 NXP
+ * Copyright 2022-2026 NXP
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -18,47 +18,6 @@
 #include "genavb.h"
 #include "log.h"
 #include "storage.h"
-
-static shell_status_t fdb_update(shell_handle_t shell, int32_t argc, char **argv);
-static shell_status_t fdb_delete(shell_handle_t shell, int32_t argc, char **argv);
-static shell_status_t fdb_read(shell_handle_t shell, int32_t argc, char **argv);
-static shell_status_t fdb_dump(shell_handle_t shell, int32_t argc, char **argv);
-
-SHELL_COMMAND_DEFINE(fdb_update,
-                     "\nfdb_update <mac> <vid> <port_id> [-c <control>] [-p]\n"
-                     "    parameters:\n"
-                     "        mac: mac address\n"
-                     "        vid: vlan id\n"
-                     "        port_id: logical port id\n"
-                     "    options:\n"
-                     "        -c <control>: filtering control, 0: filtering, 1: forwarding (default)\n"
-                     "        -p: update entry in permanent database\n",
-                     &fdb_update,
-                     SHELL_IGNORE_PARAMETER_COUNT);
-SHELL_COMMAND_DEFINE(fdb_delete,
-                     "\nfdb_delete <mac> <vid> [-p]\n"
-                     "    parameters:\n"
-                     "        mac: mac address\n"
-                     "        vid: vlan id\n"
-                     "    options:\n"
-                     "        -p: delete entry from permanent database\n",
-                     &fdb_delete,
-                     SHELL_IGNORE_PARAMETER_COUNT);
-SHELL_COMMAND_DEFINE(fdb_read,
-                     "\nfdb_read <mac> <vid> [-p]\n"
-                     "    parameters:\n"
-                     "        mac: mac address\n"
-                     "        vid: vlan id\n"
-                     "    options:\n"
-                     "        -p: read entry from permanent database\n",
-                     &fdb_read,
-                     SHELL_IGNORE_PARAMETER_COUNT);
-SHELL_COMMAND_DEFINE(fdb_dump,
-                     "\nfdb_dump [-p]\n"
-                     "    options:\n"
-                     "        -p: print permanent entries\n",
-                     &fdb_dump,
-                     SHELL_IGNORE_PARAMETER_COUNT);
 
 void help_config_fdb(shell_handle_t shell)
 {
@@ -559,10 +518,5 @@ static int fdb_apply_permanent(shell_handle_t shell)
 
 void fdb_init_shell(shell_handle_t shell)
 {
-    SHELL_RegisterCommand(shell, SHELL_COMMAND(fdb_update));
-    SHELL_RegisterCommand(shell, SHELL_COMMAND(fdb_delete));
-    SHELL_RegisterCommand(shell, SHELL_COMMAND(fdb_read));
-    SHELL_RegisterCommand(shell, SHELL_COMMAND(fdb_dump));
-
     fdb_apply_permanent(shell);
 }
