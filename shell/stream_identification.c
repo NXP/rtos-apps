@@ -11,8 +11,9 @@
 #include "genavb/stream_identification.h"
 #include "genavb/helpers.h"
 
-#include "common.h"
+#include "rtos_apps/shell/common.h"
 #include "storage.h"
+#include "common.h"
 #include "shell_config.h"
 #include "rtos_apps/shell/stream_identification.h"
 
@@ -91,7 +92,7 @@ static void si_print_entry(void *shell, uint32_t index, struct genavb_stream_ide
         shell_printf(shell, "       +----------------------------------------+\n");
         shell_printf(shell, "       |       dst mac      |  tagged  |  vlan  |\n");
         shell_printf(shell, "       +--------------------+----------+--------+\n");
-        shell_printf(shell, "       |  " MAC_STR_FMT " |", MAC_STR(entry->parameters.null.destination_mac));
+        shell_printf(shell, "       |  " RTOS_APPS_MAC_STR_FMT " |", RTOS_APPS_MAC_STR(entry->parameters.null.destination_mac));
         shell_printf(shell, " %8u |", entry->parameters.null.tagged);
         shell_printf(shell, " %6u |\n", entry->parameters.null.vlan);
         break;
@@ -101,7 +102,7 @@ static void si_print_entry(void *shell, uint32_t index, struct genavb_stream_ide
         shell_printf(shell, "       +----------------------------------------+\n");
         shell_printf(shell, "       |       src mac      |  tagged  |  vlan  |\n");
         shell_printf(shell, "       +--------------------+----------+--------+\n");
-        shell_printf(shell, "       |  " MAC_STR_FMT " |", MAC_STR(entry->parameters.smac_vlan.source_mac));
+        shell_printf(shell, "       |  " RTOS_APPS_MAC_STR_FMT " |", RTOS_APPS_MAC_STR(entry->parameters.smac_vlan.source_mac));
         shell_printf(shell, " %8u |", entry->parameters.smac_vlan.tagged);
         shell_printf(shell, " %6u |\n", entry->parameters.smac_vlan.vlan);
         break;

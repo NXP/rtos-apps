@@ -1,5 +1,5 @@
 /*
- * Copyright 2023, 2025 NXP
+ * Copyright 2023, 2025-2026 NXP
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -8,8 +8,10 @@
 
 #include "genavb/helpers.h"
 
+#include "shell_config.h"
+
+#include "rtos_apps/shell/common.h"
 #include "common.h"
-#include "log.h"
 
 int str2mac(const char *str, uint8_t *mac)
 {
@@ -36,7 +38,7 @@ int mac2str(uint8_t *mac, char *str, unsigned int len)
 {
     int rc;
 
-    rc = h_snprintf_strict(str, len, MAC_STR_FMT, MAC_STR(mac));
+    rc = h_snprintf_strict(str, len, RTOS_APPS_MAC_STR_FMT, RTOS_APPS_MAC_STR(mac));
 
     if (rc < 0)
         goto err;

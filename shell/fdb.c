@@ -10,9 +10,10 @@
 #include "genavb/fdb.h"
 #include "genavb/helpers.h"
 
-#include "common.h"
+#include "rtos_apps/shell/common.h"
 #include "storage.h"
 #include "rtos_apps/shell/fdb.h"
+#include "common.h"
 
 #include "shell_config.h"
 
@@ -29,7 +30,7 @@ static void fdb_print_entry(void *shell, uint8_t *address, uint16_t vid, bool dy
     char buf[15];
     int i, count;
 
-    shell_printf(shell, " " MAC_STR_FMT " |", MAC_STR(address));
+    shell_printf(shell, " " RTOS_APPS_MAC_STR_FMT " |", RTOS_APPS_MAC_STR(address));
     shell_printf(shell, " %4u |", vid);
     shell_printf(shell, " %7s |", dynamic ? " true": "false");
     shell_printf(shell, " % 6d |", status);
@@ -88,7 +89,7 @@ static int fdb_read_storage(uint8_t *mac, uint16_t vid, uint32_t *port_mask)
 {
     char filename[30];
 
-    if (h_snprintf_strict(filename, 30, "/fdb/" MAC_STR_FMT ",%u", MAC_STR(mac), vid) < 0)
+    if (h_snprintf_strict(filename, 30, "/fdb/" RTOS_APPS_MAC_STR_FMT ",%u", RTOS_APPS_MAC_STR(mac), vid) < 0)
         return -1;
 
     return storage_read_u32(filename, port_mask);
@@ -99,7 +100,7 @@ static int fdb_write_storage(uint8_t *mac, uint16_t vid, uint32_t port_mask)
     char filename[30] = {0};
 
     /* write '/fdb/xx:xx:xx:xx:xx:xx,vid' file with port bitmask value */
-    if (h_snprintf_strict(filename, 30, "/fdb/" MAC_STR_FMT ",%u", MAC_STR(mac), vid) < 0)
+    if (h_snprintf_strict(filename, 30, "/fdb/" RTOS_APPS_MAC_STR_FMT ",%u", RTOS_APPS_MAC_STR(mac), vid) < 0)
         return -1;
 
     return storage_write_uint_hex(filename, port_mask);
@@ -114,7 +115,7 @@ static int fdb_get_storage_entry(unsigned int i, uint8_t *mac, uint16_t *vid, ui
         unsigned int tmp[7];
         uint32_t tmp_port_mask;
 
-        if (sscanf(filename, MAC_STR_FMT ",%u", &tmp[0], &tmp[1], &tmp[2], &tmp[3], &tmp[4], &tmp[5], &tmp[6]) != 7) {
+        if (sscanf(filename, RTOS_APPS_MAC_STR_FMT ",%u", &tmp[0], &tmp[1], &tmp[2], &tmp[3], &tmp[4], &tmp[5], &tmp[6]) != 7) {
             rc = -1;
             goto err;
         }
@@ -145,7 +146,7 @@ static int fdb_delete_storage(uint8_t *mac, uint16_t vid)
 {
     char filename[30];
 
-    if (h_snprintf_strict(filename, 30, "/fdb/" MAC_STR_FMT ",%u", MAC_STR(mac), vid) < 0)
+    if (h_snprintf_strict(filename, 30, "/fdb/" RTOS_APPS_MAC_STR_FMT ",%u", RTOS_APPS_MAC_STR(mac), vid) < 0)
         return -1;
 
     return storage_rm(filename, false, true);
@@ -276,22 +277,22 @@ int cmd_fdb_update(void *shell, int32_t argc, char **argv)
 
     if (permanent) {
         if (fdb_update_permanent(shell, address, vid, &port_map) < 0) {
-            shell_printf(shell, "fdb_update_permanent(" MAC_STR_FMT ", %u, %u) failed\n",
-                MAC_STR(address), vid, port_map.port_id);
+            shell_printf(shell, "fdb_update_permanent(" RTOS_APPS_MAC_STR_FMT ", %u, %u) failed\n",
+                RTOS_APPS_MAC_STR(address), vid, port_map.port_id);
             goto err;
         }
     }
 
     rc = genavb_fdb_update(address, vid, &port_map);
     if (rc < 0) {
-        shell_printf(shell, "genavb_fdb_update(" MAC_STR_FMT ", %u, %u) failed: %s\n",
-            MAC_STR(address), vid, port_map.port_id, genavb_strerror(rc));
+        shell_printf(shell, "genavb_fdb_update(" RTOS_APPS_MAC_STR_FMT ", %u, %u) failed: %s\n",
+            RTOS_APPS_MAC_STR(address), vid, port_map.port_id, genavb_strerror(rc));
         goto err;
     }
 
-    shell_printf(shell, "FDB update port(%u) address(" MAC_STR_FMT ") vid(%u) control(%u) permanent(%u)\n",
+    shell_printf(shell, "FDB update port(%u) address(" RTOS_APPS_MAC_STR_FMT ") vid(%u) control(%u) permanent(%u)\n",
         port_map.port_id,
-        MAC_STR(address),
+        RTOS_APPS_MAC_STR(address),
         vid, port_map.control, permanent);
 
     return 0;
@@ -347,15 +348,15 @@ int cmd_fdb_read(void *shell, int32_t argc, char **argv)
 
     if (permanent) {
         if (fdb_read_permanent(address, vid, &dynamic, port_map, &status) < 0) {
-            shell_printf(shell, "fdb_read_permanent(" MAC_STR_FMT ", %u) failed\n",
-                MAC_STR(address), vid);
+            shell_printf(shell, "fdb_read_permanent(" RTOS_APPS_MAC_STR_FMT ", %u) failed\n",
+                RTOS_APPS_MAC_STR(address), vid);
             goto err;
         }
     } else {
         rc = genavb_fdb_read(&address[0], vid, &dynamic, port_map, &status);
         if (rc < 0) {
-            shell_printf(shell, "genavb_fdb_read(" MAC_STR_FMT ", %u) failed: %s\n",
-                MAC_STR(address), vid, genavb_strerror(rc));
+            shell_printf(shell, "genavb_fdb_read(" RTOS_APPS_MAC_STR_FMT ", %u) failed: %s\n",
+                RTOS_APPS_MAC_STR(address), vid, genavb_strerror(rc));
             goto err;
         }
     }
@@ -413,16 +414,16 @@ int cmd_fdb_delete(void *shell, int32_t argc, char **argv)
 
     if (permanent) {
         if (fdb_delete_permanent(address, vid) < 0) {
-            shell_printf(shell, "fdb_delete_permanent(" MAC_STR_FMT ", %u) failed\n",
-                MAC_STR(address), vid);
+            shell_printf(shell, "fdb_delete_permanent(" RTOS_APPS_MAC_STR_FMT ", %u) failed\n",
+                RTOS_APPS_MAC_STR(address), vid);
             goto err;
         }
     }
 
     rc = genavb_fdb_delete(address, vid);
     if (rc < 0) {
-        shell_printf(shell, "genavb_fdb_delete(" MAC_STR_FMT ", %u) failed: %s\n",
-            MAC_STR(address), vid, genavb_strerror(rc));
+        shell_printf(shell, "genavb_fdb_delete(" RTOS_APPS_MAC_STR_FMT ", %u) failed: %s\n",
+            RTOS_APPS_MAC_STR(address), vid, genavb_strerror(rc));
         goto err;
     }
 
@@ -496,8 +497,8 @@ static int fdb_apply_permanent(void *shell)
         for (i = 0; i < CONFIG_APP_BR_NUM_PORTS; i++) {
             rc = genavb_fdb_update(address, vid, &port_map[i]);
             if (rc < 0) {
-                shell_printf(shell, "genavb_fdb_update(" MAC_STR_FMT ", %u, %u) failed: %s\n",
-                    MAC_STR(address), vid, port_map[i].port_id, genavb_strerror(rc));
+                shell_printf(shell, "genavb_fdb_update(" RTOS_APPS_MAC_STR_FMT ", %u, %u) failed: %s\n",
+                    RTOS_APPS_MAC_STR(address), vid, port_map[i].port_id, genavb_strerror(rc));
             }
         }
     }

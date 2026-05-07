@@ -22,6 +22,9 @@
 #include "qbv.h"
 #include "genavb_sdk.h"
 
+#include "rtos_apps/shell/common.h"
+#include "common.h"
+
 #define QOS_MAX_SDU_DEFAULT 0
 #define QOS_MAX_SDU_BUF_SIZE 20
 
