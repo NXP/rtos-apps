@@ -8,9 +8,9 @@
 #define __RTOS_APPS_SHELL_PORT_STATS_H__
 
 #define CMD_PORT_STATS_HELP \
-	"\nport_stats <port_id>\n" \
+	"<port_id>\n" \
 	"    parameters:\n" \
-	"        port_id: logical port index\n"
+	"        port_id: logical port index"
 
 int cmd_port_stats(void *shell, int32_t argc, char **argv);
 

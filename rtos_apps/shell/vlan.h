@@ -8,48 +8,48 @@
 #define __RTOS_APPS_SHELL_VLAN_H__
 
 #define CMD_VLAN_UPDATE_HELP \
-	"\nvlan_update <vid> <port_id> [-c <control>] [-u] [-p]\n" \
+	"<vid> <port_id> [-c <control>] [-u] [-p]\n" \
 	"    parameters:\n" \
 	"        vid: vlan id\n" \
 	"        port_id: logical port id\n" \
 	"    options:\n" \
 	"        -c <control>: registrar-admin-control, 0: forbidden, 1: fixed (default)\n" \
 	"        -u: untagged transmit\n" \
-	"        -p: update entry in permanent database\n"
+	"        -p: update entry in permanent database"
 
 #define CMD_VLAN_DELETE_HELP \
-	"\nvlan_delete <vid> [-p]\n" \
+	"<vid> [-p]\n" \
 	"    parameters:\n" \
 	"        vid: vlan id\n" \
 	"    options:\n" \
-	"        -p: delete entry in permanent database\n"
+	"        -p: delete entry in permanent database"
 
 #define CMD_VLAN_READ_HELP \
-	"\nvlan_read <vid> [-p]\n" \
+	"<vid> [-p]\n" \
 	"    parameters:\n" \
 	"        vid: vlan id\n" \
 	"    options:\n" \
-	"        -p: read entry from permanent database\n"
+	"        -p: read entry from permanent database"
 
 #define CMD_VLAN_DUMP_HELP \
-	"\nvlan_dump [-p]\n" \
+	"[-p]\n" \
 	"    options:\n" \
-	"        -p: print permanent database\n"
+	"        -p: print permanent database"
 
 #define CMD_VLAN_SET_PVID_HELP \
-	"\nvlan_set_pvid <port_id> <vid> [-p]\n" \
+	"<port_id> <vid> [-p]\n" \
 	"    parameters:\n" \
 	"        port_id: logical port id\n" \
 	"        vid: port defaut vlan id (PVID)\n" \
 	"    options:\n" \
-	"        -p: update entry in permanent database\n"
+	"        -p: update entry in permanent database"
 
 #define CMD_VLAN_GET_PVID_HELP \
-	"\nvlan_get_pvid <port_id> [-p]\n" \
+	"<port_id> [-p]\n" \
 	"    parameters:\n" \
 	"        port_id: logical port id\n" \
 	"    options:\n" \
-	"        -p: read entry from permanent database\n"
+	"        -p: read entry from permanent database"
 
 void cmd_vlan_init(void *shell);
 

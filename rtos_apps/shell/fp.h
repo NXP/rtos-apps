@@ -8,8 +8,8 @@
 #define __RTOS_APPS_SHELL_FP_H__
 
 #define CMD_FP_SET_HELP \
-	"\nfp_set <port_id> [-q] [-t 0x<express mask>] [-p]\n" \
-	"\nfp_set <port_id> [-e <enable>] [-d <disable>] [-v <time ms>] [-a <frag size>] [-p]\n" \
+	"<port_id> [-q] [-t 0x<express mask>] [-p]\n" \
+	"<port_id> [-e <enable>] [-d <disable>] [-v <time ms>] [-a <frag size>] [-p]\n" \
 	"   parameters:\n" \
 	"       port_id: logical port index\n" \
 	"   802.1Q options:\n" \
@@ -20,14 +20,14 @@
 	"       -d <disable>: verify disable, 1: disable verify, 0: enable verify fsm, default: 0\n" \
 	"       -v <time ms>: verify time (ms), range: 1 to 128, default: 10\n" \
 	"       -a <frag size>: minimum size of non-final fragments, 0: 64B, 1: 128B, 3: 256B, 4: 512B, default: 0\n" \
-	"       -p: save configuration to permanent database\n"
+	"       -p: save configuration to permanent database"
 
 #define CMD_FP_GET_HELP \
-	"\nfp_get <port_id> [-p]\n" \
+	"<port_id> [-p]\n" \
 	"   parameters:\n" \
 	"       port_id: logical port index\n" \
 	"   options:\n" \
-	"       -p: read configuration from permanent database\n"
+	"       -p: read configuration from permanent database"
 
 void cmd_fp_init(void *shell);
 

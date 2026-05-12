@@ -8,7 +8,7 @@
 #define __RTOS_APPS_SHELL_STREAM_IDENTIFICATION_H__
 
 #define CMD_SI_UPDATE_HELP \
-	"\nsi_update <index> [-h <handle>] [-P <p1>[,<p2>,...,<pn>]] [-t <type>] [-m <mac>] [-T <tagged>] [-v <vid>] [-p]\n" \
+	"<index> [-h <handle>] [-P <p1>[,<p2>,...,<pn>]] [-t <type>] [-m <mac>] [-T <tagged>] [-v <vid>] [-p]\n" \
 	"    parameters:\n" \
 	"        index: stream identity table index\n" \
 	"    options:\n" \
@@ -25,21 +25,21 @@
 	"                     2: Frame is untagged or tagged with vid = 0 (supported only untagged) (default)\n" \
 	"                     3: Frame is tagged or not (unsupported)\n" \
 	"        -v <vlan>: vid value (default: 0)\n" \
-	"        -p: update entry in permanent database\n"
+	"        -p: update entry in permanent database"
 
 #define CMD_SI_READ_HELP \
-	"\nsi_read <index> [-p]\n" \
+	"<index> [-p]\n" \
 	"    parameters:\n" \
 	"        index: stream identity table index\n" \
 	"    options:\n" \
-	"        -p: read entry from permanent database\n"
+	"        -p: read entry from permanent database"
 
 #define CMD_SI_DELETE_HELP \
-	"\nsi_delete <index> [-p]\n" \
+	"<index> [-p]\n" \
 	"    parameters:\n" \
 	"        index: stream identity table index\n" \
 	"    options:\n" \
-	"        -p: delete entry from permanent database\n"
+	"        -p: delete entry from permanent database"
 
 void cmd_stream_identification_init(void *shell);
 

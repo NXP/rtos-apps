@@ -12,7 +12,7 @@
 	"    <component_id>\n" \
 	"        all, app, avtp, avdecc, srp, maap, common, os, fgptp, api or mgmt\n" \
 	"    <level>\n" \
-	"        crit, err, init, info or dbg\n"
+	"        crit, err, init, info or dbg"
 
 int cmd_shell_log(void *shell, int32_t argc, char **argv);
 
