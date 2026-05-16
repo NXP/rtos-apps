@@ -67,15 +67,15 @@ static inline int storage_get_file(const char *dirname, unsigned int n, char *fi
 }
 static inline int storage_read_ipv4_address(const char *filename, uint8_t *addr)
 {
-    return 0;
+    return -1;
 }
 static inline int storage_read_mac_address(const char *filename, uint8_t *mac)
 {
-    return 0;
+    return -1;
 }
 static inline int storage_read_qbv_entry(const char *filename, uint8_t *mask, uint32_t *offset, uint8_t *state)
 {
-    return 0;
+    return -1;
 }
 static inline int storage_read_uint(const char *filename, unsigned int *value)
 {
@@ -134,59 +134,59 @@ static inline int storage_read_s32(const char *filename, int32_t *value)
 }
 static inline int storage_write_uint_hex(const char *filename, unsigned int value)
 {
-    return 0;
+    return -1;
 }
 static inline int storage_write_uint(const char *filename, unsigned int value)
 {
-    return 0;
+    return -1;
 }
 static inline int storage_write_u64(const char *filename, uint64_t value)
 {
-    return 0;
+    return -1;
 }
 static inline int storage_get(const char *dirname, unsigned int n, void *file_info)
 {
-    return 0;
+    return -1;
 }
 static inline int storage_pwd(void)
 {
-    return 0;
+    return -1;
 }
 static inline int storage_cd(const char *filename, bool quiet)
 {
-    return 0;
+    return -1;
 }
 static inline int storage_ls(const char *filename)
 {
-    return 0;
+    return -1;
 }
 static inline int storage_rm(const char *filename, bool recursive, bool force)
 {
-    return 0;
+    return -1;
 }
 static inline int storage_mkdir(const char *dirname, bool parent)
 {
-    return 0;
+    return -1;
 }
 static inline int storage_cat(const char *filename)
 {
-    return 0;
+    return -1;
 }
 static inline int storage_read(const char *filename, char *buf, unsigned int len)
 {
-    return 0;
+    return -1;
 }
 static inline int storage_write(const char *filename, const char *buf, unsigned int len)
 {
-    return 0;
+    return -1;
 }
 static inline int storage_init(void)
 {
-    return 0;
+    return -1;
 }
 static inline int storage_set_shell(void *shell)
 {
-    return 0;
+    return -1;
 }
 static inline void storage_exit(void)
 {
