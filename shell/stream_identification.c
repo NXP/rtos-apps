@@ -268,7 +268,7 @@ static int si_update_parse_optional_arguments(void *shell, int32_t argc, char **
     while ((opt = rtos_getopt(argc, argv, "h:P:t:m:T:v:p")) != -1) {
         switch (opt) {
         case 'h':
-            h_strtoul(&tmp, optarg, &endptr, 0);
+            h_strtoul(&tmp, rtos_getopt_optarg(), &endptr, 0);
             handle = tmp;
             if (*endptr) {
                 shell_printf(shell, "invalid handle value\n");
@@ -277,14 +277,14 @@ static int si_update_parse_optional_arguments(void *shell, int32_t argc, char **
             entry->handle = handle;
             break;
         case 'P':
-            si_parse_port_list(optarg, entry, &entry->port_n, SI_DEFAULT_PORT_SIZE);
+            si_parse_port_list(rtos_getopt_optarg(), entry, &entry->port_n, SI_DEFAULT_PORT_SIZE);
             if (!entry->port_n) {
                 shell_printf(shell, "Invalid port number\n");
                 return -1;
             }
             break;
         case 't':
-            h_strtoul(&tmp, optarg, &endptr, 0);
+            h_strtoul(&tmp, rtos_getopt_optarg(), &endptr, 0);
             type = (genavb_si_t)tmp;
             if (*endptr || type < GENAVB_SI_NULL || type > GENAVB_SI_MASK_AND_MATCH) {
                 shell_printf(shell, "invalid type\n");
@@ -295,10 +295,10 @@ static int si_update_parse_optional_arguments(void *shell, int32_t argc, char **
         case 'm':
             switch (entry->type) {
             case GENAVB_SI_NULL:
-                rc = str2mac(optarg, entry->parameters.null.destination_mac);
+                rc = str2mac(rtos_getopt_optarg(), entry->parameters.null.destination_mac);
                 break;
             case GENAVB_SI_SRC_MAC_VLAN:
-                rc = str2mac(optarg, entry->parameters.smac_vlan.source_mac);
+                rc = str2mac(rtos_getopt_optarg(), entry->parameters.smac_vlan.source_mac);
                 break;
             default:
                 break;
@@ -309,7 +309,7 @@ static int si_update_parse_optional_arguments(void *shell, int32_t argc, char **
             }
             break;
         case 'T':
-            h_strtoul(&tmp, optarg, &endptr, 0);
+            h_strtoul(&tmp, rtos_getopt_optarg(), &endptr, 0);
             tagged = (genavb_si_vlan_tag_t)tmp;
             if (*endptr || tagged < GENAVB_SI_TAGGED || tagged > GENAVB_SI_ALL) {
                 shell_printf(shell, "invalid tagged value\n");
@@ -327,7 +327,7 @@ static int si_update_parse_optional_arguments(void *shell, int32_t argc, char **
             }
             break;
         case 'v':
-            h_strtoul(&tmp, optarg, &endptr, 0);
+            h_strtoul(&tmp, rtos_getopt_optarg(), &endptr, 0);
             vlan = tmp;
             if (*endptr || vlan > 4095) {
                 shell_printf(shell, "invalid vlan value\n");

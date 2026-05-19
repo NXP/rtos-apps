@@ -316,7 +316,7 @@ int cmd_vlan_update(void *shell, int32_t argc, char **argv)
     while ((opt = rtos_getopt(argc, argv, "c:up")) != -1) {
         switch (opt) {
         case 'c':
-            h_strtoul(&tmp, optarg, NULL, 0);
+            h_strtoul(&tmp, rtos_getopt_optarg(), NULL, 0);
             port_map.control = (genavb_vlan_admin_control_t)tmp;
             break;
         case 'u':

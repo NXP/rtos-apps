@@ -260,7 +260,7 @@ int cmd_fdb_update(void *shell, int32_t argc, char **argv)
     while ((opt = rtos_getopt(argc, argv, "c:p")) != -1) {
         switch (opt) {
         case 'c':
-            h_strtoul(&tmp, optarg, NULL, 0);
+            h_strtoul(&tmp, rtos_getopt_optarg(), NULL, 0);
             port_map.control = (genavb_fdb_port_control_t)tmp;
             break;
         case 'p':

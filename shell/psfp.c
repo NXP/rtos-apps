@@ -223,33 +223,33 @@ int cmd_sf_update(void *shell, int32_t argc, char **argv)
     while ((opt = rtos_getopt(argc, argv, "h:P:m:M:g:S:p")) != -1) {
         switch (opt) {
         case 'h':
-            h_strtoul(&tmp, optarg, NULL, 0);
+            h_strtoul(&tmp, rtos_getopt_optarg(), NULL, 0);
             instance.stream_handle = tmp;
             break;
         case 'P':
-            h_strtoul(&tmp, optarg, NULL, 0);
+            h_strtoul(&tmp, rtos_getopt_optarg(), NULL, 0);
             instance.priority_spec = tmp;
             if ((instance.priority_spec >= QOS_PRIORITY_MAX) && (instance.priority_spec != GENAVB_PRIORITY_SPEC_WILDCARD))
                 goto err_usage;
             break;
         case 'm':
-            h_strtoul(&tmp, optarg, NULL, 0);
+            h_strtoul(&tmp, rtos_getopt_optarg(), NULL, 0);
             instance.flow_meter_ref = tmp;
             if (instance.flow_meter_ref >= genavb_flow_meter_get_max_entries())
                 goto err_usage;
             break;
         case 'M':
-            h_strtoul(&tmp, optarg, NULL, 0);
+            h_strtoul(&tmp, rtos_getopt_optarg(), NULL, 0);
             instance.flow_meter_enable = tmp;
             break;
         case 'g':
-            h_strtoul(&tmp, optarg, NULL, 0);
+            h_strtoul(&tmp, rtos_getopt_optarg(), NULL, 0);
             instance.stream_gate_ref = tmp;
             if (instance.stream_gate_ref >= genavb_stream_gate_get_max_entries())
                 goto err_usage;
             break;
         case 'S':
-            h_strtoul(&tmp, optarg, NULL, 0);
+            h_strtoul(&tmp, rtos_getopt_optarg(), NULL, 0);
             instance.max_sdu_size = tmp;
             break;
         case 'p':
@@ -676,31 +676,31 @@ int cmd_sg_update(void *shell, int32_t argc, char **argv)
     while ((opt = rtos_getopt(argc, argv, "e:s:P:c:C:b:l:I:iX:xp")) != -1) {
         switch (opt) {
         case 'e':
-            h_strtoul(&tmp1, optarg, NULL, 0);
+            h_strtoul(&tmp1, rtos_getopt_optarg(), NULL, 0);
             instance.gate_enable = tmp1;
             break;
         case 's':
-            h_strtoul(&tmp1, optarg, NULL, 0);
+            h_strtoul(&tmp1, rtos_getopt_optarg(), NULL, 0);
             instance.admin_gate_state = tmp1;
             break;
         case 'P':
-            h_strtoul(&tmp1, optarg, NULL, 0);
+            h_strtoul(&tmp1, rtos_getopt_optarg(), NULL, 0);
             instance.admin_ipv = tmp1;
             break;
         case 'c':
-            h_strtoul(&tmp1, optarg, NULL, 0);
+            h_strtoul(&tmp1, rtos_getopt_optarg(), NULL, 0);
             instance.cycle_time_p = tmp1;
             break;
         case 'C':
-            h_strtoul(&tmp1, optarg, NULL, 0);
+            h_strtoul(&tmp1, rtos_getopt_optarg(), NULL, 0);
             instance.cycle_time_extension = tmp1;
             break;
         case 'b':
-            h_strtoull(&tmp0, optarg, NULL, 0);
+            h_strtoull(&tmp0, rtos_getopt_optarg(), NULL, 0);
             instance.base_time = tmp0;
             break;
         case 'l':
-            if (sscanf(optarg, "%u,%u,%u,%u", &tmp[0], &tmp[1], &tmp[2], &tmp[3]) == 4) {
+            if (sscanf(rtos_getopt_optarg(), "%u,%u,%u,%u", &tmp[0], &tmp[1], &tmp[2], &tmp[3]) == 4) {
                 gate_list[num_list_entries].gate_state_value = tmp[0];
                 gate_list[num_list_entries].ipv_spec = tmp[1];
                 gate_list[num_list_entries].time_interval_value = tmp[2];
@@ -712,14 +712,14 @@ int cmd_sg_update(void *shell, int32_t argc, char **argv)
             }
             break;
         case 'I':
-            h_strtoul(&tmp1, optarg, NULL, 0);
+            h_strtoul(&tmp1, rtos_getopt_optarg(), NULL, 0);
             instance.gate_closed_due_to_invalid_rx_enable = tmp1;
             break;
         case 'i':
             reset_gate_closed_due_to_invalid_rx = true;
             break;
         case 'X':
-            h_strtoul(&tmp1, optarg, NULL, 0);
+            h_strtoul(&tmp1, rtos_getopt_optarg(), NULL, 0);
             instance.gate_closed_due_to_octets_exceeded_enable = tmp1;
             break;
         case 'x':
@@ -873,7 +873,7 @@ int cmd_sg_read(void *shell, int32_t argc, char **argv)
             permanent = true;
             break;
         case 't':
-            h_strtoul(&tmp, optarg, NULL, 0);
+            h_strtoul(&tmp, rtos_getopt_optarg(), NULL, 0);
             sg_config_type = (genavb_sg_config_type_t)tmp;
             break;
         default:
@@ -1055,35 +1055,35 @@ int cmd_fm_update(void *shell, int32_t argc, char **argv)
     while ((opt = rtos_getopt(argc, argv, "r:b:R:B:f:c:y:m:Mp")) != -1) {
         switch (opt) {
         case 'r':
-            h_strtoull(&tmp0, optarg, NULL, 0);
+            h_strtoull(&tmp0, rtos_getopt_optarg(), NULL, 0);
             instance.committed_information_rate = tmp0;
             break;
         case 'b':
-            h_strtoul(&tmp1, optarg, NULL, 0);
+            h_strtoul(&tmp1, rtos_getopt_optarg(), NULL, 0);
             instance.committed_burst_size = tmp1;
             break;
         case 'R':
-            h_strtoull(&tmp0, optarg, NULL, 0);
+            h_strtoull(&tmp0, rtos_getopt_optarg(), NULL, 0);
             instance.excess_information_rate = tmp0;
             break;
         case 'B':
-            h_strtoul(&tmp1, optarg, NULL, 0);
+            h_strtoul(&tmp1, rtos_getopt_optarg(), NULL, 0);
             instance.excess_burst_size = tmp1;
             break;
         case 'f':
-            h_strtoul(&tmp1, optarg, NULL, 0);
+            h_strtoul(&tmp1, rtos_getopt_optarg(), NULL, 0);
             instance.coupling_flag = tmp1;
             break;
         case 'c':
-            h_strtoul(&tmp1, optarg, NULL, 0);
+            h_strtoul(&tmp1, rtos_getopt_optarg(), NULL, 0);
             instance.color_mode = tmp1;
             break;
         case 'y':
-            h_strtoul(&tmp1, optarg, NULL, 0);
+            h_strtoul(&tmp1, rtos_getopt_optarg(), NULL, 0);
             instance.drop_on_yellow = tmp1;
             break;
         case 'm':
-            h_strtoul(&tmp1, optarg, NULL, 0);
+            h_strtoul(&tmp1, rtos_getopt_optarg(), NULL, 0);
             instance.mark_all_frames_red_enable = tmp1;
             break;
         case 'M':

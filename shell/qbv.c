@@ -339,19 +339,19 @@ int cmd_qbv_set(void *shell, int32_t argc, char **argv)
     while ((opt = rtos_getopt(argc, argv, "b:c:C:l:p")) != -1) {
         switch (opt) {
         case 'b':
-            h_strtoull(&base_time, optarg, NULL, 0);
+            h_strtoull(&base_time, rtos_getopt_optarg(), NULL, 0);
             config.base_time = base_time;
             break;
         case 'c':
-            h_strtoul(&cycle_time, optarg, NULL, 0);
+            h_strtoul(&cycle_time, rtos_getopt_optarg(), NULL, 0);
             config.cycle_time_p = cycle_time;
             break;
         case 'C':
-            h_strtoul(&cycle_time_ext, optarg, NULL, 0);
+            h_strtoul(&cycle_time_ext, rtos_getopt_optarg(), NULL, 0);
             config.cycle_time_ext = cycle_time_ext;
             break;
         case 'l':
-            rc = sscanf(optarg, "%2x,%u,%u", &gate_list_entry[0], &gate_list_entry[1], &gate_list_entry[2]);
+            rc = sscanf(rtos_getopt_optarg(), "%2x,%u,%u", &gate_list_entry[0], &gate_list_entry[1], &gate_list_entry[2]);
             if (rc < 2)
                 goto err;
 
@@ -431,7 +431,7 @@ int cmd_qbv_get(void *shell, int32_t argc, char **argv)
             permanent = true;
             break;
         case 't':
-            h_strtoul(&tmp, optarg, NULL, 0);
+            h_strtoul(&tmp, rtos_getopt_optarg(), NULL, 0);
             st_config_type = (genavb_st_config_type_t)tmp;
             break;
         default:
@@ -625,7 +625,7 @@ int cmd_qbv_set_max_sdu(void *shell, int32_t argc, char **argv)
     while ((opt = rtos_getopt(argc, argv, "l:p")) != -1) {
         switch (opt) {
         case 'l':
-            if (sscanf(optarg, "%u,%"SCNu32, &tc, &sdu_value) != 2) {
+            if (sscanf(rtos_getopt_optarg(), "%u,%"SCNu32, &tc, &sdu_value) != 2) {
                 goto err;
             }
 

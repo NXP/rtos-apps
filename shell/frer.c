@@ -245,7 +245,7 @@ int cmd_seqg_update(void *shell, int32_t argc, char **argv)
     while ((opt = rtos_getopt(argc, argv, "h:rp")) != -1) {
         switch (opt) {
         case 'h':
-            buf_to_list_u32(optarg, entry.stream, &entry.stream_n, STREAM_HANDLE_MAX);
+            buf_to_list_u32(rtos_getopt_optarg(), entry.stream, &entry.stream_n, STREAM_HANDLE_MAX);
             break;
 
         case 'r':
@@ -564,15 +564,15 @@ int cmd_seqr_update(void *shell, int32_t argc, char **argv)
     while ((opt = rtos_getopt(argc, argv, "h:P:a:rH:s:i:p")) != -1) {
         switch (opt) {
         case 'h':
-            buf_to_list_u32(optarg, entry.stream, &entry.stream_n, STREAM_HANDLE_MAX);
+            buf_to_list_u32(rtos_getopt_optarg(), entry.stream, &entry.stream_n, STREAM_HANDLE_MAX);
             break;
 
         case 'P':
-            buf_to_list_uint(optarg, entry.port, &entry.port_n, PORT_MAX);
+            buf_to_list_uint(rtos_getopt_optarg(), entry.port, &entry.port_n, PORT_MAX);
             break;
 
         case 'a':
-            h_strtoul(&tmp, optarg, NULL, 0);
+            h_strtoul(&tmp, rtos_getopt_optarg(), NULL, 0);
             entry.algorithm = (genavb_seqr_algorithm_t)tmp;
             break;
 
@@ -581,17 +581,17 @@ int cmd_seqr_update(void *shell, int32_t argc, char **argv)
             break;
 
         case 'H':
-            h_strtoul(&tmp, optarg, NULL, 0);
+            h_strtoul(&tmp, rtos_getopt_optarg(), NULL, 0);
             entry.history_length = tmp;
             break;
 
         case 's':
-            h_strtoul(&tmp, optarg, NULL, 0);
+            h_strtoul(&tmp, rtos_getopt_optarg(), NULL, 0);
             entry.take_no_sequence = tmp;
             break;
 
         case 'i':
-            h_strtoul(&tmp, optarg, NULL, 0);
+            h_strtoul(&tmp, rtos_getopt_optarg(), NULL, 0);
             entry.individual_recovery = tmp;
             break;
 
@@ -854,7 +854,7 @@ int cmd_seqi_update(void *shell, int32_t argc, char **argv)
     while ((opt = rtos_getopt(argc, argv, "h:ae:i:p")) != -1) {
         switch (opt) {
         case 'h':
-            buf_to_list_u32(optarg, entry.stream, &entry.stream_n, STREAM_HANDLE_MAX);
+            buf_to_list_u32(rtos_getopt_optarg(), entry.stream, &entry.stream_n, STREAM_HANDLE_MAX);
             break;
 
         case 'a':
@@ -862,12 +862,12 @@ int cmd_seqi_update(void *shell, int32_t argc, char **argv)
             break;
 
         case 'e':
-            h_strtoul(&tmp, optarg, NULL, 0);
+            h_strtoul(&tmp, rtos_getopt_optarg(), NULL, 0);
             entry.encapsulation = (genavb_seqi_encapsulation_t)tmp;
             break;
 
         case 'i':
-            h_strtoul(&tmp, optarg, NULL, 0);
+            h_strtoul(&tmp, rtos_getopt_optarg(), NULL, 0);
             entry.path_id_lan_id = tmp;
             break;
 

@@ -240,13 +240,13 @@ int cmd_fp_set(void *shell, int32_t argc, char **argv)
             break;
 
         case 't':
-            h_strtoul(&tmp, optarg, NULL, 16);
+            h_strtoul(&tmp, rtos_getopt_optarg(), NULL, 16);
             tmp_status = tmp;
             read_fp_status_table(tmp_status, config_8021q.u.cfg_802_1Q.admin_status);
             break;
 
         case 'e':
-            h_strtoul(&tmp, optarg, NULL, 0);
+            h_strtoul(&tmp, rtos_getopt_optarg(), NULL, 0);
             config_8023.u.cfg_802_3.enable_tx = tmp;
             if (config_8023.u.cfg_802_3.enable_tx > 2) {
                 shell_printf(shell, "Bad argument enable preemption %u\n", config_8023.u.cfg_802_3.enable_tx);
@@ -255,7 +255,7 @@ int cmd_fp_set(void *shell, int32_t argc, char **argv)
             break;
 
         case 'd':
-            h_strtoul(&tmp, optarg, NULL, 0);
+            h_strtoul(&tmp, rtos_getopt_optarg(), NULL, 0);
             config_8023.u.cfg_802_3.verify_disable_tx = tmp;
             if (config_8023.u.cfg_802_3.verify_disable_tx > 1) {
                 shell_printf(shell, "Bad argument verify_disable_tx %u\n", config_8023.u.cfg_802_3.verify_disable_tx);
@@ -264,7 +264,7 @@ int cmd_fp_set(void *shell, int32_t argc, char **argv)
             break;
 
         case 'v':
-            h_strtoul(&tmp, optarg, NULL, 0);
+            h_strtoul(&tmp, rtos_getopt_optarg(), NULL, 0);
             config_8023.u.cfg_802_3.verify_time = tmp;
             if (config_8023.u.cfg_802_3.verify_time < 1 || config_8023.u.cfg_802_3.verify_time > 128) {
                 shell_printf(shell, "Bad argument verify_time %u\n", config_8023.u.cfg_802_3.verify_time);
@@ -273,7 +273,7 @@ int cmd_fp_set(void *shell, int32_t argc, char **argv)
             break;
 
         case 'a':
-            h_strtoul(&tmp, optarg, NULL, 0);
+            h_strtoul(&tmp, rtos_getopt_optarg(), NULL, 0);
             config_8023.u.cfg_802_3.add_frag_size = tmp;
             if (config_8023.u.cfg_802_3.add_frag_size > 3) {
                 shell_printf(shell, "Bad argument add_frag_size %u\n", config_8023.u.cfg_802_3.add_frag_size);
