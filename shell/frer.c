@@ -11,6 +11,7 @@
 #include "genavb/frer.h"
 #include "genavb/helpers.h"
 
+#include "rtos_abstraction_layer.h"
 #include "rtos_apps/storage.h"
 
 #include "shell_config.h"
@@ -240,7 +241,7 @@ int cmd_seqg_update(void *shell, int32_t argc, char **argv)
 
     seqg_read_permanent(index, &entry, STREAM_HANDLE_MAX);
 
-    optind = 2;
+    rtos_getopt_init(2);
     while ((opt = getopt(argc, argv, "h:rp")) != -1) {
         switch (opt) {
         case 'h':
@@ -298,7 +299,7 @@ int cmd_seqg_delete(void *shell, int32_t argc, char **argv)
     h_strtoul(&tmp, argv[1], NULL, 0);
     index = tmp;
 
-    optind = 2;
+    rtos_getopt_init(2);
     while ((opt = getopt(argc, argv, "p")) != -1) {
         switch (opt) {
         case 'p':
@@ -339,7 +340,7 @@ int cmd_seqg_read(void *shell, int32_t argc, char **argv)
     h_strtoul(&tmp, argv[1], NULL, 0);
     index = tmp;
 
-    optind = 2;
+    rtos_getopt_init(2);
     while ((opt = getopt(argc, argv, "p")) != -1) {
         switch (opt) {
         case 'p':
@@ -559,7 +560,7 @@ int cmd_seqr_update(void *shell, int32_t argc, char **argv)
 
     seqr_read_permanent(index, &entry, STREAM_HANDLE_MAX, PORT_MAX);
 
-    optind = 2;
+    rtos_getopt_init(2);
     while ((opt = getopt(argc, argv, "h:P:a:rH:s:i:p")) != -1) {
         switch (opt) {
         case 'h':
@@ -631,7 +632,7 @@ int cmd_seqr_delete(void *shell, int32_t argc, char **argv)
     h_strtoul(&tmp, argv[1], NULL, 0);
     index = tmp;
 
-    optind = 2;
+    rtos_getopt_init(2);
     while ((opt = getopt(argc, argv, "p")) != -1) {
         switch (opt) {
         case 'p':
@@ -673,7 +674,7 @@ int cmd_seqr_read(void *shell, int32_t argc, char **argv)
     h_strtoul(&tmp, argv[1], NULL, 0);
     index = tmp;
 
-    optind = 2;
+    rtos_getopt_init(2);
     while ((opt = getopt(argc, argv, "p")) != -1) {
         switch (opt) {
         case 'p':
@@ -849,7 +850,7 @@ int cmd_seqi_update(void *shell, int32_t argc, char **argv)
 
     seqi_read_permanent(port_id, &entry, STREAM_HANDLE_MAX);
 
-    optind = 2;
+    rtos_getopt_init(2);
     while ((opt = getopt(argc, argv, "h:ae:i:p")) != -1) {
         switch (opt) {
         case 'h':
@@ -907,7 +908,7 @@ int cmd_seqi_delete(void *shell, int32_t argc, char **argv)
     h_strtoul(&tmp, argv[1], NULL, 0);
     port_id = tmp;
 
-    optind = 2;
+    rtos_getopt_init(2);
     while ((opt = getopt(argc, argv, "p")) != -1) {
         switch (opt) {
         case 'p':
@@ -948,7 +949,7 @@ int cmd_seqi_read(void *shell, int32_t argc, char **argv)
     h_strtoul(&tmp, argv[1], NULL, 0);
     port_id = tmp;
 
-    optind = 2;
+    rtos_getopt_init(2);
     while ((opt = getopt(argc, argv, "p")) != -1) {
         switch (opt) {
         case 'p':

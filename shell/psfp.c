@@ -11,6 +11,7 @@
 #include "genavb/psfp.h"
 #include "genavb/error.h"
 
+#include "rtos_abstraction_layer.h"
 #include "rtos_apps/types.h"
 
 #include "rtos_apps/storage.h"
@@ -218,7 +219,7 @@ int cmd_sf_update(void *shell, int32_t argc, char **argv)
 
     sf_read_permanent(index, &instance, 0);
 
-    optind = 2;
+    rtos_getopt_init(2);
     while ((opt = getopt(argc, argv, "h:P:m:M:g:S:p")) != -1) {
         switch (opt) {
         case 'h':
@@ -302,7 +303,7 @@ int cmd_sf_delete(void *shell, int32_t argc, char **argv)
         goto err_usage;
     }
 
-    optind = 2;
+    rtos_getopt_init(2);
     while ((opt = getopt(argc, argv, "p")) != -1) {
         switch (opt) {
         case 'p':
@@ -357,7 +358,7 @@ int cmd_sf_read(void *shell, int32_t argc, char **argv)
         goto err_usage;
     }
 
-    optind = 2;
+    rtos_getopt_init(2);
     while ((opt = getopt(argc, argv, "p")) != -1) {
         switch (opt) {
         case 'p':
@@ -671,7 +672,7 @@ int cmd_sg_update(void *shell, int32_t argc, char **argv)
 
     sg_read_permanent(shell, instance.stream_gate_instance_id, &instance, 0);
 
-    optind = 2;
+    rtos_getopt_init(2);
     while ((opt = getopt(argc, argv, "e:s:P:c:C:b:l:I:iX:xp")) != -1) {
         switch (opt) {
         case 'e':
@@ -802,7 +803,7 @@ int cmd_sg_delete(void *shell, int32_t argc, char **argv)
         goto err_usage;
     }
 
-    optind = 2;
+    rtos_getopt_init(2);
     while ((opt = getopt(argc, argv, "p")) != -1) {
         switch (opt) {
         case 'p':
@@ -865,7 +866,7 @@ int cmd_sg_read(void *shell, int32_t argc, char **argv)
 
     instance.list_length = genavb_stream_gate_control_get_max_entries();
 
-    optind = 2;
+    rtos_getopt_init(2);
     while ((opt = getopt(argc, argv, "pt:")) != -1) {
         switch (opt) {
         case 'p':
@@ -1050,7 +1051,7 @@ int cmd_fm_update(void *shell, int32_t argc, char **argv)
 
     fm_read_permanent(shell, instance.flow_meter_instance_id, &instance, false);
 
-    optind = 2;
+    rtos_getopt_init(2);
     while ((opt = getopt(argc, argv, "r:b:R:B:f:c:y:m:Mp")) != -1) {
         switch (opt) {
         case 'r':
@@ -1152,7 +1153,7 @@ int cmd_fm_delete(void *shell, int32_t argc, char **argv)
         goto err_usage;
     }
 
-    optind = 2;
+    rtos_getopt_init(2);
     while ((opt = getopt(argc, argv, "p")) != -1) {
         switch (opt) {
         case 'p':
@@ -1209,7 +1210,7 @@ int cmd_fm_read(void *shell, int32_t argc, char **argv)
         goto err_usage;
     }
 
-    optind = 2;
+    rtos_getopt_init(2);
     while ((opt = getopt(argc, argv, "p")) != -1) {
         switch (opt) {
         case 'p':

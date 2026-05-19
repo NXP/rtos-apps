@@ -11,6 +11,7 @@
 #include "genavb/stream_identification.h"
 #include "genavb/helpers.h"
 
+#include "rtos_abstraction_layer.h"
 #include "rtos_apps/shell/common.h"
 #include "common.h"
 #include "rtos_apps/storage.h"
@@ -263,7 +264,7 @@ static int si_update_parse_optional_arguments(void *shell, int32_t argc, char **
     int rc = 0;
     char *endptr = NULL;
 
-    optind = 2;
+    rtos_getopt_init(2);
     while ((opt = getopt(argc, argv, "h:P:t:m:T:v:p")) != -1) {
         switch (opt) {
         case 'h':
@@ -423,7 +424,7 @@ int cmd_si_delete(void *shell, int32_t argc, char **argv)
     h_strtoul(&tmp, argv[1], NULL, 0);
     index = tmp;
 
-    optind = 2;
+    rtos_getopt_init(2);
     while ((opt = getopt(argc, argv, "p")) != -1) {
         switch (opt) {
         case 'p':
@@ -478,7 +479,7 @@ int cmd_si_read(void *shell, int32_t argc, char **argv)
 
     entry.port = ports;
 
-    optind = 2;
+    rtos_getopt_init(2);
     while ((opt = getopt(argc, argv, "p")) != -1) {
         switch (opt) {
         case 'p':

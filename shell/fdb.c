@@ -10,6 +10,7 @@
 #include "genavb/fdb.h"
 #include "genavb/helpers.h"
 
+#include "rtos_abstraction_layer.h"
 #include "rtos_apps/shell/common.h"
 #include "rtos_apps/shell/fdb.h"
 #include "rtos_apps/storage.h"
@@ -255,7 +256,7 @@ int cmd_fdb_update(void *shell, int32_t argc, char **argv)
 
     port_map.control = GENAVB_FDB_PORT_CONTROL_FORWARDING;
 
-    optind = 4;
+    rtos_getopt_init(4);
     while ((opt = getopt(argc, argv, "c:p")) != -1) {
         switch (opt) {
         case 'c':
@@ -335,7 +336,7 @@ int cmd_fdb_read(void *shell, int32_t argc, char **argv)
         goto err_usage;
     }
 
-    optind = 3;
+    rtos_getopt_init(3);
     while ((opt = getopt(argc, argv, "p")) != -1) {
         switch (opt) {
         case 'p':
@@ -401,7 +402,7 @@ int cmd_fdb_delete(void *shell, int32_t argc, char **argv)
         goto err_usage;
     }
 
-    optind = 3;
+    rtos_getopt_init(3);
     while ((opt = getopt(argc, argv, "p")) != -1) {
         switch (opt) {
         case 'p':
@@ -455,7 +456,7 @@ int cmd_fdb_dump(void *shell, int32_t argc, char **argv)
     if (argc > 3)
         goto err_usage;
 
-    optind = 1;
+    rtos_getopt_init(1);
     while ((opt = getopt(argc, argv, "p")) != -1) {
         switch (opt) {
         case 'p':

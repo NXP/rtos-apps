@@ -14,6 +14,7 @@
 #include "genavb/helpers.h"
 #include "genavb/qos.h"
 
+#include "rtos_abstraction_layer.h"
 #include "rtos_apps/types.h"
 
 #include "rtos_apps/storage.h"
@@ -334,7 +335,7 @@ int cmd_qbv_set(void *shell, int32_t argc, char **argv)
 
     config.enable = 1;
 
-    optind = 2;
+    rtos_getopt_init(2);
     while ((opt = getopt(argc, argv, "b:c:C:l:p")) != -1) {
         switch (opt) {
         case 'b':
@@ -423,7 +424,7 @@ int cmd_qbv_get(void *shell, int32_t argc, char **argv)
         goto err;
     }
 
-    optind = 2;
+    rtos_getopt_init(2);
     while ((opt = getopt(argc, argv, "pt:")) != -1) {
         switch (opt) {
         case 'p':
@@ -494,7 +495,7 @@ int cmd_qbv_disable(void *shell, int32_t argc, char **argv)
         goto err;
     }
 
-    optind = 2;
+    rtos_getopt_init(2);
     while ((opt = getopt(argc, argv, "p")) != -1) {
         switch (opt) {
         case 'p':
@@ -620,7 +621,7 @@ int cmd_qbv_set_max_sdu(void *shell, int32_t argc, char **argv)
 
     qbv_read_sdu_permanent(shell, port_id, max_sdu);
 
-    optind = 2;
+    rtos_getopt_init(2);
     while ((opt = getopt(argc, argv, "l:p")) != -1) {
         switch (opt) {
         case 'l':
@@ -724,7 +725,7 @@ int cmd_qbv_get_max_sdu(void *shell, int32_t argc, char **argv)
         goto err;
     }
 
-    optind = 2;
+    rtos_getopt_init(2);
     while ((opt = getopt(argc, argv, "p")) != -1) {
         switch (opt) {
         case 'p':

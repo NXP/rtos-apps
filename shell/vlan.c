@@ -11,6 +11,7 @@
 #include "genavb/helpers.h"
 #include "genavb/vlan.h"
 
+#include "rtos_abstraction_layer.h"
 #include "rtos_apps/storage.h"
 #include "shell_config.h"
 #include "rtos_apps/shell/vlan.h"
@@ -311,7 +312,7 @@ int cmd_vlan_update(void *shell, int32_t argc, char **argv)
 
     port_map.control = GENAVB_VLAN_ADMIN_CONTROL_FIXED;
 
-    optind = 3;
+    rtos_getopt_init(3);
     while ((opt = getopt(argc, argv, "c:up")) != -1) {
         switch (opt) {
         case 'c':
@@ -382,7 +383,7 @@ int cmd_vlan_read(void *shell, int32_t argc, char **argv)
         goto err_usage;
     }
 
-    optind = 2;
+    rtos_getopt_init(2);
     while ((opt = getopt(argc, argv, "p")) != -1) {
         switch (opt) {
         case 'p':
@@ -440,7 +441,7 @@ int cmd_vlan_delete(void *shell, int32_t argc, char **argv)
         goto err_usage;
     }
 
-    optind = 2;
+    rtos_getopt_init(2);
     while ((opt = getopt(argc, argv, "p")) != -1) {
         switch (opt) {
         case 'p':
@@ -490,7 +491,7 @@ int cmd_vlan_dump(void *shell, int32_t argc, char **argv)
     if (argc > 2)
         goto err_usage;
 
-    optind = 1;
+    rtos_getopt_init(1);
     while ((opt = getopt(argc, argv, "p")) != -1) {
         switch (opt) {
         case 'p':
@@ -636,7 +637,7 @@ int cmd_vlan_set_pvid(void *shell, int32_t argc, char **argv)
         goto err_usage;
     }
 
-    optind = 3;
+    rtos_getopt_init(3);
     while ((opt = getopt(argc, argv, "p")) != -1) {
         switch (opt) {
         case 'p':
@@ -692,7 +693,7 @@ int cmd_vlan_get_pvid(void *shell, int32_t argc, char **argv)
         goto err_usage;
     }
 
-    optind = 2;
+    rtos_getopt_init(2);
     while ((opt = getopt(argc, argv, "p")) != -1) {
         switch (opt) {
         case 'p':

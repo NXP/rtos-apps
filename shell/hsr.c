@@ -10,6 +10,7 @@
 #include "genavb/error.h"
 #include "genavb/hsr.h"
 #include "genavb/types.h"
+#include "rtos_abstraction_layer.h"
 #include "rtos_apps/storage.h"
 
 #include "rtos_apps/shell/hsr.h"
@@ -90,7 +91,7 @@ int cmd_hsr_mode_set(void *shell, int32_t argc, char **argv)
         goto err_usage;
     }
 
-    optind = 2;
+    rtos_getopt_init(2);
     while ((opt = getopt(argc, argv, "p")) != -1) {
         switch (opt) {
         case 'p':
