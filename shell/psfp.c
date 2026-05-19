@@ -220,7 +220,7 @@ int cmd_sf_update(void *shell, int32_t argc, char **argv)
     sf_read_permanent(index, &instance, 0);
 
     rtos_getopt_init(2);
-    while ((opt = getopt(argc, argv, "h:P:m:M:g:S:p")) != -1) {
+    while ((opt = rtos_getopt(argc, argv, "h:P:m:M:g:S:p")) != -1) {
         switch (opt) {
         case 'h':
             h_strtoul(&tmp, optarg, NULL, 0);
@@ -304,7 +304,7 @@ int cmd_sf_delete(void *shell, int32_t argc, char **argv)
     }
 
     rtos_getopt_init(2);
-    while ((opt = getopt(argc, argv, "p")) != -1) {
+    while ((opt = rtos_getopt(argc, argv, "p")) != -1) {
         switch (opt) {
         case 'p':
             permanent = true;
@@ -359,7 +359,7 @@ int cmd_sf_read(void *shell, int32_t argc, char **argv)
     }
 
     rtos_getopt_init(2);
-    while ((opt = getopt(argc, argv, "p")) != -1) {
+    while ((opt = rtos_getopt(argc, argv, "p")) != -1) {
         switch (opt) {
         case 'p':
             permanent = true;
@@ -673,7 +673,7 @@ int cmd_sg_update(void *shell, int32_t argc, char **argv)
     sg_read_permanent(shell, instance.stream_gate_instance_id, &instance, 0);
 
     rtos_getopt_init(2);
-    while ((opt = getopt(argc, argv, "e:s:P:c:C:b:l:I:iX:xp")) != -1) {
+    while ((opt = rtos_getopt(argc, argv, "e:s:P:c:C:b:l:I:iX:xp")) != -1) {
         switch (opt) {
         case 'e':
             h_strtoul(&tmp1, optarg, NULL, 0);
@@ -804,7 +804,7 @@ int cmd_sg_delete(void *shell, int32_t argc, char **argv)
     }
 
     rtos_getopt_init(2);
-    while ((opt = getopt(argc, argv, "p")) != -1) {
+    while ((opt = rtos_getopt(argc, argv, "p")) != -1) {
         switch (opt) {
         case 'p':
             permanent = true;
@@ -867,7 +867,7 @@ int cmd_sg_read(void *shell, int32_t argc, char **argv)
     instance.list_length = genavb_stream_gate_control_get_max_entries();
 
     rtos_getopt_init(2);
-    while ((opt = getopt(argc, argv, "pt:")) != -1) {
+    while ((opt = rtos_getopt(argc, argv, "pt:")) != -1) {
         switch (opt) {
         case 'p':
             permanent = true;
@@ -1052,7 +1052,7 @@ int cmd_fm_update(void *shell, int32_t argc, char **argv)
     fm_read_permanent(shell, instance.flow_meter_instance_id, &instance, false);
 
     rtos_getopt_init(2);
-    while ((opt = getopt(argc, argv, "r:b:R:B:f:c:y:m:Mp")) != -1) {
+    while ((opt = rtos_getopt(argc, argv, "r:b:R:B:f:c:y:m:Mp")) != -1) {
         switch (opt) {
         case 'r':
             h_strtoull(&tmp0, optarg, NULL, 0);
@@ -1154,7 +1154,7 @@ int cmd_fm_delete(void *shell, int32_t argc, char **argv)
     }
 
     rtos_getopt_init(2);
-    while ((opt = getopt(argc, argv, "p")) != -1) {
+    while ((opt = rtos_getopt(argc, argv, "p")) != -1) {
         switch (opt) {
         case 'p':
             permanent = true;
@@ -1211,7 +1211,7 @@ int cmd_fm_read(void *shell, int32_t argc, char **argv)
     }
 
     rtos_getopt_init(2);
-    while ((opt = getopt(argc, argv, "p")) != -1) {
+    while ((opt = rtos_getopt(argc, argv, "p")) != -1) {
         switch (opt) {
         case 'p':
             permanent = true;

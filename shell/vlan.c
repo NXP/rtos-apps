@@ -313,7 +313,7 @@ int cmd_vlan_update(void *shell, int32_t argc, char **argv)
     port_map.control = GENAVB_VLAN_ADMIN_CONTROL_FIXED;
 
     rtos_getopt_init(3);
-    while ((opt = getopt(argc, argv, "c:up")) != -1) {
+    while ((opt = rtos_getopt(argc, argv, "c:up")) != -1) {
         switch (opt) {
         case 'c':
             h_strtoul(&tmp, optarg, NULL, 0);
@@ -384,7 +384,7 @@ int cmd_vlan_read(void *shell, int32_t argc, char **argv)
     }
 
     rtos_getopt_init(2);
-    while ((opt = getopt(argc, argv, "p")) != -1) {
+    while ((opt = rtos_getopt(argc, argv, "p")) != -1) {
         switch (opt) {
         case 'p':
             permanent = true;
@@ -442,7 +442,7 @@ int cmd_vlan_delete(void *shell, int32_t argc, char **argv)
     }
 
     rtos_getopt_init(2);
-    while ((opt = getopt(argc, argv, "p")) != -1) {
+    while ((opt = rtos_getopt(argc, argv, "p")) != -1) {
         switch (opt) {
         case 'p':
             permanent = true;
@@ -492,7 +492,7 @@ int cmd_vlan_dump(void *shell, int32_t argc, char **argv)
         goto err_usage;
 
     rtos_getopt_init(1);
-    while ((opt = getopt(argc, argv, "p")) != -1) {
+    while ((opt = rtos_getopt(argc, argv, "p")) != -1) {
         switch (opt) {
         case 'p':
             permanent = true;
@@ -638,7 +638,7 @@ int cmd_vlan_set_pvid(void *shell, int32_t argc, char **argv)
     }
 
     rtos_getopt_init(3);
-    while ((opt = getopt(argc, argv, "p")) != -1) {
+    while ((opt = rtos_getopt(argc, argv, "p")) != -1) {
         switch (opt) {
         case 'p':
             permanent = true;
@@ -694,7 +694,7 @@ int cmd_vlan_get_pvid(void *shell, int32_t argc, char **argv)
     }
 
     rtos_getopt_init(2);
-    while ((opt = getopt(argc, argv, "p")) != -1) {
+    while ((opt = rtos_getopt(argc, argv, "p")) != -1) {
         switch (opt) {
         case 'p':
             permanent = true;

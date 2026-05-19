@@ -265,7 +265,7 @@ static int si_update_parse_optional_arguments(void *shell, int32_t argc, char **
     char *endptr = NULL;
 
     rtos_getopt_init(2);
-    while ((opt = getopt(argc, argv, "h:P:t:m:T:v:p")) != -1) {
+    while ((opt = rtos_getopt(argc, argv, "h:P:t:m:T:v:p")) != -1) {
         switch (opt) {
         case 'h':
             h_strtoul(&tmp, optarg, &endptr, 0);
@@ -425,7 +425,7 @@ int cmd_si_delete(void *shell, int32_t argc, char **argv)
     index = tmp;
 
     rtos_getopt_init(2);
-    while ((opt = getopt(argc, argv, "p")) != -1) {
+    while ((opt = rtos_getopt(argc, argv, "p")) != -1) {
         switch (opt) {
         case 'p':
             permanent = true;
@@ -480,7 +480,7 @@ int cmd_si_read(void *shell, int32_t argc, char **argv)
     entry.port = ports;
 
     rtos_getopt_init(2);
-    while ((opt = getopt(argc, argv, "p")) != -1) {
+    while ((opt = rtos_getopt(argc, argv, "p")) != -1) {
         switch (opt) {
         case 'p':
             permanent = true;

@@ -233,7 +233,7 @@ int cmd_fp_set(void *shell, int32_t argc, char **argv)
     fp_read_permanent(shell, port_id, &config_8023, GENAVB_FP_CONFIG_802_3);
 
     rtos_getopt_init(2);
-    while ((opt = getopt(argc, argv, "qt:e:d:v:a:p")) != -1) {
+    while ((opt = rtos_getopt(argc, argv, "qt:e:d:v:a:p")) != -1) {
         switch (opt) {
         case 'q':
             is_cf_8021 = true;
@@ -349,7 +349,7 @@ int cmd_fp_get(void *shell, int32_t argc, char **argv)
     }
 
     rtos_getopt_init(2);
-    while ((opt = getopt(argc, argv, "p")) != -1) {
+    while ((opt = rtos_getopt(argc, argv, "p")) != -1) {
         switch (opt) {
         case 'p':
             permanent = true;

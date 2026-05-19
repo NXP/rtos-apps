@@ -242,7 +242,7 @@ int cmd_seqg_update(void *shell, int32_t argc, char **argv)
     seqg_read_permanent(index, &entry, STREAM_HANDLE_MAX);
 
     rtos_getopt_init(2);
-    while ((opt = getopt(argc, argv, "h:rp")) != -1) {
+    while ((opt = rtos_getopt(argc, argv, "h:rp")) != -1) {
         switch (opt) {
         case 'h':
             buf_to_list_u32(optarg, entry.stream, &entry.stream_n, STREAM_HANDLE_MAX);
@@ -300,7 +300,7 @@ int cmd_seqg_delete(void *shell, int32_t argc, char **argv)
     index = tmp;
 
     rtos_getopt_init(2);
-    while ((opt = getopt(argc, argv, "p")) != -1) {
+    while ((opt = rtos_getopt(argc, argv, "p")) != -1) {
         switch (opt) {
         case 'p':
             permanent = true;
@@ -341,7 +341,7 @@ int cmd_seqg_read(void *shell, int32_t argc, char **argv)
     index = tmp;
 
     rtos_getopt_init(2);
-    while ((opt = getopt(argc, argv, "p")) != -1) {
+    while ((opt = rtos_getopt(argc, argv, "p")) != -1) {
         switch (opt) {
         case 'p':
             permanent = true;
@@ -561,7 +561,7 @@ int cmd_seqr_update(void *shell, int32_t argc, char **argv)
     seqr_read_permanent(index, &entry, STREAM_HANDLE_MAX, PORT_MAX);
 
     rtos_getopt_init(2);
-    while ((opt = getopt(argc, argv, "h:P:a:rH:s:i:p")) != -1) {
+    while ((opt = rtos_getopt(argc, argv, "h:P:a:rH:s:i:p")) != -1) {
         switch (opt) {
         case 'h':
             buf_to_list_u32(optarg, entry.stream, &entry.stream_n, STREAM_HANDLE_MAX);
@@ -633,7 +633,7 @@ int cmd_seqr_delete(void *shell, int32_t argc, char **argv)
     index = tmp;
 
     rtos_getopt_init(2);
-    while ((opt = getopt(argc, argv, "p")) != -1) {
+    while ((opt = rtos_getopt(argc, argv, "p")) != -1) {
         switch (opt) {
         case 'p':
             permanent = true;
@@ -675,7 +675,7 @@ int cmd_seqr_read(void *shell, int32_t argc, char **argv)
     index = tmp;
 
     rtos_getopt_init(2);
-    while ((opt = getopt(argc, argv, "p")) != -1) {
+    while ((opt = rtos_getopt(argc, argv, "p")) != -1) {
         switch (opt) {
         case 'p':
             permanent = true;
@@ -851,7 +851,7 @@ int cmd_seqi_update(void *shell, int32_t argc, char **argv)
     seqi_read_permanent(port_id, &entry, STREAM_HANDLE_MAX);
 
     rtos_getopt_init(2);
-    while ((opt = getopt(argc, argv, "h:ae:i:p")) != -1) {
+    while ((opt = rtos_getopt(argc, argv, "h:ae:i:p")) != -1) {
         switch (opt) {
         case 'h':
             buf_to_list_u32(optarg, entry.stream, &entry.stream_n, STREAM_HANDLE_MAX);
@@ -909,7 +909,7 @@ int cmd_seqi_delete(void *shell, int32_t argc, char **argv)
     port_id = tmp;
 
     rtos_getopt_init(2);
-    while ((opt = getopt(argc, argv, "p")) != -1) {
+    while ((opt = rtos_getopt(argc, argv, "p")) != -1) {
         switch (opt) {
         case 'p':
             permanent = true;
@@ -950,7 +950,7 @@ int cmd_seqi_read(void *shell, int32_t argc, char **argv)
     port_id = tmp;
 
     rtos_getopt_init(2);
-    while ((opt = getopt(argc, argv, "p")) != -1) {
+    while ((opt = rtos_getopt(argc, argv, "p")) != -1) {
         switch (opt) {
         case 'p':
             permanent = true;

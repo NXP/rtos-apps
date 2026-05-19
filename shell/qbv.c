@@ -336,7 +336,7 @@ int cmd_qbv_set(void *shell, int32_t argc, char **argv)
     config.enable = 1;
 
     rtos_getopt_init(2);
-    while ((opt = getopt(argc, argv, "b:c:C:l:p")) != -1) {
+    while ((opt = rtos_getopt(argc, argv, "b:c:C:l:p")) != -1) {
         switch (opt) {
         case 'b':
             h_strtoull(&base_time, optarg, NULL, 0);
@@ -425,7 +425,7 @@ int cmd_qbv_get(void *shell, int32_t argc, char **argv)
     }
 
     rtos_getopt_init(2);
-    while ((opt = getopt(argc, argv, "pt:")) != -1) {
+    while ((opt = rtos_getopt(argc, argv, "pt:")) != -1) {
         switch (opt) {
         case 'p':
             permanent = true;
@@ -496,7 +496,7 @@ int cmd_qbv_disable(void *shell, int32_t argc, char **argv)
     }
 
     rtos_getopt_init(2);
-    while ((opt = getopt(argc, argv, "p")) != -1) {
+    while ((opt = rtos_getopt(argc, argv, "p")) != -1) {
         switch (opt) {
         case 'p':
             permanent = true;
@@ -622,7 +622,7 @@ int cmd_qbv_set_max_sdu(void *shell, int32_t argc, char **argv)
     qbv_read_sdu_permanent(shell, port_id, max_sdu);
 
     rtos_getopt_init(2);
-    while ((opt = getopt(argc, argv, "l:p")) != -1) {
+    while ((opt = rtos_getopt(argc, argv, "l:p")) != -1) {
         switch (opt) {
         case 'l':
             if (sscanf(optarg, "%u,%"SCNu32, &tc, &sdu_value) != 2) {
@@ -726,7 +726,7 @@ int cmd_qbv_get_max_sdu(void *shell, int32_t argc, char **argv)
     }
 
     rtos_getopt_init(2);
-    while ((opt = getopt(argc, argv, "p")) != -1) {
+    while ((opt = rtos_getopt(argc, argv, "p")) != -1) {
         switch (opt) {
         case 'p':
             permanent = true;

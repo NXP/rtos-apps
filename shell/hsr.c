@@ -92,7 +92,7 @@ int cmd_hsr_mode_set(void *shell, int32_t argc, char **argv)
     }
 
     rtos_getopt_init(2);
-    while ((opt = getopt(argc, argv, "p")) != -1) {
+    while ((opt = rtos_getopt(argc, argv, "p")) != -1) {
         switch (opt) {
         case 'p':
             permanent = true;
