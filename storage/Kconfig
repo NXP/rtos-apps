@@ -1,0 +1,14 @@
+# Copyright 2026 NXP
+#
+# SPDX-License-Identifier: BSD-3-Clause
+
+config MCUX_COMPONENT_component.rtos_apps.storage_common
+    bool "Storage component"
+    default n
+
+    if MCUX_COMPONENT_component.rtos_apps.storage_common
+
+        config RTOS_APPS_STORAGE
+        bool
+        default y if MCUX_COMPONENT_component.rtos_apps.storage_common
+    endif

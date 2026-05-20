@@ -15,6 +15,7 @@
 
 #include "rtos_abstraction_layer.h"
 #include "rtos_apps/storage.h"
+#include "rtos_apps/storage_common.h"
 #include "shell_config.h"
 #include "rtos_apps/shell/fp.h"
 #include "fp.h"

@@ -14,6 +14,8 @@
 #include "rtos_apps/shell/common.h"
 #include "rtos_apps/shell/fdb.h"
 #include "rtos_apps/storage.h"
+#include "rtos_apps/storage_common.h"
+
 #include "common.h"
 
 #include "shell_config.h"

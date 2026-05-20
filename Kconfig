@@ -9,4 +9,5 @@ menu "RTOS Application components"
   rsource "./tsn/Kconfig"
   rsource "./async/Kconfig"
   rsource "./shell/Kconfig"
+  rsource "./storage/Kconfig"
 endmenu

@@ -18,30 +18,11 @@
 #define MAX_PWD_LENGTH         128
 #define MAX_PATH_LENGTH        (MAX_PWD_LENGTH + MAX_FILENAME_LENGTH)
 
-#if CONFIG_APP_STORAGE == 1
+#if CONFIG_RTOS_APPS_STORAGE == 1
 
 int storage_get_dir(const char *dirname, unsigned int n, char *subdirname, unsigned int len);
 int storage_get_file(const char *dirname, unsigned int n, char *filename, unsigned int len);
 
-int storage_read_ipv4_address(const char *filename, uint8_t *addr);
-int storage_read_mac_address(const char *filename, uint8_t *mac);
-
-int storage_read_qbv_entry(const char *filename, uint8_t *mask, uint32_t *interval, uint8_t *state);
-
-int storage_read_uint(const char *filename, unsigned int *value);
-int storage_read_int(const char *filename, int *value);
-int storage_read_float(const char *filename, float *value);
-int storage_read_bool(const char *filename, bool *value);
-int storage_read_u8(const char *filename, uint8_t *value);
-int storage_read_u16(const char *filename, uint16_t *value);
-int storage_read_u32(const char *filename, uint32_t *value);
-int storage_read_u64(const char *filename, uint64_t *value);
-int storage_read_s8(const char *filename, int8_t *value);
-int storage_read_s16(const char *filename, int16_t *value);
-int storage_read_s32(const char *filename, int32_t *value);
-int storage_write_uint_hex(const char *filename, unsigned int value);
-int storage_write_uint(const char *filename, unsigned int value);
-int storage_write_u64(const char *filename, uint64_t value);
 int storage_pwd(void);
 int storage_cd(const char *filename, bool quiet);
 int storage_ls(const char *filename);
@@ -54,80 +35,13 @@ int storage_init(void);
 int storage_set_shell(void *shell);
 void storage_exit(void);
 void *storage_get_lfs(void);
+
 #else
 static inline int storage_get_dir(const char *dirname, unsigned int n, char *subdirname, unsigned int len)
 {
     return -1;
 }
 static inline int storage_get_file(const char *dirname, unsigned int n, char *filename, unsigned int len)
-{
-    return -1;
-}
-static inline int storage_read_ipv4_address(const char *filename, uint8_t *addr)
-{
-    return -1;
-}
-static inline int storage_read_mac_address(const char *filename, uint8_t *mac)
-{
-    return -1;
-}
-static inline int storage_read_qbv_entry(const char *filename, uint8_t *mask, uint32_t *offset, uint8_t *state)
-{
-    return -1;
-}
-static inline int storage_read_uint(const char *filename, unsigned int *value)
-{
-    return -1;
-}
-static inline int storage_read_int(const char *filename, int *value)
-{
-    return -1;
-}
-static inline int storage_read_float(const char *filename, float *value)
-{
-    return -1;
-}
-static inline int storage_read_bool(const char *filename, bool *value)
-{
-    return -1;
-}
-static inline int storage_read_u8(const char *filename, uint8_t *value)
-{
-    return -1;
-}
-static inline int storage_read_u16(const char *filename, uint16_t *value)
-{
-    return -1;
-}
-static inline int storage_read_u32(const char *filename, uint32_t *value)
-{
-    return -1;
-}
-static inline int storage_read_u64(const char *filename, uint64_t *value)
-{
-    return -1;
-}
-static inline int storage_read_s8(const char *filename, int8_t *value)
-{
-    return -1;
-}
-static inline int storage_read_s16(const char *filename, int16_t *value)
-{
-    return -1;
-}
-static inline int storage_read_s32(const char *filename, int32_t *value)
-{
-    return -1;
-}
-static inline int storage_write_uint_hex(const char *filename, unsigned int value)
-{
-    return -1;
-}
-static inline int storage_write_uint(const char *filename, unsigned int value)
-{
-    return -1;
-}
-static inline int storage_write_u64(const char *filename, uint64_t value)
 {
     return -1;
 }
@@ -180,6 +94,6 @@ static inline void storage_exit(void)
     return;
 }
 
-#endif
+#endif /* CONFIG_RTOS_APPS_STORAGE */
 
 #endif /* _RTOS_APPS_STORAGE_H_ */

@@ -12,6 +12,7 @@
 #include "genavb/types.h"
 #include "rtos_abstraction_layer.h"
 #include "rtos_apps/storage.h"
+#include "rtos_apps/storage_common.h"
 
 #include "rtos_apps/shell/hsr.h"
 

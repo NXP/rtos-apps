@@ -15,6 +15,7 @@
 #include "rtos_apps/shell/common.h"
 #include "common.h"
 #include "rtos_apps/storage.h"
+#include "rtos_apps/storage_common.h"
 #include "shell_config.h"
 #include "rtos_apps/shell/stream_identification.h"
 
