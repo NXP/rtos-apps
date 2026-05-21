@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
-#ifdef CONFIG_APP_FP
+#ifdef CONFIG_RTOS_APPS_FP
 
 #include <stdio.h>
 
@@ -437,4 +437,4 @@ void cmd_fp_init_shell(void *shell) {return;}
 int fp_write_802_1q_permanent(void *shell, unsigned int port_id, struct genavb_fp_config config) {return -1;}
 int fp_write_802_3_permanent(void *shell, unsigned int port_id, struct genavb_fp_config config) {return -1;}
 int fp_apply_permanent(void *shell, unsigned int port_id) {return -1;}
-#endif /* CONFIG_APP_FP */
+#endif /* CONFIG_RTOS_APPS_FP */

@@ -6,22 +6,28 @@ message("rtos_apps: shell component is included.")
 mcux_add_source(
     SOURCES
     ./shell/common.c
-    ./shell/fdb.c
     ./shell/fp.c
-    ./shell/frer.c
-    ./shell/hsr.c
     ./shell/port_stats.c
-    ./shell/psfp.c
     ./shell/qbv.c
     ./shell/shell.c
-    ./shell/stream_identification.c
-    ./shell/vlan.c
 )
 
 mcux_add_include(
     INCLUDES
     .
 )
+
+if(CONFIG_MCUX_COMPONENT_component.rtos_apps.shell.tsn_bridge)
+    mcux_add_source(
+        SOURCES
+        ./shell/fdb.c
+        ./shell/frer.c
+        ./shell/hsr.c
+        ./shell/psfp.c
+        ./shell/stream_identification.c
+        ./shell/vlan.c
+    )
+endif()
 
 endif()
 

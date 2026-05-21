@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
-#ifdef CONFIG_APP_QBV
+#ifdef CONFIG_RTOS_APPS_QBV
 
 #include <stdio.h>
 #include <string.h>
@@ -780,4 +780,4 @@ void cmd_qbv_init(void *shell)
 void cmd_qbv_init(void *shell) {return;}
 int qbv_write_permanent(void *shell, unsigned int port_id, struct genavb_st_config config) {return -1;}
 int qbv_apply_permanent(void *shell, unsigned int port_id) {return -1;}
-#endif /* CONFIG_APP_QBV */
+#endif /* CONFIG_RTOS_APPS_QBV */

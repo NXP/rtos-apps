@@ -7,5 +7,24 @@ config MCUX_COMPONENT_component.rtos_apps.shell
     default n
 
     if MCUX_COMPONENT_component.rtos_apps.shell
+        config MCUX_COMPONENT_component.rtos_apps.shell.tsn_bridge
+            bool "Use TSN components"
+            default n
+
+        config MCUX_COMPONENT_component.rtos_apps.shell.fp
+            bool "Use Shell fp components"
+            default n
+
+        config MCUX_COMPONENT_component.rtos_apps.shell.qbv
+            bool "Use Shell qbv components"
+            default n
+
+        config RTOS_APPS_FP
+            bool
+            default y if MCUX_COMPONENT_component.rtos_apps.shell.fp
+
+        config RTOS_APPS_QBV
+            bool
+            default y if MCUX_COMPONENT_component.rtos_apps.shell.qbv
     endif
 
