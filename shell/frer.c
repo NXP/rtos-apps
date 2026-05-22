@@ -708,7 +708,7 @@ int cmd_seqr_read(void *shell, int32_t argc, char **argv)
     return 0;
 
 err_usage:
-    shell_printf(shell, CMD_SEQI_READ_HELP);
+    shell_printf(shell, CMD_SEQR_READ_HELP);
 
 err:
     return -1;
@@ -981,7 +981,7 @@ int cmd_seqi_read(void *shell, int32_t argc, char **argv)
     return 0;
 
 err_usage:
-    shell_printf(shell, CMD_SEQR_READ_HELP);
+    shell_printf(shell, CMD_SEQI_READ_HELP);
 
 err:
     return -1;
