@@ -23,11 +23,10 @@
 int storage_get_dir(const char *dirname, unsigned int n, char *subdirname, unsigned int len);
 int storage_get_file(const char *dirname, unsigned int n, char *filename, unsigned int len);
 
-int storage_cd(const char *filename, bool quiet);
 int storage_rm(const char *filename, bool recursive, bool force);
 int storage_mkdir(const char *dirname, bool parent);
-int storage_read(const char *filename, char *buf, unsigned int len);
-int storage_write(const char *filename, const char *buf, unsigned int len);
+int storage_read(const char *dirname, const char *filename, char *buf, unsigned int len);
+int storage_write(const char *dirname, const char *filename, const char *buf, unsigned int len);
 int storage_init(void);
 int storage_set_shell(void *shell);
 void storage_exit(void);
@@ -46,10 +45,6 @@ static inline int storage_get(const char *dirname, unsigned int n, void *file_in
 {
     return -1;
 }
-static inline int storage_cd(const char *filename, bool quiet)
-{
-    return -1;
-}
 static inline int storage_rm(const char *filename, bool recursive, bool force)
 {
     return -1;
@@ -58,11 +53,11 @@ static inline int storage_mkdir(const char *dirname, bool parent)
 {
     return -1;
 }
-static inline int storage_read(const char *filename, char *buf, unsigned int len)
+static inline int storage_read(const char *dirname, const char *filename, char *buf, unsigned int len)
 {
     return -1;
 }
-static inline int storage_write(const char *filename, const char *buf, unsigned int len)
+static inline int storage_write(const char *dirname, const char *filename, const char *buf, unsigned int len)
 {
     return -1;
 }

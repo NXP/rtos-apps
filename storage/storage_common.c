@@ -15,13 +15,13 @@
 
 #include "genavb/helpers.h"
 
-static int __storage_read_uint(const char *filename, uint64_t *value)
+static int __storage_read_uint(const char *dirname, const char *filename, uint64_t *value)
 {
     char buf[MAX_FILE_SIZE + 1];
     uint64_t tmp;
     int rc;
 
-    rc = storage_read(filename, buf, MAX_FILE_SIZE);
+    rc = storage_read(dirname, filename, buf, MAX_FILE_SIZE);
     if (rc < 0)
         return -1;
 
@@ -39,13 +39,13 @@ static int __storage_read_uint(const char *filename, uint64_t *value)
     return 0;
 }
 
-static int __storage_read_int(const char *filename, int64_t *value)
+static int __storage_read_int(const char *dirname, const char *filename, int64_t *value)
 {
     char buf[MAX_FILE_SIZE + 1];
     int64_t tmp;
     int rc;
 
-    rc = storage_read(filename, buf, MAX_FILE_SIZE);
+    rc = storage_read(dirname, filename, buf, MAX_FILE_SIZE);
     if (rc < 0)
         return -1;
 
@@ -63,13 +63,13 @@ static int __storage_read_int(const char *filename, int64_t *value)
     return 0;
 }
 
-int storage_read_ipv4_address(const char *filename, uint8_t *addr)
+int storage_read_ipv4_address(const char *dirname, const char *filename, uint8_t *addr)
 {
     char buf[MAX_FILE_SIZE + 1];
     unsigned int tmp[4];
     int rc;
 
-    rc = storage_read(filename, buf, MAX_FILE_SIZE);
+    rc = storage_read(dirname, filename, buf, MAX_FILE_SIZE);
     if (rc < 0)
         return -1;
 
@@ -86,12 +86,12 @@ int storage_read_ipv4_address(const char *filename, uint8_t *addr)
     return 0;
 }
 
-int storage_read_mac_address(const char *filename, uint8_t *mac)
+int storage_read_mac_address(const char *dirname, const char *filename, uint8_t *mac)
 {
     char buf[MAX_FILE_SIZE + 1];
     int rc;
 
-    rc = storage_read(filename, buf, MAX_FILE_SIZE);
+    rc = storage_read(dirname, filename, buf, MAX_FILE_SIZE);
     if (rc < 0)
         return -1;
 
@@ -103,13 +103,13 @@ int storage_read_mac_address(const char *filename, uint8_t *mac)
     return 0;
 }
 
-int storage_read_qbv_entry(const char *filename, uint8_t *mask, uint32_t *offset, uint8_t *state)
+int storage_read_qbv_entry(const char *dirname, const char *filename, uint8_t *mask, uint32_t *offset, uint8_t *state)
 {
     char buf[MAX_FILE_SIZE + 1];
     unsigned int tmp[3];
     int rc, arg_val;
 
-    rc = storage_read(filename, buf, MAX_FILE_SIZE);
+    rc = storage_read(dirname, filename, buf, MAX_FILE_SIZE);
     if (rc < 0)
         return -1;
 
@@ -129,11 +129,11 @@ int storage_read_qbv_entry(const char *filename, uint8_t *mask, uint32_t *offset
     return 0;
 }
 
-int storage_read_uint(const char *filename, unsigned int *value)
+int storage_read_uint(const char *dirname, const char *filename, unsigned int *value)
 {
     uint64_t tmp;
 
-    if (__storage_read_uint(filename, &tmp) < 0)
+    if (__storage_read_uint(dirname, filename, &tmp) < 0)
         return -1;
 
     *value = (unsigned int)tmp;
@@ -141,11 +141,11 @@ int storage_read_uint(const char *filename, unsigned int *value)
     return 0;
 }
 
-int storage_read_int(const char *filename, int *value)
+int storage_read_int(const char *dirname, const char *filename, int *value)
 {
     int64_t tmp;
 
-    if (__storage_read_int(filename, &tmp) < 0)
+    if (__storage_read_int(dirname, filename, &tmp) < 0)
         return -1;
 
     *value = (int)tmp;
@@ -153,13 +153,13 @@ int storage_read_int(const char *filename, int *value)
     return 0;
 }
 
-int storage_read_float(const char *filename, float *value)
+int storage_read_float(const char *dirname, const char *filename, float *value)
 {
     char buf[MAX_FILE_SIZE + 1];
     float tmp;
     int rc;
 
-    rc = storage_read(filename, buf, MAX_FILE_SIZE);
+    rc = storage_read(dirname, filename, buf, MAX_FILE_SIZE);
     if (rc < 0)
         return -1;
 
@@ -177,11 +177,11 @@ int storage_read_float(const char *filename, float *value)
     return 0;
 }
 
-int storage_read_bool(const char *filename, bool *value)
+int storage_read_bool(const char *dirname, const char *filename, bool *value)
 {
     uint64_t tmp;
 
-    if (__storage_read_uint(filename, &tmp) < 0)
+    if (__storage_read_uint(dirname, filename, &tmp) < 0)
         return -1;
 
     *value = (bool)tmp;
@@ -189,11 +189,11 @@ int storage_read_bool(const char *filename, bool *value)
     return 0;
 }
 
-int storage_read_u8(const char *filename, uint8_t *value)
+int storage_read_u8(const char *dirname, const char *filename, uint8_t *value)
 {
     uint64_t tmp;
 
-    if (__storage_read_uint(filename, &tmp) < 0)
+    if (__storage_read_uint(dirname, filename, &tmp) < 0)
         return -1;
 
     *value = (uint8_t)tmp;
@@ -201,11 +201,11 @@ int storage_read_u8(const char *filename, uint8_t *value)
     return 0;
 }
 
-int storage_read_u16(const char *filename, uint16_t *value)
+int storage_read_u16(const char *dirname, const char *filename, uint16_t *value)
 {
     uint64_t tmp;
 
-    if (__storage_read_uint(filename, &tmp) < 0)
+    if (__storage_read_uint(dirname, filename, &tmp) < 0)
         return -1;
 
     *value = (uint16_t)tmp;
@@ -213,11 +213,11 @@ int storage_read_u16(const char *filename, uint16_t *value)
     return 0;
 }
 
-int storage_read_u32(const char *filename, uint32_t *value)
+int storage_read_u32(const char *dirname, const char *filename, uint32_t *value)
 {
     uint64_t tmp;
 
-    if (__storage_read_uint(filename, &tmp) < 0)
+    if (__storage_read_uint(dirname, filename, &tmp) < 0)
         return -1;
 
     *value = (uint32_t)tmp;
@@ -225,11 +225,11 @@ int storage_read_u32(const char *filename, uint32_t *value)
     return 0;
 }
 
-int storage_read_u64(const char *filename, uint64_t *value)
+int storage_read_u64(const char *dirname, const char *filename, uint64_t *value)
 {
     uint64_t tmp;
 
-    if (__storage_read_uint(filename, &tmp) < 0)
+    if (__storage_read_uint(dirname, filename, &tmp) < 0)
         return -1;
 
     *value = tmp;
@@ -237,11 +237,11 @@ int storage_read_u64(const char *filename, uint64_t *value)
     return 0;
 }
 
-int storage_read_s8(const char *filename, int8_t *value)
+int storage_read_s8(const char *dirname, const char *filename, int8_t *value)
 {
     int64_t tmp;
 
-    if (__storage_read_int(filename, &tmp) < 0)
+    if (__storage_read_int(dirname, filename, &tmp) < 0)
         return -1;
 
     *value = (int8_t)tmp;
@@ -249,11 +249,11 @@ int storage_read_s8(const char *filename, int8_t *value)
     return 0;
 }
 
-int storage_read_s16(const char *filename, int16_t *value)
+int storage_read_s16(const char *dirname, const char *filename, int16_t *value)
 {
     int64_t tmp;
 
-    if (__storage_read_int(filename, &tmp) < 0)
+    if (__storage_read_int(dirname, filename, &tmp) < 0)
         return -1;
 
     *value = (int16_t)tmp;
@@ -261,11 +261,11 @@ int storage_read_s16(const char *filename, int16_t *value)
     return 0;
 }
 
-int storage_read_s32(const char *filename, int32_t *value)
+int storage_read_s32(const char *dirname, const char *filename, int32_t *value)
 {
     int64_t tmp;
 
-    if (__storage_read_int(filename, &tmp) < 0)
+    if (__storage_read_int(dirname, filename, &tmp) < 0)
         return -1;
 
     *value = (int32_t)tmp;
@@ -273,27 +273,27 @@ int storage_read_s32(const char *filename, int32_t *value)
     return 0;
 }
 
-int storage_write_uint_hex(const char *filename, unsigned int value)
+int storage_write_uint_hex(const char *dirname, const char *filename, unsigned int value)
 {
     char hex_str[12];
 
     if (h_snprintf_strict(hex_str, 12, "0x%08x", value) < 0)
         return -1;
 
-    return storage_write(filename, hex_str, strlen(hex_str) + 1);
+    return storage_write(dirname, filename, hex_str, strlen(hex_str) + 1);
 }
 
-int storage_write_uint(const char *filename, unsigned int value)
+int storage_write_uint(const char *dirname, const char *filename, unsigned int value)
 {
     char str[11];
 
     if (h_snprintf_strict(str, sizeof(str), "%u", value) < 0)
         return -1;
 
-    return storage_write(filename, str, strlen(str) + 1);
+    return storage_write(dirname, filename, str, strlen(str) + 1);
 }
 
-int storage_write_u64(const char *filename, uint64_t value)
+int storage_write_u64(const char *dirname, const char *filename, uint64_t value)
 {
     char str[22];
     unsigned int tmp[3];
@@ -314,5 +314,5 @@ int storage_write_u64(const char *filename, uint64_t value)
             return -1;
     }
 
-    return storage_write(filename, str, strlen(str) + 1);
+    return storage_write(dirname, filename, str, strlen(str) + 1);
 }

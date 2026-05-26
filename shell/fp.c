@@ -92,20 +92,16 @@ static int fp_read_permanent(void *shell, unsigned int port_id, struct genavb_fp
     uint32_t enable_tx = 0, verify_disable_tx = 0, verify_time = 10, add_frag_size = 0;
     char path[PATH_SZ];
     uint8_t status_fp = 0xFF;
-    int rc = -1;
+    int rc = 0;
 
     switch (type) {
     case GENAVB_FP_CONFIG_802_1Q:
-        if (h_snprintf_strict(path, PATH_SZ, "/fp/port%u/802_1Q", port_id) < 0)
+        if (h_snprintf_strict(path, PATH_SZ, "/fp/port%u/802_1Q", port_id) < 0) {
+            rc = -1;
             goto out_802_1q;
-
-        if (!storage_cd(path, true)) {
-            storage_read_u8("admin_status", &status_fp);
-
-            rc = 0;
-
-            storage_cd("-", true);
         }
+
+        storage_read_u8(path, "admin_status", &status_fp);
 
     out_802_1q:
         read_fp_status_table(status_fp, config->u.cfg_802_1Q.admin_status);
@@ -113,22 +109,18 @@ static int fp_read_permanent(void *shell, unsigned int port_id, struct genavb_fp
         break;
 
     case GENAVB_FP_CONFIG_802_3:
-        if (h_snprintf_strict(path, PATH_SZ, "/fp/port%u/802_3", port_id) < 0)
+        if (h_snprintf_strict(path, PATH_SZ, "/fp/port%u/802_3", port_id) < 0) {
+            rc = -1;
             goto out_802_3;
-
-        if (!storage_cd(path, true)) {
-            storage_read_u32("enable_tx", &enable_tx);
-
-            storage_read_u32("verify_disable_tx", &verify_disable_tx);
-
-            storage_read_u32("verify_time", &verify_time);
-
-            storage_read_u32("add_frag_size", &add_frag_size);
-
-            rc = 0;
-
-            storage_cd("-", true);
         }
+
+        storage_read_u32(path, "enable_tx", &enable_tx);
+
+        storage_read_u32(path, "verify_disable_tx", &verify_disable_tx);
+
+        storage_read_u32(path, "verify_time", &verify_time);
+
+        storage_read_u32(path, "add_frag_size", &add_frag_size);
 
     out_802_3:
         config->u.cfg_802_3.enable_tx = enable_tx;
@@ -158,21 +150,14 @@ int fp_write_802_1q_permanent(void *shell, unsigned int port_id, struct genavb_f
         goto err;
     }
 
-    if (storage_cd(path, false) < 0) {
-        shell_printf(shell, "Missing fp configuration\n");
-        rc = -1;
-        goto err;
-    }
-
     for (i = 0; i < QOS_PRIORITY_MAX; i++) {
         if (config.u.cfg_802_1Q.admin_status[i] == GENAVB_FP_ADMIN_STATUS_EXPRESS) 
             tmp |= 1 << i;
     }
 
     h_snprintf(str_tmp, 5, "0x%02x", tmp);
-    storage_write("admin_status", str_tmp, strlen(str_tmp)+1);
+    storage_write(path, "admin_status", str_tmp, strlen(str_tmp)+1);
 
-    storage_cd("-", false);
     return rc;
 err:
     return rc;
@@ -190,18 +175,11 @@ int fp_write_802_3_permanent(void *shell, unsigned int port_id, struct genavb_fp
         goto err;
     }
 
-    if (storage_cd(path, false) < 0) {
-        shell_printf(shell, "Missing fp configuration\n");
-        rc = -1;
-        goto err;
-    }
+    storage_write_uint(path, "enable_tx", config.u.cfg_802_3.enable_tx);
+    storage_write_uint(path, "verify_disable_tx", config.u.cfg_802_3.verify_disable_tx);
+    storage_write_uint(path, "verify_time", config.u.cfg_802_3.verify_time);
+    storage_write_uint(path, "add_frag_size", config.u.cfg_802_3.add_frag_size);
 
-    storage_write_uint("enable_tx", config.u.cfg_802_3.enable_tx);
-    storage_write_uint("verify_disable_tx", config.u.cfg_802_3.verify_disable_tx);
-    storage_write_uint("verify_time", config.u.cfg_802_3.verify_time);
-    storage_write_uint("add_frag_size", config.u.cfg_802_3.add_frag_size);
-
-    storage_cd("-", false);
     return rc;
 err:
     rc = -1;

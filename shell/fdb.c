@@ -95,7 +95,7 @@ static int fdb_read_storage(uint8_t *mac, uint16_t vid, uint32_t *port_mask)
     if (h_snprintf_strict(filename, 30, "/fdb/" RTOS_APPS_MAC_STR_FMT ",%u", RTOS_APPS_MAC_STR(mac), vid) < 0)
         return -1;
 
-    return storage_read_u32(filename, port_mask);
+    return storage_read_u32(NULL, filename, port_mask);
 }
 
 static int fdb_write_storage(uint8_t *mac, uint16_t vid, uint32_t port_mask)
@@ -106,7 +106,7 @@ static int fdb_write_storage(uint8_t *mac, uint16_t vid, uint32_t port_mask)
     if (h_snprintf_strict(filename, 30, "/fdb/" RTOS_APPS_MAC_STR_FMT ",%u", RTOS_APPS_MAC_STR(mac), vid) < 0)
         return -1;
 
-    return storage_write_uint_hex(filename, port_mask);
+    return storage_write_uint_hex(NULL, filename, port_mask);
 }
 
 static int fdb_get_storage_entry(unsigned int i, uint8_t *mac, uint16_t *vid, uint32_t *port_mask)

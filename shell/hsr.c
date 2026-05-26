@@ -36,12 +36,7 @@ static int hsr_mode_update_permanent(unsigned long mode)
     if (storage_mkdir("/hsr", true) < 0)
         goto err;
 
-    if (storage_cd("/hsr", true) < 0)
-        goto err;
-
-    storage_write("mode", buf, strlen(buf));
-
-    storage_cd("-", true);
+    storage_write(NULL, "/hsr/mode", buf, strlen(buf));
 
     return 0;
 
@@ -56,7 +51,7 @@ static void hsr_mode_apply_permanent(void *shell)
     uint32_t tmp = 0;
     int ret;
 
-    if (storage_read_u32("/hsr/mode", &tmp) < 0)
+    if (storage_read_u32(NULL, "/hsr/mode", &tmp) < 0)
         return;
 
     if (tmp > 3) {

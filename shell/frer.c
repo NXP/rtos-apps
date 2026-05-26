@@ -142,14 +142,9 @@ static int seqg_update_permanent(uint32_t index, struct genavb_sequence_generati
     if (storage_mkdir(path, true) < 0)
         goto err;
 
-    if (storage_cd(path, true) < 0)
-        goto err;
-
     list_u32_to_buf(entry->stream, entry->stream_n, buf, BUF_MAX_SIZE);
 
-    storage_write("handle", buf, strlen(buf));
-
-    storage_cd("-", true);
+    storage_write(path, "handle", buf, strlen(buf));
 
     return 0;
 
@@ -176,7 +171,7 @@ static int seqg_read_permanent(uint32_t index, struct genavb_sequence_generation
     if (h_snprintf_strict(path, PATH_MAX_SIZE, "/seqg/%" PRIu32 "/handle", index) < 0)
         return -1;
 
-    storage_read(path, buf, BUF_MAX_SIZE);
+    storage_read(NULL, path, buf, BUF_MAX_SIZE);
 
     buf_to_list_u32(buf, entry->stream, &entry->stream_n, stream_max);
 
@@ -389,30 +384,25 @@ static int seqr_update_permanent(uint32_t index, struct genavb_sequence_recovery
     if (storage_mkdir(path, true) < 0)
         goto err;
 
-    if (storage_cd(path, true) < 0)
-        goto err;
-
     list_u32_to_buf(entry->stream, entry->stream_n, buf, BUF_MAX_SIZE);
 
-    storage_write("handle", buf, strlen(buf));
+    storage_write(path, "handle", buf, strlen(buf));
 
     list_uint_to_buf(entry->port, entry->port_n, buf, BUF_MAX_SIZE);
 
-    storage_write("port", buf, strlen(buf));
+    storage_write(path, "port", buf, strlen(buf));
 
-    storage_write_uint("algorithm", entry->algorithm);
+    storage_write_uint(path, "algorithm", entry->algorithm);
 
-    storage_write_uint("history_length", entry->history_length);
+    storage_write_uint(path, "history_length", entry->history_length);
 
-    storage_write_uint("reset_timeout", entry->reset_timeout);
+    storage_write_uint(path, "reset_timeout", entry->reset_timeout);
 
-    storage_write_uint("take_no_sequence", entry->take_no_sequence);
+    storage_write_uint(path, "take_no_sequence", entry->take_no_sequence);
 
-    storage_write_uint("individual_recovery", entry->individual_recovery);
+    storage_write_uint(path, "individual_recovery", entry->individual_recovery);
 
-    storage_write_uint("latent_error_detection", entry->latent_error_detection);
-
-    storage_cd("-", true);
+    storage_write_uint(path, "latent_error_detection", entry->latent_error_detection);
 
     return 0;
 
@@ -440,31 +430,26 @@ static int seqr_read_permanent(uint32_t index, struct genavb_sequence_recovery *
     if (h_snprintf_strict(path, PATH_MAX_SIZE, "/seqr/%" PRIu32, index) < 0)
         goto err;
 
-    if (storage_cd(path, true) < 0)
-        goto err;
-
-    storage_read("handle", buf, BUF_MAX_SIZE);
+    storage_read(path, "handle", buf, BUF_MAX_SIZE);
 
     buf_to_list_u32(buf, entry->stream, &entry->stream_n, stream_max);
 
-    storage_read("port", buf, BUF_MAX_SIZE);
+    storage_read(path, "port", buf, BUF_MAX_SIZE);
 
     buf_to_list_uint(buf, entry->port, &entry->port_n, port_max);
 
-    storage_read_uint("algorithm", &tmp);
+    storage_read_uint(path, "algorithm", &tmp);
     entry->algorithm = (genavb_seqr_algorithm_t)tmp;
 
-    storage_read_u32("history_length", &entry->history_length);
+    storage_read_u32(path, "history_length", &entry->history_length);
 
-    storage_read_u32("reset_timeout", &entry->reset_timeout);
+    storage_read_u32(path, "reset_timeout", &entry->reset_timeout);
 
-    storage_read_bool("take_no_sequence", &entry->take_no_sequence);
+    storage_read_bool(path, "take_no_sequence", &entry->take_no_sequence);
 
-    storage_read_bool("individual_recovery", &entry->individual_recovery);
+    storage_read_bool(path, "individual_recovery", &entry->individual_recovery);
 
-    storage_read_bool("latent_error_detection", &entry->latent_error_detection);
-
-    storage_cd("-", true);
+    storage_read_bool(path, "latent_error_detection", &entry->latent_error_detection);
 
     return 0;
 
@@ -725,20 +710,15 @@ static int seqi_update_permanent(unsigned int port_id, struct genavb_sequence_id
     if (storage_mkdir(path, true) < 0)
         goto err;
 
-    if (storage_cd(path, true) < 0)
-        goto err;
-
     list_u32_to_buf(entry->stream, entry->stream_n, buf, BUF_MAX_SIZE);
 
-    storage_write("handle", buf, strlen(buf));
+    storage_write(path, "handle", buf, strlen(buf));
 
-    storage_write_uint("active", entry->active);
+    storage_write_uint(path, "active", entry->active);
 
-    storage_write_uint("encapsulation", entry->encapsulation);
+    storage_write_uint(path, "encapsulation", entry->encapsulation);
 
-    storage_write_uint("path_id_lan_id", entry->path_id_lan_id);
-
-    storage_cd("-", true);
+    storage_write_uint(path, "path_id_lan_id", entry->path_id_lan_id);
 
     return 0;
 
@@ -766,21 +746,16 @@ static int seqi_read_permanent(unsigned int port_id, struct genavb_sequence_iden
     if (h_snprintf_strict(path, PATH_MAX_SIZE, "/seqi/%u", port_id) < 0)
         goto err;
 
-    if (storage_cd(path, true) < 0)
-        goto err;
-
-    storage_read("handle", buf, BUF_MAX_SIZE);
+    storage_read(path, "handle", buf, BUF_MAX_SIZE);
 
     buf_to_list_u32(buf, entry->stream, &entry->stream_n, stream_max);
 
-    storage_read_bool("active", &entry->active);
+    storage_read_bool(path, "active", &entry->active);
 
-    storage_read_uint("encapsulation", &tmp);
+    storage_read_uint(path, "encapsulation", &tmp);
     entry->encapsulation = (genavb_seqi_encapsulation_t)tmp;
 
-    storage_read_s8("path_id_lan_id", &entry->path_id_lan_id);
-
-    storage_cd("-", true);
+    storage_read_s8(path, "path_id_lan_id", &entry->path_id_lan_id);
 
     return 0;
 

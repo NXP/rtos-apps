@@ -126,7 +126,7 @@ static int vlan_read_entry(const char *filename, uint32_t *port_mask, uint32_t *
     unsigned int tmp[2];
     int rc, arg_val;
 
-    rc = storage_read(filename, buf, MAX_FILE_SIZE);
+    rc = storage_read(NULL, filename, buf, MAX_FILE_SIZE);
     if (rc < 0)
         return -1;
 
@@ -173,7 +173,7 @@ static int vlan_write_storage(uint16_t vid, uint32_t port_mask, uint32_t untagge
     if (h_snprintf_strict(str, sizeof(str), "0x%08x,0x%08x", port_mask, untagged_port_mask) < 0)
         return -1;
 
-    return storage_write(filename, str, strlen(str) + 1);
+    return storage_write(NULL, filename, str, strlen(str) + 1);
 }
 
 static int vlan_get_storage_entry(unsigned int i, uint16_t *vid, uint32_t *port_mask, uint32_t *untagged_port_mask)
@@ -535,7 +535,7 @@ static int vlan_update_permanent_pvid(unsigned int port_id, uint16_t vid)
     if (h_snprintf_strict(filename, VLAN_MAX_FILENAME, "/port%u/pvid", port_id) < 0)
         goto err;
 
-    return storage_write_uint(filename, vid);
+    return storage_write_uint(NULL, filename, vid);
 
 err:
     return -1;
@@ -548,7 +548,7 @@ static int vlan_read_permanent_pvid(unsigned int port_id, uint16_t *vid)
     if (h_snprintf_strict(filename, VLAN_MAX_FILENAME, "/port%u/pvid", port_id) < 0)
         goto err;
 
-    return storage_read_u16(filename, vid);
+    return storage_read_u16(NULL, filename, vid);
 
 err:
     return -1;

@@ -123,16 +123,12 @@ static int sf_update_permanent(uint32_t index, struct genavb_stream_filter_insta
         goto err;
     }
 
-    storage_cd(path, true);
-
-    storage_write_uint("stream_handle", instance->stream_handle);
-    storage_write_uint("priority_spec", instance->priority_spec);
-    storage_write_uint("flow_meter_ref", instance->flow_meter_ref);
-    storage_write_uint("flow_meter_enable", instance->flow_meter_enable);
-    storage_write_uint("stream_gate_ref", instance->stream_gate_ref);
-    storage_write_uint("max_sdu_size", instance->max_sdu_size);
-
-    storage_cd("-", true);
+    storage_write_uint(path, "stream_handle", instance->stream_handle);
+    storage_write_uint(path, "priority_spec", instance->priority_spec);
+    storage_write_uint(path, "flow_meter_ref", instance->flow_meter_ref);
+    storage_write_uint(path, "flow_meter_enable", instance->flow_meter_enable);
+    storage_write_uint(path, "stream_gate_ref", instance->stream_gate_ref);
+    storage_write_uint(path, "max_sdu_size", instance->max_sdu_size);
 
 err:
     return rc;
@@ -151,24 +147,20 @@ static int sf_delete_permanent(uint32_t index, bool endpoint)
 static int sf_read_permanent(uint32_t index, struct genavb_stream_filter_instance *instance, bool endpoint)
 {
     char path[30] = {0};
-    int rc = -1;
+    int rc = 0;
 
-    if (h_snprintf_strict(path, 30, "/sf/%lu", index) < 0)
+    if (h_snprintf_strict(path, 30, "/sf/%lu", index) < 0) {
+        rc = -1;
         goto err;
-
-    if (storage_cd(path, true) == 0) {
-        storage_read_u32("stream_handle", &instance->stream_handle);
-        storage_read_u8("priority_spec", &instance->priority_spec);
-        storage_read_u32("flow_meter_ref", &instance->flow_meter_ref);
-        storage_read_bool("flow_meter_enable", &instance->flow_meter_enable);
-        storage_read_u32("stream_gate_ref", &instance->stream_gate_ref);
-        storage_read_u32("max_sdu_size", &instance->max_sdu_size);
-
-        storage_cd("-", true);
-        rc = 0;
     }
 
-    return rc;
+    storage_read_u32(path, "stream_handle", &instance->stream_handle);
+    storage_read_u8(path, "priority_spec", &instance->priority_spec);
+    storage_read_u32(path, "flow_meter_ref", &instance->flow_meter_ref);
+    storage_read_bool(path, "flow_meter_enable", &instance->flow_meter_enable);
+    storage_read_u32(path, "stream_gate_ref", &instance->stream_gate_ref);
+    storage_read_u32(path, "max_sdu_size", &instance->max_sdu_size);
+
 err:
     return rc;
 }
@@ -406,7 +398,7 @@ static int sg_read_entry_from_storage(const char *filename, uint8_t *state, uint
     unsigned int tmp[4];
     int rc;
 
-    rc = storage_read(filename, buf, 32);
+    rc = storage_read(NULL, filename, buf, 32);
     if (rc < 0)
         return -1;
 
@@ -430,7 +422,7 @@ static int sg_write_entry_to_storage(const char *filename, uint8_t mask, uint8_t
     if (h_snprintf_strict(str, 28, "%u,%u,%"PRIu32",%"PRIu32, mask, ipv, interval, octet) < 0)
         return -1;
 
-    return storage_write(filename, str, strlen(str) + 1);
+    return storage_write(NULL, filename, str, strlen(str) + 1);
 }
 
 static void sg_print_entry(void *shell, uint32_t index, struct genavb_stream_gate_instance *instance)
@@ -497,6 +489,7 @@ static int sg_update_permanent(void *shell, uint32_t index, struct genavb_stream
 {
     struct genavb_stream_gate_control_entry *entry;
     char path[30] = {0};
+    char entry_path[30];
     int rc = 0;
     int i;
 
@@ -510,27 +503,25 @@ static int sg_update_permanent(void *shell, uint32_t index, struct genavb_stream
         goto err;
     }
 
-    storage_cd(path, true);
-
-    storage_write_uint("gate_enable", instance->gate_enable);
-    storage_write_uint("admin_state", instance->admin_gate_state);
-    storage_write_uint("admin_ipv", instance->admin_ipv);
-    storage_write_uint("cycle_time", instance->cycle_time_p);
-    storage_write_uint("cycle_time_extension", instance->cycle_time_extension);
-    storage_write_u64("base_time", instance->base_time);
-    storage_write_uint("list_length", instance->list_length);
-    storage_write_uint("gate_closed_due_to_invalid_rx_enable", instance->gate_closed_due_to_invalid_rx_enable);
-    storage_write_uint("gate_closed_due_to_octets_exceeded_enable", instance->gate_closed_due_to_octets_exceeded_enable);
+    storage_write_uint(path, "gate_enable", instance->gate_enable);
+    storage_write_uint(path, "admin_state", instance->admin_gate_state);
+    storage_write_uint(path, "admin_ipv", instance->admin_ipv);
+    storage_write_uint(path, "cycle_time", instance->cycle_time_p);
+    storage_write_uint(path, "cycle_time_extension", instance->cycle_time_extension);
+    storage_write_u64(path, "base_time", instance->base_time);
+    storage_write_uint(path, "list_length", instance->list_length);
+    storage_write_uint(path, "gate_closed_due_to_invalid_rx_enable", instance->gate_closed_due_to_invalid_rx_enable);
+    storage_write_uint(path, "gate_closed_due_to_octets_exceeded_enable", instance->gate_closed_due_to_octets_exceeded_enable);
 
     if ((instance->list_length) && (instance->control_list)) {
         for (i = 0; i < instance->list_length; i++) {
             entry = &instance->control_list[i];
-            h_snprintf(path, 30, "entry%u", i);
-            sg_write_entry_to_storage(path, entry->gate_state_value, entry->ipv_spec, entry->time_interval_value, entry->interval_octet_max);
+            if (h_snprintf_strict(entry_path, 30, "%s/entry%u", path, i) < 0)
+                continue;
+            sg_write_entry_to_storage(entry_path, entry->gate_state_value, entry->ipv_spec, entry->time_interval_value, entry->interval_octet_max);
         }
     }
 
-    storage_cd("-", true);
 err:
     return rc;
 }
@@ -550,42 +541,43 @@ static int sg_read_permanent(void *shell, uint32_t index, struct genavb_stream_g
     struct genavb_stream_gate_control_entry *gate_list;
     unsigned int num_entries = 0;
     char path[30];
-    int rc = -1; 
+    char entry_path[30];
+    int rc = 0;
     int i;
 
     gate_list = instance->control_list;
-    if (!gate_list)
+    if (!gate_list) {
+        rc = -1;
         goto err;
-
-    if (h_snprintf_strict(path, 30, "/sg/%"PRIu32, index) < 0)
-        goto err;
-
-    if (storage_cd(path, true) == 0) {
-        instance->stream_gate_instance_id = index;
-        storage_read_bool("gate_enable", &instance->gate_enable);
-        storage_read_u8("admin_state", &instance->admin_gate_state);
-        storage_read_u8("admin_ipv", &instance->admin_ipv);
-        storage_read_u64("base_time", &instance->base_time);
-        storage_read_u32("cycle_time", &instance->cycle_time_p);
-        storage_read_u32("cycle_time_extension", &instance->cycle_time_extension);
-        storage_read_uint("list_length", &instance->list_length);
-        storage_read_bool("gate_closed_due_to_invalid_rx_enable", &instance->gate_closed_due_to_invalid_rx_enable);
-        storage_read_bool("gate_closed_due_to_octets_exceeded_enable", &instance->gate_closed_due_to_octets_exceeded_enable);
-
-        for (i = 0; i < instance->list_length; i++) {
-            char entry[10] = {0};
-            h_snprintf(entry, 10, "entry%u", i);
-
-            if ((rc = sg_read_entry_from_storage(entry, &gate_list[i].gate_state_value, &gate_list[i].ipv_spec, &gate_list[i].time_interval_value, &gate_list[i].interval_octet_max)) == 0) {
-                gate_list[i].operation_name = GENAVB_SG_SET_GATE_AND_IPV;
-                num_entries++;
-            }
-        }
-
-        storage_cd("-", true);
-        instance->list_length = num_entries;
-        rc = 0;
     }
+
+    if (h_snprintf_strict(path, 30, "/sg/%"PRIu32, index) < 0) {
+        rc = -1;
+        goto err;
+    }
+
+    instance->stream_gate_instance_id = index;
+    storage_read_bool(path, "gate_enable", &instance->gate_enable);
+    storage_read_u8(path, "admin_state", &instance->admin_gate_state);
+    storage_read_u8(path, "admin_ipv", &instance->admin_ipv);
+    storage_read_u64(path, "base_time", &instance->base_time);
+    storage_read_u32(path, "cycle_time", &instance->cycle_time_p);
+    storage_read_u32(path, "cycle_time_extension", &instance->cycle_time_extension);
+    storage_read_uint(path, "list_length", &instance->list_length);
+    storage_read_bool(path, "gate_closed_due_to_invalid_rx_enable", &instance->gate_closed_due_to_invalid_rx_enable);
+    storage_read_bool(path, "gate_closed_due_to_octets_exceeded_enable", &instance->gate_closed_due_to_octets_exceeded_enable);
+
+    for (i = 0; i < instance->list_length; i++) {
+        if (h_snprintf_strict(entry_path, 30, "%s/entry%u", path, i) < 0)
+            continue;
+
+        if ((rc = sg_read_entry_from_storage(entry_path, &gate_list[i].gate_state_value, &gate_list[i].ipv_spec, &gate_list[i].time_interval_value, &gate_list[i].interval_octet_max)) == 0) {
+            gate_list[i].operation_name = GENAVB_SG_SET_GATE_AND_IPV;
+            num_entries++;
+        }
+    }
+
+    instance->list_length = num_entries;
 
 err:
     return rc;
@@ -942,18 +934,14 @@ static int fm_update_permanent(void *shell, uint32_t index, struct genavb_flow_m
         goto err;
     }
 
-    storage_cd(path, true);
-
-    storage_write_u64("cir", instance->committed_information_rate);
-    storage_write_uint("cbs", instance->committed_burst_size);
-    storage_write_u64("eir", instance->excess_information_rate);
-    storage_write_uint("ebs", instance->excess_burst_size);
-    storage_write_uint("cflag", instance->coupling_flag);
-    storage_write_uint("cmode", instance->color_mode);
-    storage_write_uint("dropy", instance->drop_on_yellow);
-    storage_write_uint("mren", instance->mark_all_frames_red_enable);
-
-    storage_cd("-", true);
+    storage_write_u64(path, "cir", instance->committed_information_rate);
+    storage_write_uint(path, "cbs", instance->committed_burst_size);
+    storage_write_u64(path, "eir", instance->excess_information_rate);
+    storage_write_uint(path, "ebs", instance->excess_burst_size);
+    storage_write_uint(path, "cflag", instance->coupling_flag);
+    storage_write_uint(path, "cmode", instance->color_mode);
+    storage_write_uint(path, "dropy", instance->drop_on_yellow);
+    storage_write_uint(path, "mren", instance->mark_all_frames_red_enable);
 
 err:
     return rc;
@@ -972,27 +960,22 @@ static int fm_delete_permanent(uint32_t index, bool endpoint)
 static int fm_read_permanent(void *shell, uint32_t index, struct genavb_flow_meter_instance *instance, bool endpoint)
 {
     char path[MAX_FILENAME_LENGTH];
-    int rc = -1; 
+    int rc = 0;
 
-    if (h_snprintf_strict(path, MAX_FILENAME_LENGTH, "/fm/%"PRIu32, index) < 0)
+    if (h_snprintf_strict(path, MAX_FILENAME_LENGTH, "/fm/%"PRIu32, index) < 0) {
+        rc = -1;
         goto err;
-
-    if (storage_cd(path, true) == 0) {
-        instance->flow_meter_instance_id = index;
-        storage_read_u64("cir", &instance->committed_information_rate);
-        storage_read_u32("cbs", &instance->committed_burst_size);
-        storage_read_u64("eir", &instance->excess_information_rate);
-        storage_read_u32("ebs", &instance->excess_burst_size);
-        storage_read_u8("cflag", &instance->coupling_flag);
-        storage_read_u8("cmode", &instance->color_mode);
-        storage_read_bool("dropy", &instance->drop_on_yellow);
-        storage_read_bool("mren", &instance->mark_all_frames_red_enable);
-
-        storage_cd("-", true);
-        rc = 0;
     }
 
-    return rc;
+    instance->flow_meter_instance_id = index;
+    storage_read_u64(path, "cir", &instance->committed_information_rate);
+    storage_read_u32(path, "cbs", &instance->committed_burst_size);
+    storage_read_u64(path, "eir", &instance->excess_information_rate);
+    storage_read_u32(path, "ebs", &instance->excess_burst_size);
+    storage_read_u8(path, "cflag", &instance->coupling_flag);
+    storage_read_u8(path, "cmode", &instance->color_mode);
+    storage_read_bool(path, "dropy", &instance->drop_on_yellow);
+    storage_read_bool(path, "mren", &instance->mark_all_frames_red_enable);
 
 err:
     return rc;

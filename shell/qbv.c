@@ -149,34 +149,29 @@ static int qbv_read_permanent(void *shell, unsigned int port_id, struct genavb_s
     if (h_snprintf_strict(port, 15, "/qbv/port%u", port_id) < 0)
         goto err;
 
-    if (storage_cd(port, true) == 0) {
-        storage_read_int("enabled", &config->enable);
-        storage_read_u64("base_time", &config->base_time);
-        storage_read_u32("cycle_time", &config->cycle_time_p);
-        storage_read_u32("cycle_time_ext", &config->cycle_time_ext);
+    storage_read_int(port, "enabled", &config->enable);
+    storage_read_u64(port, "base_time", &config->base_time);
+    storage_read_u32(port, "cycle_time", &config->cycle_time_p);
+    storage_read_u32(port, "cycle_time_ext", &config->cycle_time_ext);
 
-        for (entry_id = 0; entry_id < QBV_LIST_MAX_ENTRIES; entry_id++) {
-            char entry[10] = {0};
-            h_snprintf(entry, 10, "entry%u", entry_id);
+    for (entry_id = 0; entry_id < QBV_LIST_MAX_ENTRIES; entry_id++) {
+        char entry[10] = {0};
+        h_snprintf(entry, 10, "entry%u", entry_id);
 
-            if (storage_read_qbv_entry(entry, &mask, &interval, &operation) < 0)
-                break;
+        if (storage_read_qbv_entry(port, entry, &mask, &interval, &operation) < 0)
+            break;
 
-            gate_list[entry_id].gate_states = mask;
-            gate_list[entry_id].time_interval = interval;
-            gate_list[entry_id].operation = operation;
-        }
-
-        config->cycle_time_q = NSECS_PER_SEC;
-        config->list_length = entry_id;
-
-        storage_cd("-", true);
+        gate_list[entry_id].gate_states = mask;
+        gate_list[entry_id].time_interval = interval;
+        gate_list[entry_id].operation = operation;
     }
+
+    config->cycle_time_q = NSECS_PER_SEC;
+    config->list_length = entry_id;
 
     return 0;
 
 err:
-    storage_cd("-", true);
     return -1;
 }
 
@@ -184,37 +179,33 @@ int qbv_write_permanent(void *shell, unsigned int port_id, struct genavb_st_conf
 {
     struct genavb_st_gate_control_entry *gate_list = config.control_list;
     char buf[20] = {0}, entry[10];
+    char dir[20] = {0};
     int i;
 
-    if (h_snprintf_strict(buf, 20, "/qbv/port%u", port_id) < 0) {
+    if (h_snprintf_strict(dir, 20, "/qbv/port%u", port_id) < 0) {
         goto err;
     }
 
-    storage_rm(buf, true, true);
+    storage_rm(dir, true, true);
 
     /* create qbv directory since it doesn't exist */
-    if (storage_mkdir(buf, true) < 0) {
+    if (storage_mkdir(dir, true) < 0) {
         goto err;
     }
 
-    if (storage_cd(buf, true) < 0) {
-        goto err;
-    }
-
-    storage_write_uint("enabled", (unsigned int)config.enable);
-    storage_write_u64("base_time", config.base_time);
-    storage_write_uint("cycle_time", config.cycle_time_p);
-    storage_write_uint("cycle_time_ext", config.cycle_time_ext);
+    storage_write_uint(dir, "enabled", (unsigned int)config.enable);
+    storage_write_u64(dir, "base_time", config.base_time);
+    storage_write_uint(dir, "cycle_time", config.cycle_time_p);
+    storage_write_uint(dir, "cycle_time_ext", config.cycle_time_ext);
 
     if (gate_list) {
         for (i = 0; i < config.list_length; i++) {
             h_snprintf(buf, 15, "%2x,%lu,%u", gate_list[i].gate_states, gate_list[i].time_interval, gate_list[i].operation);
             h_snprintf(entry, 10, "entry%u", i);
-            storage_write(entry, buf, strlen(buf));
+            storage_write(dir, entry, buf, strlen(buf));
         }
     }
 
-    storage_cd("-", true);
     return 0;
 err:
     return -1;
@@ -234,8 +225,8 @@ static int qbv_set_enabled(void *shell, unsigned int port_id, bool enabled)
     else
         new_state = '0';
 
-    if ((storage_read_int(file, &old_state) < 0) || ((bool)old_state != enabled))
-        if (storage_write(file, &new_state, 1) < 0)
+    if ((storage_read_int(NULL, file, &old_state) < 0) || ((bool)old_state != enabled))
+        if (storage_write(NULL, file, &new_state, 1) < 0)
             goto err;
 
     return 0;
@@ -535,27 +526,21 @@ static void print_qbv_set_max_sdu_usage(void *shell)
 
 static int qbv_write_sdu_permanent(void *shell, unsigned int port_id, struct genavb_st_max_sdu *queue_max_sdu, unsigned int n)
 {
-    char buf[QOS_MAX_SDU_BUF_SIZE], queue[3];
+    char dir[QOS_MAX_SDU_BUF_SIZE], queue[3];
     int i;
 
-    if (h_snprintf_strict(buf, QOS_MAX_SDU_BUF_SIZE, "/qbv/port%u/max_sdu", port_id) < 0) {
+    if (h_snprintf_strict(dir, QOS_MAX_SDU_BUF_SIZE, "/qbv/port%u/max_sdu", port_id) < 0) {
         goto err;
     }
 
-    if (storage_mkdir(buf, true) < 0) {
-        goto err;
-    }
-
-    if (storage_cd(buf, true) < 0) {
+    if (storage_mkdir(dir, true) < 0) {
         goto err;
     }
 
     for (i = 0; i < n; i++) {
         h_snprintf(queue, 3, "q%u", queue_max_sdu[i].traffic_class);
-        storage_write_uint(queue, queue_max_sdu[i].queue_max_sdu);
+        storage_write_uint(dir, queue, queue_max_sdu[i].queue_max_sdu);
     }
-
-    storage_cd("-", true);
 
     return 0;
 
@@ -565,29 +550,23 @@ err:
 
 static int qbv_read_sdu_permanent(void *shell, unsigned int port_id, struct genavb_st_max_sdu *queue_max_sdu)
 {
-    char buf[QOS_MAX_SDU_BUF_SIZE], queue[3];
+    char dir[QOS_MAX_SDU_BUF_SIZE], queue[3];
     uint32_t sdu_value = QOS_MAX_SDU_DEFAULT;
     int i;
 
-    if (h_snprintf_strict(buf, QOS_MAX_SDU_BUF_SIZE, "/qbv/port%u/max_sdu", port_id) < 0) {
-        goto err;
-    }
-
-    if (storage_cd(buf, true) < 0) {
+    if (h_snprintf_strict(dir, QOS_MAX_SDU_BUF_SIZE, "/qbv/port%u/max_sdu", port_id) < 0) {
         goto err;
     }
 
     for (i = 0; i < QOS_TRAFFIC_CLASS_MAX; i++) {
         h_snprintf(queue, 3, "q%u", i);
-        if (storage_read_u32(queue, &sdu_value) < 0) {
+        if (storage_read_u32(dir, queue, &sdu_value) < 0) {
             continue;
         }
 
         queue_max_sdu[i].traffic_class = i;
         queue_max_sdu[i].queue_max_sdu = sdu_value;
     }
-
-    storage_cd("-", true);
 
     return 0;
 
