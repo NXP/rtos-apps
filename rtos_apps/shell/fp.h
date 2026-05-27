@@ -7,6 +7,8 @@
 #ifndef __RTOS_APPS_SHELL_FP_H__
 #define __RTOS_APPS_SHELL_FP_H__
 
+#include "genavb/frame_preemption.h"
+
 #define CMD_FP_SET_HELP \
 	"<port_id> [-q] [-t 0x<express mask>] [-p]\n" \
 	"<port_id> [-e <enable>] [-d <disable>] [-v <time ms>] [-a <frag size>] [-p]\n" \
@@ -33,5 +35,10 @@ void cmd_fp_init(void *shell);
 
 int cmd_fp_set(void *shell, int32_t argc, char **argv);
 int cmd_fp_get(void *shell, int32_t argc, char **argv);
+
+int fp_write_802_1q_permanent(void *shell, unsigned int port_id, struct genavb_fp_config *config);
+int fp_write_802_3_permanent(void *shell, unsigned int port_id, struct genavb_fp_config *config);
+int fp_apply_permanent(void *shell, unsigned int port_id);
+int fp_apply(void *shell, unsigned int port_id, struct genavb_fp_config *config_fp_8021q, struct genavb_fp_config *config_fp_8023);
 
 #endif /* __RTOS_APPS_SHELL_FP_H__ */

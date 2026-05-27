@@ -4,6 +4,8 @@
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
+#include "rtos_apps/shell/fp.h"
+
 #ifdef CONFIG_RTOS_APPS_FP
 
 #include <stdio.h>
@@ -17,8 +19,6 @@
 #include "rtos_apps/storage.h"
 #include "rtos_apps/storage_common.h"
 #include "shell_config.h"
-#include "rtos_apps/shell/fp.h"
-#include "fp.h"
 #include "storage.h"
 
 static void print_fp_set_usage(void *shell)
@@ -431,10 +431,12 @@ void cmd_fp_init(void *shell)
 }
 
 #else
-#include "fp.h"
+void cmd_fp_init(void *shell) {return;}
 
-void cmd_fp_init_shell(void *shell) {return;}
-int fp_write_802_1q_permanent(void *shell, unsigned int port_id, struct genavb_fp_config config) {return -1;}
-int fp_write_802_3_permanent(void *shell, unsigned int port_id, struct genavb_fp_config config) {return -1;}
+int cmd_fp_set(void *shell, int32_t argc, char **argv) {return -1;}
+int cmd_fp_get(void *shell, int32_t argc, char **argv) {return -1;}
+
+int fp_write_802_1q_permanent(void *shell, unsigned int port_id, struct genavb_fp_config *config) {return -1;}
+int fp_write_802_3_permanent(void *shell, unsigned int port_id, struct genavb_fp_config *config) {return -1;}
 int fp_apply_permanent(void *shell, unsigned int port_id) {return -1;}
 #endif /* CONFIG_RTOS_APPS_FP */

@@ -7,6 +7,8 @@
 #ifndef __RTOS_APPS_SHELL_QBV_H__
 #define __RTOS_APPS_SHELL_QBV_H__
 
+#include "genavb/scheduled_traffic.h"
+
 #define CMD_QBV_SET_HELP \
 	"<port_id> [-b <base_time>] [-c <cycle_time>] [-C <cycle_time_ext>] [-l <gate_states>,<time_interval>[,<gate_operation>] [-l ...]] [-p]\n" \
 	"    parameters:\n" \
@@ -55,5 +57,9 @@ int cmd_qbv_get(void *shell, int32_t argc, char **argv);
 int cmd_qbv_disable(void *shell, int32_t argc, char **argv);
 int cmd_qbv_set_max_sdu(void *shell, int32_t argc, char **argv);
 int cmd_qbv_get_max_sdu(void *shell, int32_t argc, char **argv);
+
+int qbv_write_permanent(void *shell, unsigned int port_id, struct genavb_st_config *config);
+int qbv_apply_permanent(void *shell, unsigned int port_id);
+int qbv_apply(void *shell, unsigned int port_id, struct genavb_st_config *config);
 
 #endif /* __RTOS_APPS_SHELL_QBV_H__ */

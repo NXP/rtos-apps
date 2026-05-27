@@ -4,6 +4,8 @@
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
+#include "rtos_apps/shell/qbv.h"
+
 #ifdef CONFIG_RTOS_APPS_QBV
 
 #include <stdio.h>
@@ -20,8 +22,6 @@
 #include "rtos_apps/storage.h"
 #include "rtos_apps/storage_common.h"
 #include "shell_config.h"
-#include "rtos_apps/shell/qbv.h"
-#include "qbv.h"
 #include "genavb_sdk.h"
 
 #include "rtos_apps/shell/common.h"
@@ -775,9 +775,14 @@ void cmd_qbv_init(void *shell)
 }
 
 #else
-#include "qbv.h"
-
 void cmd_qbv_init(void *shell) {return;}
-int qbv_write_permanent(void *shell, unsigned int port_id, struct genavb_st_config config) {return -1;}
+int cmd_qbv_set(void *shell, int32_t argc, char **argv) {return -1;}
+int cmd_qbv_get(void *shell, int32_t argc, char **argv) {return -1;}
+int cmd_qbv_disable(void *shell, int32_t argc, char **argv) {return -1;}
+int cmd_qbv_set_max_sdu(void *shell, int32_t argc, char **argv) {return -1;}
+int cmd_qbv_get_max_sdu(void *shell, int32_t argc, char **argv) {return -1;}
+
+int qbv_write_permanent(void *shell, unsigned int port_id, struct genavb_st_config *config) {return -1;}
 int qbv_apply_permanent(void *shell, unsigned int port_id) {return -1;}
+int qbv_apply(void *shell, unsigned int port_id, struct genavb_st_config *config) {return -1;}
 #endif /* CONFIG_RTOS_APPS_QBV */
