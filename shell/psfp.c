@@ -114,7 +114,7 @@ static int sf_update_permanent(uint32_t index, struct genavb_stream_filter_insta
     char path[SHELL_STORAGE_MAX_FILENAME] = {0};
     int rc = 0;
 
-    if (h_snprintf_strict(path, SHELL_STORAGE_MAX_FILENAME, "/sf/%lu", index) < 0) {
+    if (h_snprintf_strict(path, SHELL_STORAGE_MAX_FILENAME, CONFIG_STORAGE_ROOT "/sf/%lu", index) < 0) {
         rc = -1;
         goto err;
     }
@@ -139,7 +139,7 @@ static int sf_delete_permanent(uint32_t index, bool endpoint)
 {
     char filename[SHELL_STORAGE_MAX_FILENAME];
 
-    if (h_snprintf_strict(filename, SHELL_STORAGE_MAX_FILENAME, "/sf/%lu", index) < 0)
+    if (h_snprintf_strict(filename, SHELL_STORAGE_MAX_FILENAME, CONFIG_STORAGE_ROOT "/sf/%lu", index) < 0)
         return -1;
 
     return storage_rm(filename, true, true);
@@ -150,7 +150,7 @@ static int sf_read_permanent(uint32_t index, struct genavb_stream_filter_instanc
     char path[SHELL_STORAGE_MAX_FILENAME] = {0};
     int rc = 0;
 
-    if (h_snprintf_strict(path, SHELL_STORAGE_MAX_FILENAME, "/sf/%lu", index) < 0) {
+    if (h_snprintf_strict(path, SHELL_STORAGE_MAX_FILENAME, CONFIG_STORAGE_ROOT "/sf/%lu", index) < 0) {
         rc = -1;
         goto err;
     }
@@ -173,7 +173,7 @@ static void sf_apply_permanent(void *shell)
     char subdirname[SHELL_STORAGE_MAX_DIRNAME];
 
     i = 0;
-    while (!storage_get_dir("/sf", i, subdirname, SHELL_STORAGE_MAX_DIRNAME)) {
+    while (!storage_get_dir(CONFIG_STORAGE_ROOT "/sf", i, subdirname, SHELL_STORAGE_MAX_DIRNAME)) {
         i++;
 
         if (sscanf(subdirname, "%u", &index) != 1)
@@ -494,7 +494,7 @@ static int sg_update_permanent(void *shell, uint32_t index, struct genavb_stream
     int rc = 0;
     int i;
 
-    if (h_snprintf_strict(path, SHELL_STORAGE_MAX_FILENAME, "/sg/%"PRIu32, index) < 0) {
+    if (h_snprintf_strict(path, SHELL_STORAGE_MAX_FILENAME, CONFIG_STORAGE_ROOT "/sg/%"PRIu32, index) < 0) {
         rc = -1;
         goto err;
     }
@@ -531,7 +531,7 @@ static int sg_delete_permanent(uint32_t index, bool endpoint)
 {
     char filename[SHELL_STORAGE_MAX_FILENAME];
 
-    if (h_snprintf_strict(filename, SHELL_STORAGE_MAX_FILENAME, "/sg/%"PRIu32, index) < 0)
+    if (h_snprintf_strict(filename, SHELL_STORAGE_MAX_FILENAME, CONFIG_STORAGE_ROOT "/sg/%"PRIu32, index) < 0)
         return -1;
 
     return storage_rm(filename, true, true);
@@ -552,7 +552,7 @@ static int sg_read_permanent(void *shell, uint32_t index, struct genavb_stream_g
         goto err;
     }
 
-    if (h_snprintf_strict(path, SHELL_STORAGE_MAX_FILENAME, "/sg/%"PRIu32, index) < 0) {
+    if (h_snprintf_strict(path, SHELL_STORAGE_MAX_FILENAME, CONFIG_STORAGE_ROOT "/sg/%"PRIu32, index) < 0) {
         rc = -1;
         goto err;
     }
@@ -614,7 +614,7 @@ static void sg_apply_permanent(void *shell)
     int rc;
 
     i = 0;
-    while (!storage_get_dir("/sg", i, subdirname, SHELL_STORAGE_MAX_DIRNAME)) {
+    while (!storage_get_dir(CONFIG_STORAGE_ROOT "/sg", i, subdirname, SHELL_STORAGE_MAX_DIRNAME)) {
         i++;
 
         if (sscanf(subdirname, "%u", &index) != 1)
@@ -925,7 +925,7 @@ static int fm_update_permanent(void *shell, uint32_t index, struct genavb_flow_m
     char path[SHELL_STORAGE_MAX_FILENAME];
     int rc = 0;
 
-    if (h_snprintf_strict(path, SHELL_STORAGE_MAX_FILENAME, "/fm/%"PRIu32, index) < 0) {
+    if (h_snprintf_strict(path, SHELL_STORAGE_MAX_FILENAME, CONFIG_STORAGE_ROOT "/fm/%"PRIu32, index) < 0) {
         rc = -1;
         goto err;
     }
@@ -952,7 +952,7 @@ static int fm_delete_permanent(uint32_t index, bool endpoint)
 {
     char filename[SHELL_STORAGE_MAX_FILENAME];
 
-    if (h_snprintf_strict(filename, SHELL_STORAGE_MAX_FILENAME, "/fm/%"PRIu32, index) < 0)
+    if (h_snprintf_strict(filename, SHELL_STORAGE_MAX_FILENAME, CONFIG_STORAGE_ROOT "/fm/%"PRIu32, index) < 0)
         return -1;
 
     return storage_rm(filename, true, true);
@@ -963,7 +963,7 @@ static int fm_read_permanent(void *shell, uint32_t index, struct genavb_flow_met
     char path[SHELL_STORAGE_MAX_FILENAME];
     int rc = 0;
 
-    if (h_snprintf_strict(path, SHELL_STORAGE_MAX_FILENAME, "/fm/%"PRIu32, index) < 0) {
+    if (h_snprintf_strict(path, SHELL_STORAGE_MAX_FILENAME, CONFIG_STORAGE_ROOT "/fm/%"PRIu32, index) < 0) {
         rc = -1;
         goto err;
     }
@@ -990,7 +990,7 @@ static void fm_apply_permanent(void *shell)
     int rc;
 
     i = 0;
-    while (!storage_get_dir("/fm", i, subdirname, SHELL_STORAGE_MAX_DIRNAME)) {
+    while (!storage_get_dir(CONFIG_STORAGE_ROOT "/fm", i, subdirname, SHELL_STORAGE_MAX_DIRNAME)) {
         i++;
 
         if (sscanf(subdirname, "%u", &index) != 1)

@@ -19,8 +19,7 @@
 #include "shell_config.h"
 #include "rtos_apps/shell/fp.h"
 #include "fp.h"
-
-#define PATH_SZ         30
+#include "storage.h"
 
 static void print_fp_set_usage(void *shell)
 {
@@ -90,13 +89,13 @@ static void fp_config_print(void *shell, unsigned int port_id, unsigned int type
 static int fp_read_permanent(void *shell, unsigned int port_id, struct genavb_fp_config *config, unsigned int type)
 {
     uint32_t enable_tx = 0, verify_disable_tx = 0, verify_time = 10, add_frag_size = 0;
-    char path[PATH_SZ];
+    char path[SHELL_STORAGE_MAX_FILENAME];
     uint8_t status_fp = 0xFF;
     int rc = 0;
 
     switch (type) {
     case GENAVB_FP_CONFIG_802_1Q:
-        if (h_snprintf_strict(path, PATH_SZ, "/fp/port%u/802_1Q", port_id) < 0) {
+        if (h_snprintf_strict(path, SHELL_STORAGE_MAX_FILENAME, CONFIG_STORAGE_ROOT "/fp/port%u/802_1Q", port_id) < 0) {
             rc = -1;
             goto out_802_1q;
         }
@@ -109,7 +108,7 @@ static int fp_read_permanent(void *shell, unsigned int port_id, struct genavb_fp
         break;
 
     case GENAVB_FP_CONFIG_802_3:
-        if (h_snprintf_strict(path, PATH_SZ, "/fp/port%u/802_3", port_id) < 0) {
+        if (h_snprintf_strict(path, SHELL_STORAGE_MAX_FILENAME, CONFIG_STORAGE_ROOT "/fp/port%u/802_3", port_id) < 0) {
             rc = -1;
             goto out_802_3;
         }
@@ -139,11 +138,11 @@ static int fp_read_permanent(void *shell, unsigned int port_id, struct genavb_fp
 
 int fp_write_802_1q_permanent(void *shell, unsigned int port_id, struct genavb_fp_config config)
 {
-    char path[PATH_SZ], str_tmp[5];
+    char path[SHELL_STORAGE_MAX_FILENAME], str_tmp[5];
     int i, rc = 0;
     uint8_t tmp = 0;
 
-    if (h_snprintf_strict(path, PATH_SZ, "/fp/port%u/802_1Q", port_id) < 0)
+    if (h_snprintf_strict(path, SHELL_STORAGE_MAX_FILENAME, CONFIG_STORAGE_ROOT "/fp/port%u/802_1Q", port_id) < 0)
         goto err;
 
     if (storage_mkdir(path, true) < 0) {
@@ -165,10 +164,10 @@ err:
 
 int fp_write_802_3_permanent(void *shell, unsigned int port_id, struct genavb_fp_config config)
 {
-    char path[PATH_SZ] = {0};
+    char path[SHELL_STORAGE_MAX_FILENAME] = {0};
     int rc = 0;
 
-    if (h_snprintf_strict(path, PATH_SZ, "/fp/port%u/802_3", port_id) < 0)
+    if (h_snprintf_strict(path, SHELL_STORAGE_MAX_FILENAME, CONFIG_STORAGE_ROOT "/fp/port%u/802_3", port_id) < 0)
         goto err;
 
     if (storage_mkdir(path, true) < 0) {

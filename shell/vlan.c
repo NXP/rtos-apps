@@ -156,7 +156,7 @@ static int vlan_read_storage(uint16_t vid, uint32_t *port_mask, uint32_t *untagg
 {
     char filename[SHELL_STORAGE_MAX_FILENAME];
 
-    if (h_snprintf_strict(filename, SHELL_STORAGE_MAX_FILENAME, "/vlan/%u", vid) < 0)
+    if (h_snprintf_strict(filename, SHELL_STORAGE_MAX_FILENAME, CONFIG_STORAGE_ROOT "/vlan/%u", vid) < 0)
         return -1;
 
     return vlan_read_entry(filename, port_mask, untagged_port_mask);
@@ -168,7 +168,7 @@ static int vlan_write_storage(uint16_t vid, uint32_t port_mask, uint32_t untagge
     char str[22];
 
     /* vlan entries are stored in "/vlan/${vid}" files */
-    if (h_snprintf_strict(filename, SHELL_STORAGE_MAX_FILENAME, "/vlan/%u", vid) < 0)
+    if (h_snprintf_strict(filename, SHELL_STORAGE_MAX_FILENAME, CONFIG_STORAGE_ROOT "/vlan/%u", vid) < 0)
         return -1;
 
     /* file contains two port bitmasks for forwarded and untagged ports */
@@ -183,7 +183,7 @@ static int vlan_get_storage_entry(unsigned int i, uint16_t *vid, uint32_t *port_
     char filename[SHELL_STORAGE_MAX_FILENAME];
     int rc = -1;
 
-    if (!storage_get_file("/vlan", i, filename, SHELL_STORAGE_MAX_FILENAME)) {
+    if (!storage_get_file(CONFIG_STORAGE_ROOT "/vlan", i, filename, SHELL_STORAGE_MAX_FILENAME)) {
         unsigned int tmp_vid;
         uint32_t tmp_port_mask, tmp_untagged_port_mask;
 
@@ -213,7 +213,7 @@ static int vlan_delete_storage(uint16_t vid)
 {
     char filename[SHELL_STORAGE_MAX_FILENAME];
 
-    if (h_snprintf_strict(filename, SHELL_STORAGE_MAX_FILENAME, "/vlan/%u", vid) < 0)
+    if (h_snprintf_strict(filename, SHELL_STORAGE_MAX_FILENAME, CONFIG_STORAGE_ROOT "/vlan/%u", vid) < 0)
         return -1;
 
     return storage_rm(filename, false, true);
@@ -257,7 +257,7 @@ static int vlan_update_permanent(void *shell, uint16_t vid, struct genavb_vlan_p
 {
     uint32_t port_mask = 0, untagged_port_mask = 0;
 
-    if (storage_mkdir("/vlan", true) < 0) {
+    if (storage_mkdir(CONFIG_STORAGE_ROOT "/vlan", true) < 0) {
         return -1;
     }
 
@@ -528,13 +528,13 @@ static int vlan_update_permanent_pvid(unsigned int port_id, uint16_t vid)
 {
     char filename[SHELL_STORAGE_MAX_FILENAME];
 
-    if (h_snprintf_strict(filename, SHELL_STORAGE_MAX_FILENAME, "/port%u", port_id) < 0)
+    if (h_snprintf_strict(filename, SHELL_STORAGE_MAX_FILENAME, CONFIG_STORAGE_ROOT "/port%u", port_id) < 0)
         goto err;
 
     if (storage_mkdir(filename, true) < 0)
         goto err;
 
-    if (h_snprintf_strict(filename, SHELL_STORAGE_MAX_FILENAME, "/port%u/pvid", port_id) < 0)
+    if (h_snprintf_strict(filename, SHELL_STORAGE_MAX_FILENAME, CONFIG_STORAGE_ROOT "/port%u/pvid", port_id) < 0)
         goto err;
 
     return storage_write_uint(NULL, filename, vid);
@@ -547,7 +547,7 @@ static int vlan_read_permanent_pvid(unsigned int port_id, uint16_t *vid)
 {
     char filename[SHELL_STORAGE_MAX_FILENAME];
 
-    if (h_snprintf_strict(filename, SHELL_STORAGE_MAX_FILENAME, "/port%u/pvid", port_id) < 0)
+    if (h_snprintf_strict(filename, SHELL_STORAGE_MAX_FILENAME, CONFIG_STORAGE_ROOT "/port%u/pvid", port_id) < 0)
         goto err;
 
     return storage_read_u16(NULL, filename, vid);

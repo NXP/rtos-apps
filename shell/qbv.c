@@ -25,10 +25,11 @@
 #include "genavb_sdk.h"
 
 #include "rtos_apps/shell/common.h"
+#include "storage.h"
 #include "common.h"
 
 #define QOS_MAX_SDU_DEFAULT 0
-#define QOS_MAX_SDU_BUF_SIZE 20
+#define QOS_MAX_SDU_BUF_SIZE (20 + SHELL_STORAGE_ROOT_SIZE)
 
 static const struct genavb_st_max_sdu max_sdu_default[QOS_TRAFFIC_CLASS_MAX] = {
     [0] = {
@@ -139,14 +140,14 @@ static int qbv_read_permanent(void *shell, unsigned int port_id, struct genavb_s
     struct genavb_st_gate_control_entry *gate_list;
     unsigned int entry_id;
     uint32_t interval = 0;
-    char port[15] = {0};
+    char port[15 + SHELL_STORAGE_ROOT_SIZE] = {0};
     uint8_t mask = 0, operation = GENAVB_ST_SET_GATE_STATES;
 
     gate_list = config->control_list;
     if (!gate_list)
         goto err;
 
-    if (h_snprintf_strict(port, 15, "/qbv/port%u", port_id) < 0)
+    if (h_snprintf_strict(port, 15 + SHELL_STORAGE_ROOT_SIZE, CONFIG_STORAGE_ROOT "/qbv/port%u", port_id) < 0)
         goto err;
 
     storage_read_int(port, "enabled", &config->enable);
@@ -179,10 +180,10 @@ int qbv_write_permanent(void *shell, unsigned int port_id, struct genavb_st_conf
 {
     struct genavb_st_gate_control_entry *gate_list = config.control_list;
     char buf[20] = {0}, entry[10];
-    char dir[20] = {0};
+    char dir[20 + SHELL_STORAGE_ROOT_SIZE] = {0};
     int i;
 
-    if (h_snprintf_strict(dir, 20, "/qbv/port%u", port_id) < 0) {
+    if (h_snprintf_strict(dir, 20 + SHELL_STORAGE_ROOT_SIZE, CONFIG_STORAGE_ROOT "/qbv/port%u", port_id) < 0) {
         goto err;
     }
 
@@ -213,11 +214,11 @@ err:
 
 static int qbv_set_enabled(void *shell, unsigned int port_id, bool enabled)
 {
-    char file[25] = {0};
+    char file[SHELL_STORAGE_MAX_FILENAME] = {0};
     int old_state;
     char new_state;
 
-    if (h_snprintf_strict(file, 25, "/qbv/port%u/enabled", port_id) < 0)
+    if (h_snprintf_strict(file, SHELL_STORAGE_MAX_FILENAME, CONFIG_STORAGE_ROOT "/qbv/port%u/enabled", port_id) < 0)
         goto err;
 
     if (enabled)
@@ -529,7 +530,7 @@ static int qbv_write_sdu_permanent(void *shell, unsigned int port_id, struct gen
     char dir[QOS_MAX_SDU_BUF_SIZE], queue[3];
     int i;
 
-    if (h_snprintf_strict(dir, QOS_MAX_SDU_BUF_SIZE, "/qbv/port%u/max_sdu", port_id) < 0) {
+    if (h_snprintf_strict(dir, QOS_MAX_SDU_BUF_SIZE, CONFIG_STORAGE_ROOT "/qbv/port%u/max_sdu", port_id) < 0) {
         goto err;
     }
 
@@ -554,7 +555,7 @@ static int qbv_read_sdu_permanent(void *shell, unsigned int port_id, struct gena
     uint32_t sdu_value = QOS_MAX_SDU_DEFAULT;
     int i;
 
-    if (h_snprintf_strict(dir, QOS_MAX_SDU_BUF_SIZE, "/qbv/port%u/max_sdu", port_id) < 0) {
+    if (h_snprintf_strict(dir, QOS_MAX_SDU_BUF_SIZE, CONFIG_STORAGE_ROOT "/qbv/port%u/max_sdu", port_id) < 0) {
         goto err;
     }
 

@@ -144,7 +144,7 @@ static int si_update_permanent(void *shell, uint32_t index, struct genavb_stream
     char dirname[SHELL_STORAGE_MAX_FILENAME];
     char tmp_str[SHELL_STORAGE_MAX_FILESIZE];
 
-    if (h_snprintf_strict(dirname, SHELL_STORAGE_MAX_FILENAME, "/si/%lu", index) < 0)
+    if (h_snprintf_strict(dirname, SHELL_STORAGE_MAX_FILENAME, CONFIG_STORAGE_ROOT "/si/%lu", index) < 0)
         goto err;
 
     if (storage_mkdir(dirname, true) < 0)
@@ -192,7 +192,7 @@ static int si_delete_permanent(void *shell, uint32_t index)
 {
     char dirname[SHELL_STORAGE_MAX_FILENAME];
 
-    if (h_snprintf_strict(dirname, SHELL_STORAGE_MAX_FILENAME, "/si/%lu", index) < 0)
+    if (h_snprintf_strict(dirname, SHELL_STORAGE_MAX_FILENAME, CONFIG_STORAGE_ROOT "/si/%lu", index) < 0)
         return -1;
 
     return storage_rm(dirname, true, true);
@@ -204,7 +204,7 @@ static int si_read_permanent(void *shell, uint32_t index, struct genavb_stream_i
     char tmp_str[SHELL_STORAGE_MAX_FILESIZE];
     uint8_t tmp;
 
-    if (h_snprintf_strict(dirname, SHELL_STORAGE_MAX_FILENAME, "/si/%lu", index) < 0)
+    if (h_snprintf_strict(dirname, SHELL_STORAGE_MAX_FILENAME, CONFIG_STORAGE_ROOT "/si/%lu", index) < 0)
         goto err;
 
     if (storage_read_u32(dirname, "handle", &entry->handle) < 0)
@@ -518,7 +518,7 @@ static void si_apply_permanent(void *shell)
     int rc;
 
     i = 0;
-    while (!storage_get_dir("/si", i, subdirname, SHELL_STORAGE_MAX_DIRNAME)) {
+    while (!storage_get_dir(CONFIG_STORAGE_ROOT "/si", i, subdirname, SHELL_STORAGE_MAX_DIRNAME)) {
         i++;
 
         if (sscanf(subdirname, "%u", &index) != 1)

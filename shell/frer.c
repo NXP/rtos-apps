@@ -139,7 +139,7 @@ static int seqg_update_permanent(uint32_t index, struct genavb_sequence_generati
     char path[PATH_MAX_SIZE];
     char buf[BUF_MAX_SIZE];
 
-    if (h_snprintf_strict(path, PATH_MAX_SIZE, "/seqg/%" PRIu32, index) < 0)
+    if (h_snprintf_strict(path, PATH_MAX_SIZE, CONFIG_STORAGE_ROOT "/seqg/%" PRIu32, index) < 0)
         goto err;
 
     if (storage_mkdir(path, true) < 0)
@@ -159,7 +159,7 @@ static int seqg_delete_permanent(uint32_t index)
 {
     char path[PATH_MAX_SIZE];
 
-    if (h_snprintf_strict(path, PATH_MAX_SIZE, "/seqg/%" PRIu32, index) < 0)
+    if (h_snprintf_strict(path, PATH_MAX_SIZE, CONFIG_STORAGE_ROOT "/seqg/%" PRIu32, index) < 0)
         return -1;
 
     return storage_rm(path, true, true);
@@ -171,7 +171,7 @@ static int seqg_read_permanent(uint32_t index, struct genavb_sequence_generation
     char buf[BUF_MAX_SIZE] = {0};
 
     /* permanent values */
-    if (h_snprintf_strict(path, PATH_MAX_SIZE, "/seqg/%" PRIu32 "/handle", index) < 0)
+    if (h_snprintf_strict(path, PATH_MAX_SIZE, CONFIG_STORAGE_ROOT "/seqg/%" PRIu32 "/handle", index) < 0)
         return -1;
 
     storage_read(NULL, path, buf, BUF_MAX_SIZE);
@@ -190,7 +190,7 @@ static void seqg_apply_permanent(void *shell)
     int rc;
 
     i = 0;
-    while (!storage_get_dir("/seqg", i, subdirname, SHELL_STORAGE_MAX_DIRNAME)) {
+    while (!storage_get_dir(CONFIG_STORAGE_ROOT "/seqg", i, subdirname, SHELL_STORAGE_MAX_DIRNAME)) {
         i++;
 
         if (sscanf(subdirname, "%u", &index) != 1)
@@ -381,7 +381,7 @@ static int seqr_update_permanent(uint32_t index, struct genavb_sequence_recovery
     char path[PATH_MAX_SIZE];
     char buf[BUF_MAX_SIZE];
 
-    if (h_snprintf_strict(path, PATH_MAX_SIZE, "/seqr/%" PRIu32, index) < 0)
+    if (h_snprintf_strict(path, PATH_MAX_SIZE, CONFIG_STORAGE_ROOT "/seqr/%" PRIu32, index) < 0)
         goto err;
 
     if (storage_mkdir(path, true) < 0)
@@ -417,7 +417,7 @@ static int seqr_delete_permanent(uint32_t index)
 {
     char path[PATH_MAX_SIZE];
 
-    if (h_snprintf_strict(path, PATH_MAX_SIZE, "/seqr/%" PRIu32, index) < 0)
+    if (h_snprintf_strict(path, PATH_MAX_SIZE, CONFIG_STORAGE_ROOT "/seqr/%" PRIu32, index) < 0)
         return -1;
 
     return storage_rm(path, true, true);
@@ -430,7 +430,7 @@ static int seqr_read_permanent(uint32_t index, struct genavb_sequence_recovery *
     unsigned int tmp = 0;
 
     /* permanent values */
-    if (h_snprintf_strict(path, PATH_MAX_SIZE, "/seqr/%" PRIu32, index) < 0)
+    if (h_snprintf_strict(path, PATH_MAX_SIZE, CONFIG_STORAGE_ROOT "/seqr/%" PRIu32, index) < 0)
         goto err;
 
     storage_read(path, "handle", buf, BUF_MAX_SIZE);
@@ -470,7 +470,7 @@ static void seqr_apply_permanent(void *shell)
     int rc;
 
     i = 0;
-    while (!storage_get_dir("/seqr", i, subdirname, SHELL_STORAGE_MAX_DIRNAME)) {
+    while (!storage_get_dir(CONFIG_STORAGE_ROOT "/seqr", i, subdirname, SHELL_STORAGE_MAX_DIRNAME)) {
         i++;
 
         if (sscanf(subdirname, "%u", &index) != 1)
@@ -707,7 +707,7 @@ static int seqi_update_permanent(unsigned int port_id, struct genavb_sequence_id
     char path[PATH_MAX_SIZE];
     char buf[BUF_MAX_SIZE];
 
-    if (h_snprintf_strict(path, PATH_MAX_SIZE, "/seqi/%u", port_id) < 0)
+    if (h_snprintf_strict(path, PATH_MAX_SIZE, CONFIG_STORAGE_ROOT "/seqi/%u", port_id) < 0)
         goto err;
 
     if (storage_mkdir(path, true) < 0)
@@ -733,7 +733,7 @@ static int seqi_delete_permanent(unsigned int port_id)
 {
     char path[PATH_MAX_SIZE];
 
-    if (h_snprintf_strict(path, PATH_MAX_SIZE, "/seqi/%u", port_id) < 0)
+    if (h_snprintf_strict(path, PATH_MAX_SIZE, CONFIG_STORAGE_ROOT "/seqi/%u", port_id) < 0)
         return -1;
 
     return storage_rm(path, true, true);
@@ -746,7 +746,7 @@ static int seqi_read_permanent(unsigned int port_id, struct genavb_sequence_iden
     unsigned int tmp = 0;
 
     /* permanent values */
-    if (h_snprintf_strict(path, PATH_MAX_SIZE, "/seqi/%u", port_id) < 0)
+    if (h_snprintf_strict(path, PATH_MAX_SIZE, CONFIG_STORAGE_ROOT "/seqi/%u", port_id) < 0)
         goto err;
 
     storage_read(path, "handle", buf, BUF_MAX_SIZE);
@@ -775,7 +775,7 @@ static void seqi_apply_permanent(void *shell)
     int rc;
 
     i = 0;
-    while (!storage_get_dir("/seqi", i, subdirname, SHELL_STORAGE_MAX_DIRNAME)) {
+    while (!storage_get_dir(CONFIG_STORAGE_ROOT "/seqi", i, subdirname, SHELL_STORAGE_MAX_DIRNAME)) {
         i++;
 
         if (sscanf(subdirname, "%u", &port_id) != 1)

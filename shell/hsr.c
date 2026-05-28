@@ -16,6 +16,8 @@
 
 #include "rtos_apps/shell/hsr.h"
 
+#include "storage.h"
+
 #include "shell_config.h"
 
 #define BUF_MAX_SIZE 5
@@ -33,10 +35,10 @@ static int hsr_mode_update_permanent(unsigned long mode)
     if (h_snprintf_strict(buf, BUF_MAX_SIZE, "%u", mode) < 0)
         goto err;
 
-    if (storage_mkdir("/hsr", true) < 0)
+    if (storage_mkdir(CONFIG_STORAGE_ROOT "/hsr", true) < 0)
         goto err;
 
-    storage_write(NULL, "/hsr/mode", buf, strlen(buf));
+    storage_write(NULL, CONFIG_STORAGE_ROOT "/hsr/mode", buf, strlen(buf));
 
     return 0;
 
@@ -51,7 +53,7 @@ static void hsr_mode_apply_permanent(void *shell)
     uint32_t tmp = 0;
     int ret;
 
-    if (storage_read_u32(NULL, "/hsr/mode", &tmp) < 0)
+    if (storage_read_u32(NULL, CONFIG_STORAGE_ROOT "/hsr/mode", &tmp) < 0)
         return;
 
     if (tmp > 3) {
