@@ -10,7 +10,7 @@
 #include <stdbool.h>
 #include <stdint.h>
 
-#if CONFIG_RTOS_APPS_STORAGE == 1
+#if defined(CONFIG_RTOS_APPS_STORAGE)
 
 int storage_read_bool(const char *dirname, const char *filename, bool *value);
 int storage_read_float(const char *dirname, const char *filename, float *value);

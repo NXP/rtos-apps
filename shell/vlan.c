@@ -12,12 +12,14 @@
 #include "genavb/vlan.h"
 
 #include "rtos_abstraction_layer.h"
+
+#include "rtos_apps/shell/vlan.h"
 #include "rtos_apps/storage.h"
 #include "rtos_apps/storage_common.h"
-#include "shell_config.h"
-#include "rtos_apps/shell/vlan.h"
 
-#define VLAN_MAX_FILENAME 30
+#include "storage.h"
+
+#include "shell_config.h"
 
 static void vlan_dump_pvid(void *shell, bool permanent);
 
@@ -122,11 +124,11 @@ static int vlan_port_mask_2_port_map(uint32_t port_mask, uint32_t untagged_port_
 
 static int vlan_read_entry(const char *filename, uint32_t *port_mask, uint32_t *untagged_port_mask)
 {
-    char buf[MAX_FILE_SIZE + 1];
+    char buf[SHELL_STORAGE_MAX_FILESIZE + 1];
     unsigned int tmp[2];
     int rc, arg_val;
 
-    rc = storage_read(NULL, filename, buf, MAX_FILE_SIZE);
+    rc = storage_read(NULL, filename, buf, SHELL_STORAGE_MAX_FILESIZE);
     if (rc < 0)
         return -1;
 
@@ -152,9 +154,9 @@ static int vlan_read_entry(const char *filename, uint32_t *port_mask, uint32_t *
 
 static int vlan_read_storage(uint16_t vid, uint32_t *port_mask, uint32_t *untagged_port_mask)
 {
-    char filename[VLAN_MAX_FILENAME];
+    char filename[SHELL_STORAGE_MAX_FILENAME];
 
-    if (h_snprintf_strict(filename, VLAN_MAX_FILENAME, "/vlan/%u", vid) < 0)
+    if (h_snprintf_strict(filename, SHELL_STORAGE_MAX_FILENAME, "/vlan/%u", vid) < 0)
         return -1;
 
     return vlan_read_entry(filename, port_mask, untagged_port_mask);
@@ -162,11 +164,11 @@ static int vlan_read_storage(uint16_t vid, uint32_t *port_mask, uint32_t *untagg
 
 static int vlan_write_storage(uint16_t vid, uint32_t port_mask, uint32_t untagged_port_mask)
 {
-    char filename[VLAN_MAX_FILENAME];
+    char filename[SHELL_STORAGE_MAX_FILENAME];
     char str[22];
 
     /* vlan entries are stored in "/vlan/${vid}" files */
-    if (h_snprintf_strict(filename, VLAN_MAX_FILENAME, "/vlan/%u", vid) < 0)
+    if (h_snprintf_strict(filename, SHELL_STORAGE_MAX_FILENAME, "/vlan/%u", vid) < 0)
         return -1;
 
     /* file contains two port bitmasks for forwarded and untagged ports */
@@ -178,10 +180,10 @@ static int vlan_write_storage(uint16_t vid, uint32_t port_mask, uint32_t untagge
 
 static int vlan_get_storage_entry(unsigned int i, uint16_t *vid, uint32_t *port_mask, uint32_t *untagged_port_mask)
 {
-    char filename[VLAN_MAX_FILENAME];
+    char filename[SHELL_STORAGE_MAX_FILENAME];
     int rc = -1;
 
-    if (!storage_get_file("/vlan", i, filename, VLAN_MAX_FILENAME)) {
+    if (!storage_get_file("/vlan", i, filename, SHELL_STORAGE_MAX_FILENAME)) {
         unsigned int tmp_vid;
         uint32_t tmp_port_mask, tmp_untagged_port_mask;
 
@@ -209,9 +211,9 @@ err:
 
 static int vlan_delete_storage(uint16_t vid)
 {
-    char filename[VLAN_MAX_FILENAME];
+    char filename[SHELL_STORAGE_MAX_FILENAME];
 
-    if (h_snprintf_strict(filename, VLAN_MAX_FILENAME, "/vlan/%u", vid) < 0)
+    if (h_snprintf_strict(filename, SHELL_STORAGE_MAX_FILENAME, "/vlan/%u", vid) < 0)
         return -1;
 
     return storage_rm(filename, false, true);
@@ -524,15 +526,15 @@ err_usage:
 
 static int vlan_update_permanent_pvid(unsigned int port_id, uint16_t vid)
 {
-    char filename[VLAN_MAX_FILENAME];
+    char filename[SHELL_STORAGE_MAX_FILENAME];
 
-    if (h_snprintf_strict(filename, VLAN_MAX_FILENAME, "/port%u", port_id) < 0)
+    if (h_snprintf_strict(filename, SHELL_STORAGE_MAX_FILENAME, "/port%u", port_id) < 0)
         goto err;
 
     if (storage_mkdir(filename, true) < 0)
         goto err;
 
-    if (h_snprintf_strict(filename, VLAN_MAX_FILENAME, "/port%u/pvid", port_id) < 0)
+    if (h_snprintf_strict(filename, SHELL_STORAGE_MAX_FILENAME, "/port%u/pvid", port_id) < 0)
         goto err;
 
     return storage_write_uint(NULL, filename, vid);
@@ -543,9 +545,9 @@ err:
 
 static int vlan_read_permanent_pvid(unsigned int port_id, uint16_t *vid)
 {
-    char filename[VLAN_MAX_FILENAME];
+    char filename[SHELL_STORAGE_MAX_FILENAME];
 
-    if (h_snprintf_strict(filename, VLAN_MAX_FILENAME, "/port%u/pvid", port_id) < 0)
+    if (h_snprintf_strict(filename, SHELL_STORAGE_MAX_FILENAME, "/port%u/pvid", port_id) < 0)
         goto err;
 
     return storage_read_u16(NULL, filename, vid);

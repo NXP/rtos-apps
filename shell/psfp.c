@@ -12,12 +12,13 @@
 #include "genavb/error.h"
 
 #include "rtos_abstraction_layer.h"
-#include "rtos_apps/types.h"
-
-#include "rtos_apps/storage.h"
-#include "rtos_apps/storage_common.h"
 
 #include "rtos_apps/shell/psfp.h"
+#include "rtos_apps/storage.h"
+#include "rtos_apps/storage_common.h"
+#include "rtos_apps/types.h"
+
+#include "storage.h"
 
 #include "shell_config.h"
 
@@ -110,10 +111,10 @@ static void sf_print_entry(void *shell, uint32_t index, struct genavb_stream_fil
 
 static int sf_update_permanent(uint32_t index, struct genavb_stream_filter_instance *instance, bool endpoint)
 {
-    char path[30] = {0};
+    char path[SHELL_STORAGE_MAX_FILENAME] = {0};
     int rc = 0;
 
-    if (h_snprintf_strict(path, 30, "/sf/%lu", index) < 0) {
+    if (h_snprintf_strict(path, SHELL_STORAGE_MAX_FILENAME, "/sf/%lu", index) < 0) {
         rc = -1;
         goto err;
     }
@@ -136,9 +137,9 @@ err:
 
 static int sf_delete_permanent(uint32_t index, bool endpoint)
 {
-    char filename[30];
+    char filename[SHELL_STORAGE_MAX_FILENAME];
 
-    if (h_snprintf_strict(filename, 30, "/sf/%lu", index) < 0)
+    if (h_snprintf_strict(filename, SHELL_STORAGE_MAX_FILENAME, "/sf/%lu", index) < 0)
         return -1;
 
     return storage_rm(filename, true, true);
@@ -146,10 +147,10 @@ static int sf_delete_permanent(uint32_t index, bool endpoint)
 
 static int sf_read_permanent(uint32_t index, struct genavb_stream_filter_instance *instance, bool endpoint)
 {
-    char path[30] = {0};
+    char path[SHELL_STORAGE_MAX_FILENAME] = {0};
     int rc = 0;
 
-    if (h_snprintf_strict(path, 30, "/sf/%lu", index) < 0) {
+    if (h_snprintf_strict(path, SHELL_STORAGE_MAX_FILENAME, "/sf/%lu", index) < 0) {
         rc = -1;
         goto err;
     }
@@ -169,10 +170,10 @@ static void sf_apply_permanent(void *shell)
 {
     struct genavb_stream_filter_instance instance;
     unsigned int i, index;
-    char subdirname[MAX_DIR_NAME_LEN];
+    char subdirname[SHELL_STORAGE_MAX_DIRNAME];
 
     i = 0;
-    while (!storage_get_dir("/sf", i, subdirname, MAX_DIR_NAME_LEN)) {
+    while (!storage_get_dir("/sf", i, subdirname, SHELL_STORAGE_MAX_DIRNAME)) {
         i++;
 
         if (sscanf(subdirname, "%u", &index) != 1)
@@ -488,12 +489,12 @@ static void sg_print_entry(void *shell, uint32_t index, struct genavb_stream_gat
 static int sg_update_permanent(void *shell, uint32_t index, struct genavb_stream_gate_instance *instance, bool endpoint)
 {
     struct genavb_stream_gate_control_entry *entry;
-    char path[30] = {0};
-    char entry_path[30];
+    char path[SHELL_STORAGE_MAX_FILENAME] = {0};
+    char entry_path[SHELL_STORAGE_MAX_FILENAME];
     int rc = 0;
     int i;
 
-    if (h_snprintf_strict(path, 30, "/sg/%"PRIu32, index) < 0) {
+    if (h_snprintf_strict(path, SHELL_STORAGE_MAX_FILENAME, "/sg/%"PRIu32, index) < 0) {
         rc = -1;
         goto err;
     }
@@ -516,7 +517,7 @@ static int sg_update_permanent(void *shell, uint32_t index, struct genavb_stream
     if ((instance->list_length) && (instance->control_list)) {
         for (i = 0; i < instance->list_length; i++) {
             entry = &instance->control_list[i];
-            if (h_snprintf_strict(entry_path, 30, "%s/entry%u", path, i) < 0)
+            if (h_snprintf_strict(entry_path, SHELL_STORAGE_MAX_FILENAME, "%s/entry%u", path, i) < 0)
                 continue;
             sg_write_entry_to_storage(entry_path, entry->gate_state_value, entry->ipv_spec, entry->time_interval_value, entry->interval_octet_max);
         }
@@ -528,9 +529,9 @@ err:
 
 static int sg_delete_permanent(uint32_t index, bool endpoint)
 {
-    char filename[30];
+    char filename[SHELL_STORAGE_MAX_FILENAME];
 
-    if (h_snprintf_strict(filename, 30, "/sg/%"PRIu32, index) < 0)
+    if (h_snprintf_strict(filename, SHELL_STORAGE_MAX_FILENAME, "/sg/%"PRIu32, index) < 0)
         return -1;
 
     return storage_rm(filename, true, true);
@@ -540,8 +541,8 @@ static int sg_read_permanent(void *shell, uint32_t index, struct genavb_stream_g
 {
     struct genavb_stream_gate_control_entry *gate_list;
     unsigned int num_entries = 0;
-    char path[30];
-    char entry_path[30];
+    char path[SHELL_STORAGE_MAX_FILENAME];
+    char entry_path[SHELL_STORAGE_MAX_FILENAME];
     int rc = 0;
     int i;
 
@@ -551,7 +552,7 @@ static int sg_read_permanent(void *shell, uint32_t index, struct genavb_stream_g
         goto err;
     }
 
-    if (h_snprintf_strict(path, 30, "/sg/%"PRIu32, index) < 0) {
+    if (h_snprintf_strict(path, SHELL_STORAGE_MAX_FILENAME, "/sg/%"PRIu32, index) < 0) {
         rc = -1;
         goto err;
     }
@@ -568,7 +569,7 @@ static int sg_read_permanent(void *shell, uint32_t index, struct genavb_stream_g
     storage_read_bool(path, "gate_closed_due_to_octets_exceeded_enable", &instance->gate_closed_due_to_octets_exceeded_enable);
 
     for (i = 0; i < instance->list_length; i++) {
-        if (h_snprintf_strict(entry_path, 30, "%s/entry%u", path, i) < 0)
+        if (h_snprintf_strict(entry_path, SHELL_STORAGE_MAX_FILENAME, "%s/entry%u", path, i) < 0)
             continue;
 
         if ((rc = sg_read_entry_from_storage(entry_path, &gate_list[i].gate_state_value, &gate_list[i].ipv_spec, &gate_list[i].time_interval_value, &gate_list[i].interval_octet_max)) == 0) {
@@ -609,11 +610,11 @@ static void sg_apply_permanent(void *shell)
     struct genavb_stream_gate_control_entry gate_list[genavb_stream_gate_control_get_max_entries()];
     genavb_clock_id_t clk_id = GENAVB_CLOCK_BR_0_0;
     unsigned int i, index;
-    char subdirname[MAX_DIR_NAME_LEN];
+    char subdirname[SHELL_STORAGE_MAX_DIRNAME];
     int rc;
 
     i = 0;
-    while (!storage_get_dir("/sg", i, subdirname, MAX_DIR_NAME_LEN)) {
+    while (!storage_get_dir("/sg", i, subdirname, SHELL_STORAGE_MAX_DIRNAME)) {
         i++;
 
         if (sscanf(subdirname, "%u", &index) != 1)
@@ -921,10 +922,10 @@ static void fm_print_entry(void *shell, uint32_t index, struct genavb_flow_meter
 
 static int fm_update_permanent(void *shell, uint32_t index, struct genavb_flow_meter_instance *instance, bool endpoint)
 {
-    char path[MAX_FILENAME_LENGTH];
+    char path[SHELL_STORAGE_MAX_FILENAME];
     int rc = 0;
 
-    if (h_snprintf_strict(path, MAX_FILENAME_LENGTH, "/fm/%"PRIu32, index) < 0) {
+    if (h_snprintf_strict(path, SHELL_STORAGE_MAX_FILENAME, "/fm/%"PRIu32, index) < 0) {
         rc = -1;
         goto err;
     }
@@ -949,9 +950,9 @@ err:
 
 static int fm_delete_permanent(uint32_t index, bool endpoint)
 {
-    char filename[MAX_FILENAME_LENGTH];
+    char filename[SHELL_STORAGE_MAX_FILENAME];
 
-    if (h_snprintf_strict(filename, MAX_FILENAME_LENGTH, "/fm/%"PRIu32, index) < 0)
+    if (h_snprintf_strict(filename, SHELL_STORAGE_MAX_FILENAME, "/fm/%"PRIu32, index) < 0)
         return -1;
 
     return storage_rm(filename, true, true);
@@ -959,10 +960,10 @@ static int fm_delete_permanent(uint32_t index, bool endpoint)
 
 static int fm_read_permanent(void *shell, uint32_t index, struct genavb_flow_meter_instance *instance, bool endpoint)
 {
-    char path[MAX_FILENAME_LENGTH];
+    char path[SHELL_STORAGE_MAX_FILENAME];
     int rc = 0;
 
-    if (h_snprintf_strict(path, MAX_FILENAME_LENGTH, "/fm/%"PRIu32, index) < 0) {
+    if (h_snprintf_strict(path, SHELL_STORAGE_MAX_FILENAME, "/fm/%"PRIu32, index) < 0) {
         rc = -1;
         goto err;
     }
@@ -985,11 +986,11 @@ static void fm_apply_permanent(void *shell)
 {
     struct genavb_flow_meter_instance instance;
     unsigned int i, index;
-    char subdirname[MAX_DIR_NAME_LEN];
+    char subdirname[SHELL_STORAGE_MAX_DIRNAME];
     int rc;
 
     i = 0;
-    while (!storage_get_dir("/fm", i, subdirname, MAX_DIR_NAME_LEN)) {
+    while (!storage_get_dir("/fm", i, subdirname, SHELL_STORAGE_MAX_DIRNAME)) {
         i++;
 
         if (sscanf(subdirname, "%u", &index) != 1)

@@ -12,12 +12,16 @@
 #include "genavb/helpers.h"
 
 #include "rtos_abstraction_layer.h"
+
 #include "rtos_apps/shell/common.h"
-#include "common.h"
+#include "rtos_apps/shell/stream_identification.h"
 #include "rtos_apps/storage.h"
 #include "rtos_apps/storage_common.h"
+
+#include "storage.h"
+#include "common.h"
+
 #include "shell_config.h"
-#include "rtos_apps/shell/stream_identification.h"
 
 #define SI_DEFAULT_PORT_NUM     1
 #define SI_DEFAULT_PORT_SIZE    CONFIG_APP_LOGICAL_PORTS
@@ -137,10 +141,10 @@ static uint32_t get_port_id(void *data, unsigned int i)
 
 static int si_update_permanent(void *shell, uint32_t index, struct genavb_stream_identity *entry)
 {
-    char dirname[MAX_FILENAME_LENGTH];
-    char tmp_str[MAX_FILE_SIZE];
+    char dirname[SHELL_STORAGE_MAX_FILENAME];
+    char tmp_str[SHELL_STORAGE_MAX_FILESIZE];
 
-    if (h_snprintf_strict(dirname, MAX_FILENAME_LENGTH, "/si/%lu", index) < 0)
+    if (h_snprintf_strict(dirname, SHELL_STORAGE_MAX_FILENAME, "/si/%lu", index) < 0)
         goto err;
 
     if (storage_mkdir(dirname, true) < 0)
@@ -148,14 +152,14 @@ static int si_update_permanent(void *shell, uint32_t index, struct genavb_stream
 
     storage_write_uint(dirname, "handle", entry->handle);
 
-    list_u32_to_buf(entry, &get_port_id, entry->port_n, tmp_str, MAX_FILE_SIZE);
+    list_u32_to_buf(entry, &get_port_id, entry->port_n, tmp_str, SHELL_STORAGE_MAX_FILESIZE);
     storage_write(dirname, "port_list", tmp_str, strlen(tmp_str));
 
     storage_write_uint(dirname, "type", entry->type);
 
     switch (entry->type) {
     case GENAVB_SI_NULL:
-        mac2str(entry->parameters.null.destination_mac, tmp_str, MAX_FILE_SIZE);
+        mac2str(entry->parameters.null.destination_mac, tmp_str, SHELL_STORAGE_MAX_FILESIZE);
         storage_write(dirname, "mac", tmp_str, strlen(tmp_str));
 
         storage_write_uint(dirname, "tagged", entry->parameters.null.tagged);
@@ -165,7 +169,7 @@ static int si_update_permanent(void *shell, uint32_t index, struct genavb_stream
         break;
 
     case GENAVB_SI_SRC_MAC_VLAN:
-        mac2str(entry->parameters.smac_vlan.source_mac, tmp_str, MAX_FILE_SIZE);
+        mac2str(entry->parameters.smac_vlan.source_mac, tmp_str, SHELL_STORAGE_MAX_FILESIZE);
         storage_write(dirname, "mac", tmp_str, strlen(tmp_str));
 
         storage_write_uint(dirname, "tagged", entry->parameters.smac_vlan.tagged);
@@ -186,9 +190,9 @@ err:
 
 static int si_delete_permanent(void *shell, uint32_t index)
 {
-    char dirname[MAX_FILENAME_LENGTH];
+    char dirname[SHELL_STORAGE_MAX_FILENAME];
 
-    if (h_snprintf_strict(dirname, MAX_FILENAME_LENGTH, "/si/%lu", index) < 0)
+    if (h_snprintf_strict(dirname, SHELL_STORAGE_MAX_FILENAME, "/si/%lu", index) < 0)
         return -1;
 
     return storage_rm(dirname, true, true);
@@ -196,17 +200,17 @@ static int si_delete_permanent(void *shell, uint32_t index)
 
 static int si_read_permanent(void *shell, uint32_t index, struct genavb_stream_identity *entry)
 {
-    char dirname[MAX_FILENAME_LENGTH];
-    char tmp_str[MAX_FILE_SIZE];
+    char dirname[SHELL_STORAGE_MAX_FILENAME];
+    char tmp_str[SHELL_STORAGE_MAX_FILESIZE];
     uint8_t tmp;
 
-    if (h_snprintf_strict(dirname, MAX_FILENAME_LENGTH, "/si/%lu", index) < 0)
+    if (h_snprintf_strict(dirname, SHELL_STORAGE_MAX_FILENAME, "/si/%lu", index) < 0)
         goto err;
 
     if (storage_read_u32(dirname, "handle", &entry->handle) < 0)
         goto err;
 
-    if (storage_read(dirname, "port_list", tmp_str, MAX_FILE_SIZE) > 0)
+    if (storage_read(dirname, "port_list", tmp_str, SHELL_STORAGE_MAX_FILESIZE) > 0)
         si_parse_port_list(tmp_str, entry, &entry->port_n, SI_DEFAULT_PORT_SIZE);
 
     storage_read_u8(dirname, "type", &tmp);
@@ -214,7 +218,7 @@ static int si_read_permanent(void *shell, uint32_t index, struct genavb_stream_i
 
     switch (entry->type) {
     case GENAVB_SI_NULL:
-        if (storage_read(dirname, "mac", tmp_str, MAX_FILE_SIZE) > 0)
+        if (storage_read(dirname, "mac", tmp_str, SHELL_STORAGE_MAX_FILESIZE) > 0)
             str2mac(tmp_str, entry->parameters.null.destination_mac);
 
         storage_read_u8(dirname, "tagged", &tmp);
@@ -225,7 +229,7 @@ static int si_read_permanent(void *shell, uint32_t index, struct genavb_stream_i
         break;
 
     case GENAVB_SI_SRC_MAC_VLAN:
-        if (storage_read(dirname, "mac", tmp_str, MAX_FILE_SIZE) > 0)
+        if (storage_read(dirname, "mac", tmp_str, SHELL_STORAGE_MAX_FILESIZE) > 0)
             str2mac(tmp_str, entry->parameters.smac_vlan.source_mac);
 
         storage_read_u8(dirname, "tagged", &tmp);
@@ -509,12 +513,12 @@ static void si_apply_permanent(void *shell)
 {
     struct genavb_si_port ports[SI_DEFAULT_PORT_SIZE] = SI_DEFAULT_PORT;
     struct genavb_stream_identity entry;
-    char subdirname[MAX_DIR_NAME_LEN];
+    char subdirname[SHELL_STORAGE_MAX_DIRNAME];
     unsigned int i, index;
     int rc;
 
     i = 0;
-    while (!storage_get_dir("/si", i, subdirname, MAX_DIR_NAME_LEN)) {
+    while (!storage_get_dir("/si", i, subdirname, SHELL_STORAGE_MAX_DIRNAME)) {
         i++;
 
         if (sscanf(subdirname, "%u", &index) != 1)

@@ -17,6 +17,7 @@
 #include "rtos_apps/storage_common.h"
 
 #include "common.h"
+#include "storage.h"
 
 #include "shell_config.h"
 
@@ -90,9 +91,9 @@ static int fdb_port_mask_2_port_map(uint32_t port_mask, struct genavb_fdb_port_m
 
 static int fdb_read_storage(uint8_t *mac, uint16_t vid, uint32_t *port_mask)
 {
-    char filename[30];
+    char filename[SHELL_STORAGE_MAX_FILENAME];
 
-    if (h_snprintf_strict(filename, 30, "/fdb/" RTOS_APPS_MAC_STR_FMT ",%u", RTOS_APPS_MAC_STR(mac), vid) < 0)
+    if (h_snprintf_strict(filename, SHELL_STORAGE_MAX_FILENAME, "/fdb/" RTOS_APPS_MAC_STR_FMT ",%u", RTOS_APPS_MAC_STR(mac), vid) < 0)
         return -1;
 
     return storage_read_u32(NULL, filename, port_mask);
@@ -100,10 +101,10 @@ static int fdb_read_storage(uint8_t *mac, uint16_t vid, uint32_t *port_mask)
 
 static int fdb_write_storage(uint8_t *mac, uint16_t vid, uint32_t port_mask)
 {
-    char filename[30] = {0};
+    char filename[SHELL_STORAGE_MAX_FILENAME] = {0};
 
     /* write '/fdb/xx:xx:xx:xx:xx:xx,vid' file with port bitmask value */
-    if (h_snprintf_strict(filename, 30, "/fdb/" RTOS_APPS_MAC_STR_FMT ",%u", RTOS_APPS_MAC_STR(mac), vid) < 0)
+    if (h_snprintf_strict(filename, SHELL_STORAGE_MAX_FILENAME, "/fdb/" RTOS_APPS_MAC_STR_FMT ",%u", RTOS_APPS_MAC_STR(mac), vid) < 0)
         return -1;
 
     return storage_write_uint_hex(NULL, filename, port_mask);
@@ -111,10 +112,10 @@ static int fdb_write_storage(uint8_t *mac, uint16_t vid, uint32_t port_mask)
 
 static int fdb_get_storage_entry(unsigned int i, uint8_t *mac, uint16_t *vid, uint32_t *port_mask)
 {
-    char filename[MAX_FILE_SIZE];
+    char filename[SHELL_STORAGE_MAX_FILESIZE];
     int rc = -1;
 
-    if (!storage_get_file("/fdb", i, filename, MAX_FILE_SIZE)) {
+    if (!storage_get_file("/fdb", i, filename, SHELL_STORAGE_MAX_FILESIZE)) {
         unsigned int tmp[7];
         uint32_t tmp_port_mask;
 
@@ -147,9 +148,9 @@ err:
 
 static int fdb_delete_storage(uint8_t *mac, uint16_t vid)
 {
-    char filename[30];
+    char filename[SHELL_STORAGE_MAX_FILENAME];
 
-    if (h_snprintf_strict(filename, 30, "/fdb/" RTOS_APPS_MAC_STR_FMT ",%u", RTOS_APPS_MAC_STR(mac), vid) < 0)
+    if (h_snprintf_strict(filename, SHELL_STORAGE_MAX_FILENAME, "/fdb/" RTOS_APPS_MAC_STR_FMT ",%u", RTOS_APPS_MAC_STR(mac), vid) < 0)
         return -1;
 
     return storage_rm(filename, false, true);

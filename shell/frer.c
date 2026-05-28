@@ -12,11 +12,14 @@
 #include "genavb/helpers.h"
 
 #include "rtos_abstraction_layer.h"
+
+#include "rtos_apps/shell/frer.h"
 #include "rtos_apps/storage.h"
 #include "rtos_apps/storage_common.h"
 
+#include "storage.h"
+
 #include "shell_config.h"
-#include "rtos_apps/shell/frer.h"
 
 #define PATH_MAX_SIZE          50
 #define BUF_MAX_SIZE           31
@@ -182,12 +185,12 @@ static void seqg_apply_permanent(void *shell)
 {
     struct genavb_sequence_generation entry;
     uint32_t stream[STREAM_HANDLE_MAX] = {STREAM_HANDLE_DEFAULT, };
-    char subdirname[MAX_DIR_NAME_LEN];
+    char subdirname[SHELL_STORAGE_MAX_DIRNAME];
     unsigned int i, index;
     int rc;
 
     i = 0;
-    while (!storage_get_dir("/seqg", i, subdirname, MAX_DIR_NAME_LEN)) {
+    while (!storage_get_dir("/seqg", i, subdirname, SHELL_STORAGE_MAX_DIRNAME)) {
         i++;
 
         if (sscanf(subdirname, "%u", &index) != 1)
@@ -462,12 +465,12 @@ static void seqr_apply_permanent(void *shell)
     struct genavb_sequence_recovery entry;
     uint32_t stream[STREAM_HANDLE_MAX] = {STREAM_HANDLE_DEFAULT, };
     unsigned int port[PORT_MAX] = {PORT_DEFAULT, };
-    char subdirname[MAX_DIR_NAME_LEN];
+    char subdirname[SHELL_STORAGE_MAX_DIRNAME];
     unsigned int i, index;
     int rc;
 
     i = 0;
-    while (!storage_get_dir("/seqr", i, subdirname, MAX_DIR_NAME_LEN)) {
+    while (!storage_get_dir("/seqr", i, subdirname, SHELL_STORAGE_MAX_DIRNAME)) {
         i++;
 
         if (sscanf(subdirname, "%u", &index) != 1)
@@ -767,12 +770,12 @@ static void seqi_apply_permanent(void *shell)
 {
     struct genavb_sequence_identification entry;
     uint32_t stream[STREAM_HANDLE_MAX] = {STREAM_HANDLE_DEFAULT, };
-    char subdirname[MAX_DIR_NAME_LEN];
+    char subdirname[SHELL_STORAGE_MAX_DIRNAME];
     unsigned int i, port_id;
     int rc;
 
     i = 0;
-    while (!storage_get_dir("/seqi", i, subdirname, MAX_DIR_NAME_LEN)) {
+    while (!storage_get_dir("/seqi", i, subdirname, SHELL_STORAGE_MAX_DIRNAME)) {
         i++;
 
         if (sscanf(subdirname, "%u", &port_id) != 1)

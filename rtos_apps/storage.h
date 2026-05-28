@@ -11,14 +11,7 @@
 #include <stdint.h>
 #include <inttypes.h>
 
-#define MAX_FILE_SIZE          32
-#define MAX_FILENAME_LENGTH    32
-#define MAX_DIR_NAME_LEN       8
-
-#define MAX_PWD_LENGTH         128
-#define MAX_PATH_LENGTH        (MAX_PWD_LENGTH + MAX_FILENAME_LENGTH)
-
-#if CONFIG_RTOS_APPS_STORAGE == 1
+#if defined(CONFIG_RTOS_APPS_STORAGE)
 
 int storage_get_dir(const char *dirname, unsigned int n, char *subdirname, unsigned int len);
 int storage_get_file(const char *dirname, unsigned int n, char *filename, unsigned int len);

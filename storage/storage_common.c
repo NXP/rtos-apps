@@ -15,6 +15,8 @@
 
 #include "genavb/helpers.h"
 
+#define MAX_FILE_SIZE          32
+
 static int __storage_read_uint(const char *dirname, const char *filename, uint64_t *value)
 {
     char buf[MAX_FILE_SIZE + 1];
