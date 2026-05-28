@@ -1,0 +1,93 @@
+# Copyright 2026 NXP
+#
+# SPDX-License-Identifier: BSD-3-Clause
+#
+
+menuconfig RTOS_APPS
+	bool "RTOS Apps"
+	help
+	  Enable the RTOS Apps library. Individual components are selected
+	  independently below.
+
+if RTOS_APPS
+
+config RTOS_APPS_ASYNC
+	bool "Asynchronous processing"
+	default n
+	help
+	  Enable the asynchronous processing helper (async.c). Provides a
+	  lightweight deferred-work mechanism used by the TSN and audio
+	  pipelines.
+
+menuconfig RTOS_APPS_LOG
+	bool "Logging"
+	default n
+	help
+	  Enable the logging component (log.c). Provides a thin wrapper
+	  around debug output with optional timestamps and a component
+	  name label.
+
+if RTOS_APPS_LOG
+
+rsource "log/Kconfig"
+
+endif # RTOS_APPS_LOG
+
+config RTOS_APPS_STATS
+	bool "Statistics"
+	default n
+	help
+	  Enable the statistics helper (stats.c). Provides lightweight
+	  runtime counters and latency measurements for application tasks.
+
+config RTOS_APPS_AUDIO
+	bool "Audio pipeline"
+	default n
+	select RTOS_APPS_LOG
+	select RTOS_APPS_STATS
+	help
+	  Enable the audio pipeline component. Provides a multi-element
+	  pipeline (SAI source/sink, routing, DTMF, sine generator) for
+	  AVB/non-AVB audio applications.
+
+menuconfig RTOS_APPS_SHELL
+	bool "Shell commands"
+	default n
+	help
+	  Enable the RTOS Apps shell command set. Provides runtime
+	  inspection and configuration of TSN/AVB parameters via the
+	  Zephyr shell subsystem.
+
+if RTOS_APPS_SHELL
+
+rsource "shell/Kconfig"
+
+config RTOS_APPS_TSN_BRIDGE
+	bool "TSN bridge shell commands"
+	help
+	  Include shell commands for TSN bridge management: FDB, FRER, HSR,
+	  PSFP, stream identification, and VLAN configuration.
+	  Enable this option only on boards that include a TSN bridge.
+
+endif # RTOS_APPS_SHELL
+
+config RTOS_APPS_STORAGE
+	bool "Storage"
+	default n
+	help
+	  Enable the storage component (storage_common.c). Provides
+	  persistent read/write access to application configuration
+	  and calibration data.
+
+menuconfig RTOS_APPS_TSN
+	bool "TSN endpoint"
+	default n
+	select RTOS_APPS_ASYNC
+	select RTOS_APPS_LOG
+	select RTOS_APPS_STATS
+	help
+	  Enable the TSN endpoint component. Provides the cyclic task,
+	  alarm task, TSN pipeline configuration, and monitoring
+	  statistics for IEEE 802.1 TSN endpoint applications.
+
+endif # RTOS_APPS
