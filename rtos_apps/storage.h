@@ -57,12 +57,10 @@ void *storage_get_lfs(void);
 #else
 static inline int storage_get_dir(const char *dirname, unsigned int n, char *subdirname, unsigned int len)
 {
-    /* for -Wuninitialized*/ *subdirname = '\0';
     return -1;
 }
 static inline int storage_get_file(const char *dirname, unsigned int n, char *filename, unsigned int len)
 {
-    /* for -Wuninitialized*/ *filename = '\0';
     return -1;
 }
 static inline int storage_read_ipv4_address(const char *filename, uint8_t *addr)
@@ -79,57 +77,46 @@ static inline int storage_read_qbv_entry(const char *filename, uint8_t *mask, ui
 }
 static inline int storage_read_uint(const char *filename, unsigned int *value)
 {
-    /* for -Wuninitialized*/ *value = 0;
     return -1;
 }
 static inline int storage_read_int(const char *filename, int *value)
 {
-    /* for -Wuninitialized*/ *value = 0;
     return -1;
 }
 static inline int storage_read_float(const char *filename, float *value)
 {
-    /* for -Wuninitialized*/ *value = 0;
     return -1;
 }
 static inline int storage_read_bool(const char *filename, bool *value)
 {
-    /* for -Wuninitialized*/ *value = 0;
     return -1;
 }
 static inline int storage_read_u8(const char *filename, uint8_t *value)
 {
-    /* for -Wuninitialized*/ *value = 0;
     return -1;
 }
 static inline int storage_read_u16(const char *filename, uint16_t *value)
 {
-    /* for -Wuninitialized*/ *value = 0;
     return -1;
 }
 static inline int storage_read_u32(const char *filename, uint32_t *value)
 {
-    /* for -Wuninitialized*/ *value = 0;
     return -1;
 }
 static inline int storage_read_u64(const char *filename, uint64_t *value)
 {
-    /* for -Wuninitialized*/ *value = 0;
     return -1;
 }
 static inline int storage_read_s8(const char *filename, int8_t *value)
 {
-    /* for -Wuninitialized*/ *value = 0;
     return -1;
 }
 static inline int storage_read_s16(const char *filename, int16_t *value)
 {
-    /* for -Wuninitialized*/ *value = 0;
     return -1;
 }
 static inline int storage_read_s32(const char *filename, int32_t *value)
 {
-    /* for -Wuninitialized*/ *value = 0;
     return -1;
 }
 static inline int storage_write_uint_hex(const char *filename, unsigned int value)
