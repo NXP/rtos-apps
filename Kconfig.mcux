@@ -1,0 +1,13 @@
+# Copyright 2025-2026 NXP
+#
+# SPDX-License-Identifier: BSD-3-Clause
+
+menu "RTOS Application components"
+  rsource "./log/Kconfig.mcux"
+  rsource "./stats/Kconfig.mcux"
+  rsource "./audio/Kconfig.mcux"
+  rsource "./tsn/Kconfig.mcux"
+  rsource "./async/Kconfig.mcux"
+  rsource "./shell/Kconfig.mcux"
+  rsource "./storage/Kconfig.mcux"
+endmenu
