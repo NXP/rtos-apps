@@ -1,0 +1,18 @@
+# Copyright 2026 NXP
+#
+# SPDX-License-Identifier: BSD-3-Clause
+
+# Note: Do not define default values as it might be defined on the
+#       MCUXpresso Kconfig counterpart.
+
+config RTOS_APPS_FP
+	bool "Frame Preemption (FP) shell commands"
+	help
+	  Include the Frame Preemption (802.3br) shell command set.
+	  Allows runtime inspection and configuration of FP parameters.
+
+config RTOS_APPS_QBV
+	bool "Qbv (802.1Qbv) shell commands"
+	help
+	  Include the Time-Aware Shaper (802.1Qbv) shell command set.
+	  Allows runtime inspection and configuration of gate control lists.

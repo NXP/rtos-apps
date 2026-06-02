@@ -1,0 +1,17 @@
+# Copyright 2026 NXP
+#
+# SPDX-License-Identifier: BSD-3-Clause
+
+# Note: Do not define default values as it might be defined on the
+#       MCUXpresso Kconfig counterpart.
+
+config RTOS_APPS_LOG_TIMESTAMP
+	bool "Log timestamp"
+	help
+	  Prefix each log message with a hardware timestamp.
+
+config RTOS_APPS_LOG_STR
+	string "Log component name"
+	help
+	  Provides a string name for logging.
+	  Macro value is in quotes (this sentence is parsed by MCUXpresso)

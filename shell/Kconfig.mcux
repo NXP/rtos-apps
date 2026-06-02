@@ -7,6 +7,9 @@ config MCUX_COMPONENT_component.rtos_apps.shell
     default n
 
     if MCUX_COMPONENT_component.rtos_apps.shell
+
+        rsource "./Kconfig"
+
         config MCUX_COMPONENT_component.rtos_apps.shell.tsn_bridge
             bool "Use TSN components"
             default n
@@ -20,11 +23,9 @@ config MCUX_COMPONENT_component.rtos_apps.shell
             default n
 
         config RTOS_APPS_FP
-            bool
             default y if MCUX_COMPONENT_component.rtos_apps.shell.fp
 
         config RTOS_APPS_QBV
-            bool
             default y if MCUX_COMPONENT_component.rtos_apps.shell.qbv
     endif
 
