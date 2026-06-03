@@ -66,7 +66,7 @@ static int gavb_log_level(char *component_str, char *level_str)
     return 0;
 }
 
-int app_log_level_set(char *level_str)
+static int app_log_level_set(char *level_str)
 {
     rtos_apps_log_level_t level;
 
