@@ -9,7 +9,7 @@
 
 #include "genavb/scheduled_traffic.h"
 
-int qbv_write_permanent(void *shell, unsigned int port_id, struct genavb_st_config config);
+int qbv_write_permanent(void *shell, unsigned int port_id, struct genavb_st_config *config);
 int qbv_apply_permanent(void *shell, unsigned int port_id);
 int qbv_apply(void *shell, unsigned int port_id, struct genavb_st_config *config);
 

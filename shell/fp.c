@@ -136,7 +136,7 @@ static int fp_read_permanent(void *shell, unsigned int port_id, struct genavb_fp
     return rc;
 }
 
-int fp_write_802_1q_permanent(void *shell, unsigned int port_id, struct genavb_fp_config config)
+int fp_write_802_1q_permanent(void *shell, unsigned int port_id, struct genavb_fp_config *config)
 {
     char path[SHELL_STORAGE_MAX_FILENAME], str_tmp[5];
     int i, rc = 0;
@@ -150,7 +150,7 @@ int fp_write_802_1q_permanent(void *shell, unsigned int port_id, struct genavb_f
     }
 
     for (i = 0; i < QOS_PRIORITY_MAX; i++) {
-        if (config.u.cfg_802_1Q.admin_status[i] == GENAVB_FP_ADMIN_STATUS_EXPRESS) 
+        if (config->u.cfg_802_1Q.admin_status[i] == GENAVB_FP_ADMIN_STATUS_EXPRESS)
             tmp |= 1 << i;
     }
 
@@ -162,7 +162,7 @@ err:
     return rc;
 }
 
-int fp_write_802_3_permanent(void *shell, unsigned int port_id, struct genavb_fp_config config)
+int fp_write_802_3_permanent(void *shell, unsigned int port_id, struct genavb_fp_config *config)
 {
     char path[SHELL_STORAGE_MAX_FILENAME] = {0};
     int rc = 0;
@@ -174,10 +174,10 @@ int fp_write_802_3_permanent(void *shell, unsigned int port_id, struct genavb_fp
         goto err;
     }
 
-    storage_write_uint(path, "enable_tx", config.u.cfg_802_3.enable_tx);
-    storage_write_uint(path, "verify_disable_tx", config.u.cfg_802_3.verify_disable_tx);
-    storage_write_uint(path, "verify_time", config.u.cfg_802_3.verify_time);
-    storage_write_uint(path, "add_frag_size", config.u.cfg_802_3.add_frag_size);
+    storage_write_uint(path, "enable_tx", config->u.cfg_802_3.enable_tx);
+    storage_write_uint(path, "verify_disable_tx", config->u.cfg_802_3.verify_disable_tx);
+    storage_write_uint(path, "verify_time", config->u.cfg_802_3.verify_time);
+    storage_write_uint(path, "add_frag_size", config->u.cfg_802_3.add_frag_size);
 
     return rc;
 err:
@@ -270,7 +270,7 @@ int cmd_fp_set(void *shell, int32_t argc, char **argv)
 
     if (permanent) {
         if (is_cf_8021) {
-            if (fp_write_802_1q_permanent(shell, port_id, config_8021q) < 0) {
+            if (fp_write_802_1q_permanent(shell, port_id, &config_8021q) < 0) {
                 shell_printf(shell, "fp_write_802_1q_permanent(%u) failed\n", port_id);
                 goto err;
             }
@@ -287,7 +287,7 @@ int cmd_fp_set(void *shell, int32_t argc, char **argv)
 
     if (permanent) {
         if (!is_cf_8021) {
-            if (fp_write_802_3_permanent(shell, port_id, config_8023) < 0) {
+            if (fp_write_802_3_permanent(shell, port_id, &config_8023) < 0) {
                 shell_printf(shell, "fp_write_802_3_permanent(%u) failed\n", port_id);
                 goto err;
             }

@@ -176,9 +176,9 @@ err:
     return -1;
 }
 
-int qbv_write_permanent(void *shell, unsigned int port_id, struct genavb_st_config config)
+int qbv_write_permanent(void *shell, unsigned int port_id, struct genavb_st_config *config)
 {
-    struct genavb_st_gate_control_entry *gate_list = config.control_list;
+    struct genavb_st_gate_control_entry *gate_list = config->control_list;
     char buf[20] = {0}, entry[10];
     char dir[20 + SHELL_STORAGE_ROOT_SIZE] = {0};
     int i;
@@ -194,13 +194,13 @@ int qbv_write_permanent(void *shell, unsigned int port_id, struct genavb_st_conf
         goto err;
     }
 
-    storage_write_uint(dir, "enabled", (unsigned int)config.enable);
-    storage_write_u64(dir, "base_time", config.base_time);
-    storage_write_uint(dir, "cycle_time", config.cycle_time_p);
-    storage_write_uint(dir, "cycle_time_ext", config.cycle_time_ext);
+    storage_write_uint(dir, "enabled", (unsigned int)config->enable);
+    storage_write_u64(dir, "base_time", config->base_time);
+    storage_write_uint(dir, "cycle_time", config->cycle_time_p);
+    storage_write_uint(dir, "cycle_time_ext", config->cycle_time_ext);
 
     if (gate_list) {
-        for (i = 0; i < config.list_length; i++) {
+        for (i = 0; i < config->list_length; i++) {
             h_snprintf(buf, 15, "%2x,%lu,%u", gate_list[i].gate_states, gate_list[i].time_interval, gate_list[i].operation);
             h_snprintf(entry, 10, "entry%u", i);
             storage_write(dir, entry, buf, strlen(buf));
@@ -370,7 +370,7 @@ int cmd_qbv_set(void *shell, int32_t argc, char **argv)
         config.list_length = num_entries;
 
     if (permanent) {
-        if (qbv_write_permanent(shell, port_id, config) < 0) {
+        if (qbv_write_permanent(shell, port_id, &config) < 0) {
             shell_printf(shell, "qbv_write_permanent(%u) failed\n", port_id);
             goto err;
         }
