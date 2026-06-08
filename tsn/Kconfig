@@ -1,4 +1,4 @@
-# Copyright 2025 NXP
+# Copyright 2025-2026 NXP
 #
 # SPDX-License-Identifier: BSD-3-Clause
 
@@ -55,6 +55,10 @@ config MCUX_COMPONENT_component.rtos_apps.tsn
         config RTOS_APPS_MOTOR_IO_DEVICE
             bool
             default y if MCUX_COMPONENT_component.rtos_apps.tsn.motor.iodevice
+
+        config RTOS_APPS_TSN_API_TIMING_ENABLED
+            bool "Enable GenAVB/TSN socket API timing measurements"
+            default n
     endif
 
 config MCUX_COMPONENT_component.rtos_apps.tsn_headers

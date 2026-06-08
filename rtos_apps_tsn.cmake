@@ -38,6 +38,12 @@ if(CONFIG_APP_SERIAL)
     )
 endif()
 
+if(CONFIG_APP_TSN_API_TIMING_ENABLED)
+    target_compile_definitions(${RTOS_APPS_TARGET} PRIVATE
+        CONFIG_RTOS_APPS_TSN_API_TIMING_ENABLED=1
+    )
+endif()
+
 if(CONFIG_APP_MOTOR_CONTROLLER)
     target_compile_definitions(${RTOS_APPS_TARGET} PRIVATE
         CONFIG_RTOS_APPS_MOTOR_CONTROLLER=1

@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2021, 2023, 2025 NXP
+ * Copyright 2018-2021, 2023, 2025-2026 NXP
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -35,6 +35,10 @@ struct tsn_task_stats {
     struct rtos_apps_hist proc_time_hist;
     struct rtos_apps_stats total_time;
     struct rtos_apps_hist total_time_hist;
+#ifdef CONFIG_RTOS_APPS_TSN_API_TIMING_ENABLED
+    struct rtos_apps_stats tx_time;
+    struct rtos_apps_hist tx_time_hist;
+#endif
     unsigned int sched;
     unsigned int sched_early;
     unsigned int sched_missed;

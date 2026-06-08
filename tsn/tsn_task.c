@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2021, 2023-2025 NXP
+ * Copyright 2018-2021, 2023-2026 NXP
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -21,6 +21,37 @@
 #define SOCKET_DIR_RX 0
 #define SOCKET_DIR_TX 1
 
+#ifdef CONFIG_RTOS_APPS_TSN_API_TIMING_ENABLED
+static inline void tsn_tx_time_stats_start(rtos_cycles_t *start)
+{
+    *start = rtos_cycles_get();
+}
+
+static inline void tsn_tx_time_stats_end(struct net_socket *sock,
+                                         rtos_cycles_t start)
+{
+    struct tsn_task *task = container_of(sock, struct tsn_task, sock_tx[sock->id]);
+    rtos_cycles_t end = rtos_cycles_get();
+    rtos_cycles_t delta_cycles = rtos_cycles_delta(start, end);
+    int32_t latency_ns = (int32_t)rtos_cycles_to_ns(delta_cycles);
+
+    rtos_apps_stats_update(&task->stats.tx_time, latency_ns);
+    rtos_apps_hist_update(&task->stats.tx_time_hist, latency_ns);
+}
+#else
+static inline void tsn_tx_time_stats_start(rtos_cycles_t *start)
+{
+    (void)start;
+}
+
+static inline void tsn_tx_time_stats_end(struct net_socket *sock,
+                                         rtos_cycles_t start)
+{
+    (void)sock;
+    (void)start;
+}
+#endif
+
 void tsn_task_stats_init(struct tsn_task *task)
 {
     rtos_apps_stats_init(&task->stats.sched_err, 31, "sched err", NULL);
@@ -31,6 +62,11 @@ void tsn_task_stats_init(struct tsn_task *task)
 
     rtos_apps_stats_init(&task->stats.total_time, 31, "total time", NULL);
     rtos_apps_hist_init(&task->stats.total_time_hist, 100, 1000);
+
+#ifdef CONFIG_RTOS_APPS_TSN_API_TIMING_ENABLED
+    rtos_apps_stats_init(&task->stats.tx_time, 31, "tx time", NULL);
+    rtos_apps_hist_init(&task->stats.tx_time_hist, 100, 100);
+#endif
 
     task->stats.sched_err_max = 0;
 }
@@ -113,6 +149,13 @@ static void tsn_task_stats_print(void *data)
     rtos_apps_stats_print(&task->stats_snap.total_time);
     rtos_apps_hist_print(&task->stats_snap.total_time_hist);
 
+#ifdef CONFIG_RTOS_APPS_TSN_API_TIMING_ENABLED
+    rtos_apps_stats_compute(&task->stats_snap.tx_time);
+
+    rtos_apps_stats_print(&task->stats_snap.tx_time);
+    rtos_apps_hist_print(&task->stats_snap.tx_time_hist);
+#endif
+
     task->stats_snap.pending = false;
 }
 
@@ -125,6 +168,9 @@ static void tsn_task_stats_dump(struct tsn_task *task)
     rtos_apps_stats_reset(&task->stats.sched_err);
     rtos_apps_stats_reset(&task->stats.proc_time);
     rtos_apps_stats_reset(&task->stats.total_time);
+#ifdef CONFIG_RTOS_APPS_TSN_API_TIMING_ENABLED
+    rtos_apps_stats_reset(&task->stats.tx_time);
+#endif
     task->stats_snap.pending = true;
 
     if (rtos_apps_async_call(task->params->async, &tsn_task_stats_print, task) < 0)
@@ -315,6 +361,7 @@ void tsn_net_transmit_free(struct net_socket *sock, unsigned int n)
 int tsn_net_transmit_sock(struct net_socket *sock, bool tx_time, uint64_t ts)
 {
     struct genavb_socket_tx_send_params params[NET_RX_BATCH] = {[0 ... NET_RX_BATCH - 1] = { .flags = (genavb_socket_tx_send_flags_t)0 }};
+    rtos_cycles_t start;
     int rc;
     int status, n;
 
@@ -325,7 +372,12 @@ int tsn_net_transmit_sock(struct net_socket *sock, bool tx_time, uint64_t ts)
 
     n = sock->n;
 
+    tsn_tx_time_stats_start(&start);
+
     rc = genavb_socket_tx_send_iov(sock->genavb_tx, sock->iovec, params, n);
+
+    tsn_tx_time_stats_end(sock, start);
+
     if (rc == n) {
         status = NET_OK;
         sock->stats.frames += n;
