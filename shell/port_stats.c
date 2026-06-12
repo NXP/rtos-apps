@@ -13,8 +13,6 @@
 #include "rtos_apps/types.h"
 #include "rtos_apps/log.h"
 
-#include "rtos_apps/storage.h"
-
 #include "shell_config.h"
 #include "rtos_apps/shell/port_stats.h"
 

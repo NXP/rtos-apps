@@ -13,8 +13,8 @@
 #include "rtos_abstraction_layer.h"
 #include "rtos_apps/shell/common.h"
 #include "rtos_apps/shell/fdb.h"
-#include "rtos_apps/storage.h"
-#include "rtos_apps/storage_common.h"
+#include "rtos_apps/shell/shell_storage_app.h"
+#include "rtos_apps/storage/storage.h"
 
 #include "common.h"
 #include "storage.h"

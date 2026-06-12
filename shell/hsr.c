@@ -11,10 +11,11 @@
 #include "genavb/hsr.h"
 #include "genavb/types.h"
 #include "rtos_abstraction_layer.h"
-#include "rtos_apps/storage.h"
-#include "rtos_apps/storage_common.h"
 
 #include "rtos_apps/shell/hsr.h"
+#include "rtos_apps/shell/shell_storage_app.h"
+#include "rtos_apps/storage/storage.h"
+#include "rtos_apps/storage/storage_app.h"
 
 #include "storage.h"
 

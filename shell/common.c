@@ -8,8 +8,6 @@
 
 #include "genavb/helpers.h"
 
-#include "shell_config.h"
-
 #include "rtos_apps/shell/common.h"
 #include "common.h"
 

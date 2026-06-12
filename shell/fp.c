@@ -10,14 +10,16 @@
 
 #include <stdio.h>
 
+#include "rtos_apps/shell/shell_storage_app.h"
+#include "rtos_apps/storage/storage.h"
+#include "rtos_apps/storage/storage_app.h"
+
 #include "genavb/frame_preemption.h"
 
 #include "genavb/error.h"
 #include "genavb/helpers.h"
 
 #include "rtos_abstraction_layer.h"
-#include "rtos_apps/storage.h"
-#include "rtos_apps/storage_common.h"
 #include "shell_config.h"
 #include "storage.h"
 

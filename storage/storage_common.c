@@ -8,8 +8,8 @@
 #include <stdint.h>
 #include <stdio.h>
 
-#include "rtos_apps/storage.h"
-#include "rtos_apps/storage_common.h"
+#include "rtos_apps/storage/storage_app.h"
+#include "rtos_apps/storage/storage.h"
 
 #include "rtos_apps/shell/common.h"
 

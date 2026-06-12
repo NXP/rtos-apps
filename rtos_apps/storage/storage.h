@@ -4,8 +4,8 @@
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
-#ifndef _RTOS_APPS_STORAGE_COMMON_H_
-#define _RTOS_APPS_STORAGE_COMMON_H_
+#ifndef _RTOS_APPS_STORAGE_STORAGE_H_
+#define _RTOS_APPS_STORAGE_STORAGE_H_
 
 #include <stdbool.h>
 #include <stdint.h>
@@ -106,4 +106,4 @@ static inline int storage_write_u64(const char *dirname, const char *filename, u
 
 #endif /* CONFIG_RTOS_APPS_STORAGE */
 
-#endif /* _RTOS_APPS_STORAGE_COMMON_H_ */
+#endif /* _RTOS_APPS_STORAGE_STORAGE_H_ */
