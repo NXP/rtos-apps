@@ -25,7 +25,6 @@
 #include "rtos_apps/storage/storage_app.h"
 
 #include "shell_config.h"
-#include "genavb_sdk.h"
 
 #include "storage.h"
 #include "common.h"
@@ -118,11 +117,6 @@ static void dump_genavb_st_config(void *shell, unsigned int port_id, struct gena
     shell_printf(shell, "cycle_time_ext %d (ns)\n", config->cycle_time_ext);
     shell_printf(shell, "list_length    %d\n", config->list_length);
 
-    if (config->list_length > QBV_LIST_MAX_ENTRIES) {
-        shell_printf(shell, "invalid list length\n");
-        return;
-    }
-
     if (config->list_length && config->control_list) {
         shell_printf(shell, "\ngate list:\n");
         shell_printf(shell, " entry | oper | gate | interval (ns) |\n");
@@ -157,7 +151,7 @@ static int qbv_read_permanent(void *shell, unsigned int port_id, struct genavb_s
     storage_read_u32(port, "cycle_time", &config->cycle_time_p);
     storage_read_u32(port, "cycle_time_ext", &config->cycle_time_ext);
 
-    for (entry_id = 0; entry_id < QBV_LIST_MAX_ENTRIES; entry_id++) {
+    for (entry_id = 0; entry_id < config->list_length; entry_id++) {
         char entry[10] = {0};
         h_snprintf(entry, 10, "entry%u", entry_id);
 
@@ -240,13 +234,14 @@ err:
 /**
  * return: 1 when config applied, 0 when qbv not enabled, -1 on error
  */
-int qbv_apply_permanent(void *shell, unsigned int port_id)
+static int __qbv_apply_permanent(void *shell, unsigned int port_id, unsigned int max_entries)
 {
-    struct genavb_st_gate_control_entry gate_list[QBV_LIST_MAX_ENTRIES];
+    struct genavb_st_gate_control_entry gate_list[max_entries];
     struct genavb_st_config config = st_config_default;
     int rc = -1;
 
     config.control_list = gate_list;
+    config.list_length = max_entries;
     gate_list[0] = st_list_default;
 
     if (qbv_read_permanent(shell, port_id, &config) < 0) {
@@ -258,6 +253,22 @@ int qbv_apply_permanent(void *shell, unsigned int port_id)
 
 err_get_config:
     return rc;
+}
+
+int qbv_apply_permanent(void *shell, unsigned int port_id)
+{
+    unsigned int max_entries = 0;
+
+    max_entries = genavb_st_get_max_entries(port_id);
+    if (!max_entries) {
+        shell_printf(shell, "genavb_st_get_max_entries(%u) failed\n", port_id);
+        goto err;
+    }
+
+    return __qbv_apply_permanent(shell, port_id, max_entries);
+
+err:
+    return -1;
 }
 
 int qbv_apply(void *shell, unsigned int port_id, struct genavb_st_config *config)
@@ -299,32 +310,19 @@ static void print_qbv_set_usage(void *shell)
     shell_printf(shell, CMD_QBV_SET_HELP);
 }
 
-int cmd_qbv_set(void *shell, int32_t argc, char **argv)
+static int __cmd_qbv_set(void *shell, int32_t argc, char **argv, unsigned int port_id, unsigned int max_entries)
 {
-    struct genavb_st_gate_control_entry gate_list[QBV_LIST_MAX_ENTRIES];
+    struct genavb_st_gate_control_entry gate_list[max_entries];
     unsigned int gate_list_entry[3], num_entries = 0;
     struct genavb_st_config config = st_config_default;
     unsigned long long base_time;
     bool permanent = false;
-    unsigned int port_id;
-    unsigned long cycle_time, cycle_time_ext, tmp;
+    unsigned long cycle_time, cycle_time_ext;
     int rc = 0, opt;
 
     gate_list[0] = st_list_default;
-
     config.control_list = &gate_list[0];
-
-    if (argc < 2) {
-        print_qbv_set_usage(shell);
-        goto err;
-    }
-
-    h_strtoul(&tmp, argv[1], NULL, 0);
-    port_id = tmp;
-    if (port_id >= CONFIG_APP_LOGICAL_PORTS) {
-        shell_printf(shell, "invalid port_id %u\n", port_id);
-        goto err;
-    }
+    config.list_length = max_entries;
 
     rc = qbv_read_permanent(shell, port_id, &config);
 
@@ -350,8 +348,8 @@ int cmd_qbv_set(void *shell, int32_t argc, char **argv)
             if (rc < 2)
                 goto err;
 
-            if (num_entries >= QBV_LIST_MAX_ENTRIES) {
-                shell_printf(shell, "number of entries must be less than or equal to %d\n", QBV_LIST_MAX_ENTRIES);
+            if (num_entries >= max_entries) {
+                shell_printf(shell, "number of entries must be less than or equal to %u\n", max_entries);
                 goto err;
             }
 
@@ -388,27 +386,14 @@ err:
     return -1;
 }
 
-static void print_qbv_get_usage(void *shell)
+int cmd_qbv_set(void *shell, int32_t argc, char **argv)
 {
-    shell_printf(shell, "Usage: ");
-    shell_printf(shell, CMD_QBV_GET_HELP);
-}
-
-int cmd_qbv_get(void *shell, int32_t argc, char **argv)
-{
-    struct genavb_st_config config = st_config_default;
-    struct genavb_st_gate_control_entry gate_list[QBV_LIST_MAX_ENTRIES];
-    genavb_st_config_type_t st_config_type = GENAVB_ST_OPER;
     unsigned int port_id;
-    bool permanent = false;
     unsigned long tmp;
-    int opt, rc;
-
-    gate_list[0] = st_list_default;
-    config.control_list = gate_list;
+    unsigned int max_entries;
 
     if (argc < 2) {
-        print_qbv_get_usage(shell);
+        print_qbv_set_usage(shell);
         goto err;
     }
 
@@ -418,6 +403,37 @@ int cmd_qbv_get(void *shell, int32_t argc, char **argv)
         shell_printf(shell, "invalid port_id %u\n", port_id);
         goto err;
     }
+
+    max_entries = genavb_st_get_max_entries(port_id);
+    if (!max_entries) {
+        shell_printf(shell, "genavb_st_get_max_entries(%u) failed\n", port_id);
+        goto err;
+    }
+
+    return __cmd_qbv_set(shell, argc, argv, port_id, max_entries);
+
+err:
+    return -1;
+}
+
+static void print_qbv_get_usage(void *shell)
+{
+    shell_printf(shell, "Usage: ");
+    shell_printf(shell, CMD_QBV_GET_HELP);
+}
+
+static int __cmd_qbv_get(void *shell, int32_t argc, char **argv, unsigned int port_id, unsigned int max_entries)
+{
+    struct genavb_st_gate_control_entry gate_list[max_entries];
+    struct genavb_st_config config = st_config_default;
+    genavb_st_config_type_t st_config_type = GENAVB_ST_OPER;
+    bool permanent = false;
+    unsigned long tmp;
+    int opt, rc;
+
+    gate_list[0] = st_list_default;
+    config.control_list = gate_list;
+    config.list_length = max_entries;
 
     rtos_getopt_init(2);
     while ((opt = rtos_getopt(argc, argv, "pt:")) != -1) {
@@ -434,7 +450,6 @@ int cmd_qbv_get(void *shell, int32_t argc, char **argv)
         }
     }
 
-
     if (permanent) {
         shell_printf(shell, "reading permanent configuration\n");
 
@@ -445,7 +460,7 @@ int cmd_qbv_get(void *shell, int32_t argc, char **argv)
     } else {
         shell_printf(shell, "reading hardware configuration\n");
 
-        rc = genavb_st_get_config(port_id, st_config_type, &config, QBV_LIST_MAX_ENTRIES);
+        rc = genavb_st_get_config(port_id, st_config_type, &config, config.list_length);
         if (rc < 0) {
             shell_printf(shell, "genavb_st_get_config(%u) failed: %s\n", port_id, genavb_strerror(rc));
             goto err_get_config;
@@ -457,6 +472,35 @@ int cmd_qbv_get(void *shell, int32_t argc, char **argv)
     return 0;
 
 err_get_config:
+    return -1;
+}
+
+int cmd_qbv_get(void *shell, int32_t argc, char **argv)
+{
+    unsigned int port_id;
+    unsigned long tmp;
+    unsigned int max_entries;
+
+    if (argc < 2) {
+        print_qbv_get_usage(shell);
+        goto err;
+    }
+
+    h_strtoul(&tmp, argv[1], NULL, 0);
+    port_id = tmp;
+    if (port_id >= CONFIG_APP_LOGICAL_PORTS) {
+        shell_printf(shell, "invalid port_id %u\n", port_id);
+        goto err;
+    }
+
+    max_entries = genavb_st_get_max_entries(port_id);
+    if (!max_entries) {
+        shell_printf(shell, "genavb_st_get_max_entries(%u) failed\n", port_id);
+        goto err;
+    }
+
+    return __cmd_qbv_get(shell, argc, argv, port_id, max_entries);
+
 err:
     return -1;
 }
