@@ -13,6 +13,7 @@
 #include "rtos_abstraction_layer.h"
 
 #include "rtos_apps/shell/hsr.h"
+#include "rtos_apps/shell/shell.h"
 #include "rtos_apps/shell/shell_storage_app.h"
 #include "rtos_apps/storage/storage.h"
 #include "rtos_apps/storage/storage_app.h"
@@ -22,12 +23,6 @@
 #include "shell_config.h"
 
 #define BUF_MAX_SIZE 5
-
-static void print_hsr_mode_set_usage(void *shell)
-{
-    shell_printf(shell, "Usage: ");
-    shell_printf(shell, CMD_HSR_MODE_SET_HELP);
-}
 
 static int hsr_mode_update_permanent(unsigned long mode)
 {
@@ -115,12 +110,12 @@ int cmd_hsr_mode_set(void *shell, int32_t argc, char **argv)
 
     shell_printf(shell, "HSR operation mode %u set success\n", mode);
 
-    return 0;
+    return SHELL_ERR_SUCCESS;
 
 err_usage:
-    print_hsr_mode_set_usage(shell);
+    return SHELL_ERR_HELP;
 err:
-    return -1;
+    return SHELL_ERR_ERROR;
 }
 
 void cmd_hsr_init(void *shell)

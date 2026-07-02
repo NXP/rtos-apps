@@ -10,6 +10,7 @@
 
 #include <stdio.h>
 
+#include "rtos_apps/shell/shell.h"
 #include "rtos_apps/shell/shell_storage_app.h"
 #include "rtos_apps/storage/storage.h"
 #include "rtos_apps/storage/storage_app.h"
@@ -22,18 +23,6 @@
 #include "rtos_abstraction_layer.h"
 #include "shell_config.h"
 #include "storage.h"
-
-static void print_fp_set_usage(void *shell)
-{
-    shell_printf(shell, "Usage: ");
-    shell_printf(shell, CMD_FP_SET_HELP);
-}
-
-static void print_fp_get_usage(void *shell)
-{
-    shell_printf(shell, "Usage: ");
-    shell_printf(shell, CMD_FP_GET_HELP);
-}
 
 static void read_fp_status_table(uint8_t status_fp, genavb_fp_admin_status_t *status_admin)
 {
@@ -198,8 +187,7 @@ int cmd_fp_set(void *shell, int32_t argc, char **argv)
     int opt, rc;
 
     if (argc < 2) {
-        print_fp_set_usage(shell);
-        goto err;
+        goto err_usage;
     }
 
     h_strtoul(&tmp, argv[1], NULL, 0);
@@ -304,9 +292,11 @@ int cmd_fp_set(void *shell, int32_t argc, char **argv)
         }
     }
 
-    return 0;
+    return SHELL_ERR_SUCCESS;
+err_usage:
+    return SHELL_ERR_HELP;
 err:
-    return -1;
+    return SHELL_ERR_ERROR;
 }
 
 int cmd_fp_get(void *shell, int32_t argc, char **argv)
@@ -372,11 +362,11 @@ int cmd_fp_get(void *shell, int32_t argc, char **argv)
 
     fp_config_print(shell, port_id, GENAVB_FP_CONFIG_802_3, &config, permanent);
 
-    return 0;
+    return SHELL_ERR_SUCCESS;
 err_usage:
-    print_fp_get_usage(shell);
+    return SHELL_ERR_HELP;
 err:
-    return -1;
+    return SHELL_ERR_ERROR;
 }
 
 int fp_apply_permanent(void *shell, unsigned int port_id)

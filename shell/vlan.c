@@ -14,6 +14,7 @@
 #include "rtos_abstraction_layer.h"
 
 #include "rtos_apps/shell/vlan.h"
+#include "rtos_apps/shell/shell.h"
 #include "rtos_apps/shell/shell_storage_app.h"
 #include "rtos_apps/storage/storage.h"
 #include "rtos_apps/storage/storage_app.h"
@@ -92,12 +93,6 @@ static void vlan_print_entry(void *shell, uint16_t vid, bool dynamic, struct gen
         vlan_print_port_list(shell, port_mask[column]);
 
     shell_printf(shell, "\n");
-}
-
-static void print_vlan_update_usage(void *shell)
-{
-    shell_printf(shell, "Usage: ");
-    shell_printf(shell, CMD_VLAN_UPDATE_HELP);
 }
 
 static int vlan_port_mask_2_port_map(uint32_t port_mask, uint32_t untagged_port_mask, struct genavb_vlan_port_map map[CONFIG_APP_BR_NUM_PORTS])
@@ -354,18 +349,12 @@ int cmd_vlan_update(void *shell, int32_t argc, char **argv)
 
     shell_printf(shell, "VLAN update port(%u) vid(%u)\n", port_map.port_id, vid);
 
-    return 0;
+    return SHELL_ERR_SUCCESS;
 
 err_usage:
-    print_vlan_update_usage(shell);
+    return SHELL_ERR_HELP;
 err:
-    return -1;
-}
-
-static void print_vlan_read_usage(void *shell)
-{
-    shell_printf(shell, "Usage: ");
-    shell_printf(shell, CMD_VLAN_READ_HELP);
+    return SHELL_ERR_ERROR;
 }
 
 int cmd_vlan_read(void *shell, int32_t argc, char **argv)
@@ -414,18 +403,12 @@ int cmd_vlan_read(void *shell, int32_t argc, char **argv)
     vlan_print_description(shell);
     vlan_print_entry(shell, vid, dynamic, &port_map[0]);
 
-    return 0;
+    return SHELL_ERR_SUCCESS;
 
 err_usage:
-    print_vlan_read_usage(shell);
+    return SHELL_ERR_HELP;
 err:
-    return -1;
-}
-
-static void print_vlan_delete_usage(void *shell)
-{
-    shell_printf(shell, "Usage: ");
-    shell_printf(shell, CMD_VLAN_DELETE_HELP);
+    return SHELL_ERR_ERROR;
 }
 
 int cmd_vlan_delete(void *shell, int32_t argc, char **argv)
@@ -469,18 +452,12 @@ int cmd_vlan_delete(void *shell, int32_t argc, char **argv)
         goto err;
     }
 
-    return 0;
+    return SHELL_ERR_SUCCESS;
 
 err_usage:
-    print_vlan_delete_usage(shell);
+    return SHELL_ERR_HELP;
 err:
-    return -1;
-}
-
-static void print_vlan_dump_usage(void *shell)
-{
-    shell_printf(shell, "Usage: ");
-    shell_printf(shell, CMD_VLAN_DUMP_HELP);
+    return SHELL_ERR_ERROR;
 }
 
 int cmd_vlan_dump(void *shell, int32_t argc, char **argv)
@@ -518,11 +495,10 @@ int cmd_vlan_dump(void *shell, int32_t argc, char **argv)
 
     vlan_dump_pvid(shell, permanent);
 
-    return 0;
+    return SHELL_ERR_SUCCESS;
 
 err_usage:
-    print_vlan_dump_usage(shell);
-    return -1;
+    return SHELL_ERR_HELP;
 }
 
 static int vlan_update_permanent_pvid(unsigned int port_id, uint16_t vid)
@@ -610,12 +586,6 @@ static void vlan_dump_pvid(void *shell, bool permanent)
     return;
 }
 
-static void print_vlan_set_pvid_usage(void *shell)
-{
-    shell_printf(shell, "Usage: ");
-    shell_printf(shell, CMD_VLAN_SET_PVID_HELP);
-}
-
 int cmd_vlan_set_pvid(void *shell, int32_t argc, char **argv)
 {
     bool permanent = false;
@@ -665,18 +635,12 @@ int cmd_vlan_set_pvid(void *shell, int32_t argc, char **argv)
         goto err;
     }
 
-    return 0;
+    return SHELL_ERR_SUCCESS;
 
 err_usage:
-    print_vlan_set_pvid_usage(shell);
+    return SHELL_ERR_HELP;
 err:
-    return -1;
-}
-
-static void print_vlan_get_pvid_usage(void *shell)
-{
-    shell_printf(shell, "Usage: ");
-    shell_printf(shell, CMD_VLAN_GET_PVID_HELP);
+    return SHELL_ERR_ERROR;
 }
 
 int cmd_vlan_get_pvid(void *shell, int32_t argc, char **argv)
@@ -723,12 +687,12 @@ int cmd_vlan_get_pvid(void *shell, int32_t argc, char **argv)
 
     shell_printf(shell, "port %u PVID %u\n", port_id, vid);
 
-    return 0;
+    return SHELL_ERR_SUCCESS;
 
 err_usage:
-    print_vlan_get_pvid_usage(shell);
+    return SHELL_ERR_HELP;
 err:
-    return -1;
+    return SHELL_ERR_ERROR;
 }
 
 static int vlan_apply_permanent_pvid(void)
@@ -768,10 +732,10 @@ static int vlan_apply_permanent_pvid(void)
         }
     }
 
-    return 0;
+    return SHELL_ERR_SUCCESS;
 
 err:
-    return -1;
+    return SHELL_ERR_ERROR;
 }
 
 static int vlan_apply_permanent_entries(void)

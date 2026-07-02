@@ -14,6 +14,7 @@
 #include "rtos_abstraction_layer.h"
 
 #include "rtos_apps/shell/frer.h"
+#include "rtos_apps/shell/shell.h"
 #include "rtos_apps/shell/shell_storage_app.h"
 #include "rtos_apps/storage/storage.h"
 #include "rtos_apps/storage/storage_app.h"
@@ -232,7 +233,7 @@ int cmd_seqg_update(void *shell, int32_t argc, char **argv)
     int rc, opt;
 
     if (argc < 2)
-        goto err;
+        goto err_usage;
 
     h_strtoul(&tmp, argv[1], NULL, 0);
     index = tmp;
@@ -278,12 +279,12 @@ int cmd_seqg_update(void *shell, int32_t argc, char **argv)
         }
     }
 
-    return 0;
+    return SHELL_ERR_SUCCESS;
 
+err_usage:
+    return SHELL_ERR_HELP;
 err:
-    shell_printf(shell, CMD_SEQG_UPDATE_HELP);
-
-    return -1;
+    return SHELL_ERR_ERROR;
 }
 
 int cmd_seqg_delete(void *shell, int32_t argc, char **argv)
@@ -294,7 +295,7 @@ int cmd_seqg_delete(void *shell, int32_t argc, char **argv)
     int rc, opt;
 
     if (argc < 2)
-        goto err;
+        goto err_usage;
 
     h_strtoul(&tmp, argv[1], NULL, 0);
     index = tmp;
@@ -317,12 +318,10 @@ int cmd_seqg_delete(void *shell, int32_t argc, char **argv)
     if ((rc = genavb_sequence_generation_delete(index)) < 0)
         shell_printf(shell, "genavb_sequence_generation_delete(%u) failed %s\n", index, genavb_strerror(rc));
 
-    return 0;
+    return SHELL_ERR_SUCCESS;
 
-err:
-    shell_printf(shell, CMD_SEQG_DELETE_HELP);
-
-    return -1;
+err_usage:
+    return SHELL_ERR_HELP;
 }
 
 int cmd_seqg_read(void *shell, int32_t argc, char **argv)
@@ -368,13 +367,13 @@ int cmd_seqg_read(void *shell, int32_t argc, char **argv)
 
     seqg_print(shell, index, &entry);
 
-    return 0;
+    return SHELL_ERR_SUCCESS;
 
 err_usage:
-    shell_printf(shell, CMD_SEQG_READ_HELP);
+    return SHELL_ERR_HELP;
 
 err:
-    return -1;
+    return SHELL_ERR_ERROR;
 }
 
 static int seqr_update_permanent(uint32_t index, struct genavb_sequence_recovery *entry)
@@ -540,7 +539,7 @@ int cmd_seqr_update(void *shell, int32_t argc, char **argv)
     int rc, opt;
 
     if (argc < 2)
-        goto err;
+        goto err_usage;
 
     h_strtoul(&tmp, argv[1], NULL, 0);
     index = tmp;
@@ -601,12 +600,10 @@ int cmd_seqr_update(void *shell, int32_t argc, char **argv)
     if ((rc = genavb_sequence_recovery_update(index, &entry)) < 0)
         shell_printf(shell, "genavb_sequence_recovery_update(%u) failed %s\n", index, genavb_strerror(rc));
 
-    return 0;
+    return SHELL_ERR_SUCCESS;
 
-err:
-    shell_printf(shell, CMD_SEQR_UPDATE_HELP);
-
-    return -1;
+err_usage:
+    return SHELL_ERR_HELP;
 }
 
 int cmd_seqr_delete(void *shell, int32_t argc, char **argv)
@@ -617,7 +614,7 @@ int cmd_seqr_delete(void *shell, int32_t argc, char **argv)
     int rc, opt;
 
     if (argc < 2)
-        goto err;
+        goto err_usage;
 
     h_strtoul(&tmp, argv[1], NULL, 0);
     index = tmp;
@@ -640,12 +637,10 @@ int cmd_seqr_delete(void *shell, int32_t argc, char **argv)
     if ((rc = genavb_sequence_recovery_delete(index)) < 0)
         shell_printf(shell, "genavb_sequence_recovery_delete(%u) failed %s\n", index, genavb_strerror(rc));
 
-    return 0;
+    return SHELL_ERR_SUCCESS;
 
-err:
-    shell_printf(shell, CMD_SEQR_DELETE_HELP);
-
-    return -1;
+err_usage:
+    return SHELL_ERR_HELP;
 }
 
 int cmd_seqr_read(void *shell, int32_t argc, char **argv)
@@ -694,13 +689,13 @@ int cmd_seqr_read(void *shell, int32_t argc, char **argv)
 
     seqr_print(shell, index, &entry);
 
-    return 0;
+    return SHELL_ERR_SUCCESS;
 
 err_usage:
-    shell_printf(shell, CMD_SEQR_READ_HELP);
+    return SHELL_ERR_HELP;
 
 err:
-    return -1;
+    return SHELL_ERR_ERROR;
 }
 
 static int seqi_update_permanent(unsigned int port_id, struct genavb_sequence_identification *entry)
@@ -821,7 +816,7 @@ int cmd_seqi_update(void *shell, int32_t argc, char **argv)
     int rc, opt;
 
     if (argc < 2)
-        goto err;
+        goto err_usage;
 
     h_strtoul(&tmp, argv[1], NULL, 0);
     port_id = tmp;
@@ -867,12 +862,10 @@ int cmd_seqi_update(void *shell, int32_t argc, char **argv)
     if ((rc = genavb_sequence_identification_update(port_id, true, &entry)) < 0)
         shell_printf(shell, "genavb_sequence_identification_update(%u) failed: %s\n", port_id, genavb_strerror(rc));
 
-    return 0;
+    return SHELL_ERR_SUCCESS;
 
-err:
-    shell_printf(shell, CMD_SEQI_UPDATE_HELP);
-
-    return -1;
+err_usage:
+    return SHELL_ERR_HELP;
 }
 
 int cmd_seqi_delete(void *shell, int32_t argc, char **argv)
@@ -883,7 +876,7 @@ int cmd_seqi_delete(void *shell, int32_t argc, char **argv)
     int rc, opt;
 
     if (argc < 2)
-        goto err;
+        goto err_usage;
 
     h_strtoul(&tmp, argv[1], NULL, 0);
     port_id = tmp;
@@ -906,12 +899,10 @@ int cmd_seqi_delete(void *shell, int32_t argc, char **argv)
     if ((rc = genavb_sequence_identification_delete(port_id, true)) < 0)
         shell_printf(shell, "genavb_sequence_identification_delete(%u) failed: %s\n", port_id, genavb_strerror(rc));
 
-    return 0;
+    return SHELL_ERR_SUCCESS;
 
-err:
-    shell_printf(shell, CMD_SEQI_DELETE_HELP);
-
-    return -1;
+err_usage:
+    return SHELL_ERR_HELP;
 }
 
 int cmd_seqi_read(void *shell, int32_t argc, char **argv)
@@ -957,13 +948,13 @@ int cmd_seqi_read(void *shell, int32_t argc, char **argv)
 
     seqi_print(shell, port_id, &entry);
 
-    return 0;
+    return SHELL_ERR_SUCCESS;
 
 err_usage:
-    shell_printf(shell, CMD_SEQI_READ_HELP);
+    return SHELL_ERR_HELP;
 
 err:
-    return -1;
+    return SHELL_ERR_ERROR;
 }
 
 void cmd_frer_init(void *shell)

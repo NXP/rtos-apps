@@ -15,6 +15,7 @@
 
 #include "rtos_apps/shell/psfp.h"
 #include "rtos_apps/shell/shell_storage_app.h"
+#include "rtos_apps/shell/shell.h"
 #include "rtos_apps/storage/storage.h"
 #include "rtos_apps/storage/storage_app.h"
 #include "rtos_apps/types.h"
@@ -189,11 +190,6 @@ static void sf_apply_permanent(void *shell)
     }
 }
 
-static void print_sf_update_usage(void *shell)
-{
-    shell_printf(shell, "Usage: ");
-}
-
 int cmd_sf_update(void *shell, int32_t argc, char **argv)
 {
     struct genavb_stream_filter_instance instance = stream_filter_default;
@@ -267,18 +263,12 @@ int cmd_sf_update(void *shell, int32_t argc, char **argv)
         goto err;
     }
 
-    return 0;
+    return SHELL_ERR_SUCCESS;
 
 err_usage:
-    print_sf_update_usage(shell);
+    return SHELL_ERR_HELP;
 err:
-    return -1;
-}
-
-static void print_sf_delete_usage(void *shell)
-{
-    shell_printf(shell, "Usage: ");
-    shell_printf(shell, CMD_SF_DELETE_HELP);
+    return SHELL_ERR_ERROR;
 }
 
 int cmd_sf_delete(void *shell, int32_t argc, char **argv)
@@ -321,18 +311,12 @@ int cmd_sf_delete(void *shell, int32_t argc, char **argv)
         goto err;
     }
 
-    return 0;
+    return SHELL_ERR_SUCCESS;
 
 err_usage:
-    print_sf_delete_usage(shell);
+    return SHELL_ERR_HELP;
 err:
-    return -1;
-}
-
-static void print_sf_read_usage(void *shell)
-{
-    shell_printf(shell, "Usage: ");
-    shell_printf(shell, CMD_SF_READ_HELP);
+    return SHELL_ERR_ERROR;
 }
 
 int cmd_sf_read(void *shell, int32_t argc, char **argv)
@@ -386,12 +370,12 @@ int cmd_sf_read(void *shell, int32_t argc, char **argv)
     }
 
 no_entry:
-    return 0;
+    return SHELL_ERR_SUCCESS;
 
 err_usage:
-    print_sf_read_usage(shell);
+    return SHELL_ERR_HELP;
 err:
-    return -1;
+    return SHELL_ERR_ERROR;
 }
 
 static int sg_read_entry_from_storage(const char *filename, uint8_t *state, uint8_t *ipv, uint32_t *interval, uint32_t *octet_max)
@@ -631,12 +615,6 @@ static void sg_apply_permanent(void *shell)
     }
 }
 
-static void print_sg_update_usage(void *shell)
-{
-    shell_printf(shell, "Usage: ");
-    shell_printf(shell, CMD_SG_UPDATE_HELP);
-}
-
 int cmd_sg_update(void *shell, int32_t argc, char **argv)
 {
     struct genavb_stream_gate_instance instance;
@@ -766,19 +744,13 @@ int cmd_sg_update(void *shell, int32_t argc, char **argv)
         }
     }
 
-    return 0;
+    return SHELL_ERR_SUCCESS;
 
 err_usage:
-    print_sg_update_usage(shell);
+    return SHELL_ERR_HELP;
 
 err:
-    return -1;
-}
-
-static void print_sg_delete_usage(void *shell)
-{
-    shell_printf(shell, "Usage: ");
-    shell_printf(shell, CMD_SG_DELETE_HELP);
+    return SHELL_ERR_ERROR;
 }
 
 int cmd_sg_delete(void *shell, int32_t argc, char **argv)
@@ -822,19 +794,13 @@ int cmd_sg_delete(void *shell, int32_t argc, char **argv)
         goto err;
     }
 
-    return 0;
+    return SHELL_ERR_SUCCESS;
 
 err_usage:
-    print_sg_delete_usage(shell);
+    return SHELL_ERR_HELP;
 
 err:
-    return -1;
-}
-
-static void print_sg_read_usage(void *shell)
-{
-    shell_printf(shell, "Usage: ");
-    shell_printf(shell, CMD_SG_READ_HELP);
+    return SHELL_ERR_ERROR;
 }
 
 int cmd_sg_read(void *shell, int32_t argc, char **argv)
@@ -892,12 +858,11 @@ int cmd_sg_read(void *shell, int32_t argc, char **argv)
     sg_print_entry(shell, index, &instance);
 
 no_entry:
-    return 0;
+    return SHELL_ERR_SUCCESS;
 
 err_usage:
-    print_sg_read_usage(shell);
 
-    return -1;
+    return SHELL_ERR_HELP;
 }
 
 static void fm_print_entry(void *shell, uint32_t index, struct genavb_flow_meter_instance *instance)
@@ -1007,12 +972,6 @@ static void fm_apply_permanent(void *shell)
     }
 }
 
-static void print_fm_update_usage(void *shell)
-{
-    shell_printf(shell, "Usage: ");
-    shell_printf(shell, CMD_FM_UPDATE_HELP);
-}
-
 int cmd_fm_update(void *shell, int32_t argc, char **argv)
 {
     struct genavb_flow_meter_instance instance = flow_meter_default;
@@ -1107,19 +1066,13 @@ int cmd_fm_update(void *shell, int32_t argc, char **argv)
         }
     }
 
-    return 0;
+    return SHELL_ERR_SUCCESS;
 
 err_usage:
-    print_fm_update_usage(shell);
+    return SHELL_ERR_HELP;
 
 err:
-    return -1;
-}
-
-static void print_fm_delete_usage(void *shell)
-{
-    shell_printf(shell, "Usage: ");
-    shell_printf(shell, CMD_FM_DELETE_HELP);
+    return SHELL_ERR_ERROR;
 }
 
 int cmd_fm_delete(void *shell, int32_t argc, char **argv)
@@ -1163,19 +1116,13 @@ int cmd_fm_delete(void *shell, int32_t argc, char **argv)
         goto err;
     }
 
-    return 0;
+    return SHELL_ERR_SUCCESS;
 
 err_usage:
-    print_fm_delete_usage(shell);
+    return SHELL_ERR_HELP;
 
 err:
-    return -1;
-}
-
-static void print_fm_read_usage(void *shell)
-{
-    shell_printf(shell, "Usage: ");
-    shell_printf(shell, CMD_FM_READ_HELP);
+    return SHELL_ERR_ERROR;
 }
 
 int cmd_fm_read(void *shell, int32_t argc, char **argv)
@@ -1223,13 +1170,13 @@ int cmd_fm_read(void *shell, int32_t argc, char **argv)
     fm_print_entry(shell, index, &instance);
 
 no_entry:
-    return 0;
+    return SHELL_ERR_SUCCESS;
 
 err_usage:
-    print_fm_read_usage(shell);
+    return SHELL_ERR_HELP;
 
 err:
-    return -1;
+    return SHELL_ERR_ERROR;
 }
 
 void cmd_psfp_init(void *shell)

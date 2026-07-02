@@ -15,6 +15,7 @@
 
 #include "shell_config.h"
 #include "rtos_apps/shell/port_stats.h"
+#include "rtos_apps/shell/shell.h"
 
 static int __port_stats(void *shell, unsigned int port_id, int n)
 {
@@ -60,5 +61,5 @@ int cmd_port_stats(void *shell, int32_t argc, char **argv)
     __port_stats(shell, port_id, n);
 
 exit:
-    return 0;
+    return SHELL_ERR_SUCCESS;
 }

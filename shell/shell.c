@@ -102,10 +102,8 @@ int cmd_shell_log(void *shell, int32_t argc, char **argv)
             goto usage;
     }
 
-    return 0;
+    return SHELL_ERR_SUCCESS;
 
 usage:
-    shell_printf(shell, CMD_SHELL_LOG_HELP);
-
-    return -1;
+    return SHELL_ERR_HELP;
 }

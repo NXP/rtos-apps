@@ -15,6 +15,7 @@
 
 #include "rtos_apps/shell/common.h"
 #include "rtos_apps/shell/stream_identification.h"
+#include "rtos_apps/shell/shell.h"
 #include "rtos_apps/shell/shell_storage_app.h"
 #include "rtos_apps/storage/storage.h"
 #include "rtos_apps/storage/storage_app.h"
@@ -352,12 +353,6 @@ static int si_update_parse_optional_arguments(void *shell, int32_t argc, char **
     return 0;
 }
 
-static void si_update_print_usage(void *shell)
-{
-    shell_printf(shell, "Usage:");
-    shell_printf(shell, CMD_SI_UPDATE_HELP);
-}
-
 int cmd_si_update(void *shell, int32_t argc, char **argv)
 {
     struct genavb_si_port ports[SI_DEFAULT_PORT_SIZE] = SI_DEFAULT_PORT;
@@ -393,19 +388,13 @@ int cmd_si_update(void *shell, int32_t argc, char **argv)
         goto err;
     }
 
-    return 0;
+    return SHELL_ERR_SUCCESS;
 
 err_usage:
-    si_update_print_usage(shell);
+    return SHELL_ERR_HELP;
 
 err:
-    return -1;
-}
-
-static void si_delete_print_usage(void *shell)
-{
-    shell_printf(shell, "Usage:");
-    shell_printf(shell, CMD_SI_DELETE_HELP);
+    return SHELL_ERR_ERROR;
 }
 
 int cmd_si_delete(void *shell, int32_t argc, char **argv)
@@ -445,18 +434,12 @@ int cmd_si_delete(void *shell, int32_t argc, char **argv)
         goto err;
     }
 
-    return 0;
+    return SHELL_ERR_SUCCESS;
 
 err_usage:
-    si_delete_print_usage(shell);
+    return SHELL_ERR_HELP;
 err:
-    return -1;
-}
-
-static void si_read_print_usage(void *shell)
-{
-    shell_printf(shell, "Usage:");
-    shell_printf(shell, CMD_SI_READ_HELP);
+    return SHELL_ERR_ERROR;
 }
 
 int cmd_si_read(void *shell, int32_t argc, char **argv)
@@ -502,12 +485,12 @@ int cmd_si_read(void *shell, int32_t argc, char **argv)
 
     si_print_entry(shell, index, &entry);
 
-    return 0;
+    return SHELL_ERR_SUCCESS;
 
 err_usage:
-    si_read_print_usage(shell);
+    return SHELL_ERR_HELP;
 err:
-    return -1;
+    return SHELL_ERR_ERROR;
 }
 
 static void si_apply_permanent(void *shell)

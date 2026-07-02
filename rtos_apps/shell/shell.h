@@ -14,6 +14,12 @@
 	"    <level>\n" \
 	"        crit, err, init, info or dbg"
 
+typedef enum {
+    SHELL_ERR_HELP    = -2,
+    SHELL_ERR_ERROR   = -1,
+    SHELL_ERR_SUCCESS = 0,
+} shell_err_t;
+
 int cmd_shell_log(void *shell, int32_t argc, char **argv);
 
 #endif /* __RTOS_APPS_SHELL_SHELL_H__ */

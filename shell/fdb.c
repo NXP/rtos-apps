@@ -13,6 +13,7 @@
 #include "rtos_abstraction_layer.h"
 #include "rtos_apps/shell/common.h"
 #include "rtos_apps/shell/fdb.h"
+#include "rtos_apps/shell/shell.h"
 #include "rtos_apps/shell/shell_storage_app.h"
 #include "rtos_apps/storage/storage.h"
 
@@ -66,12 +67,6 @@ static void fdb_print_entry(void *shell, uint8_t *address, uint16_t vid, bool dy
     }
 
     shell_printf(shell, " %14s |\n", buf);
-}
-
-static void print_fdb_update_usage(void *shell)
-{
-    shell_printf(shell, "Usage: ");
-    shell_printf(shell, CMD_FDB_UPDATE_HELP);
 }
 
 static int fdb_port_mask_2_port_map(uint32_t port_mask, struct genavb_fdb_port_map *map)
@@ -299,18 +294,12 @@ int cmd_fdb_update(void *shell, int32_t argc, char **argv)
         RTOS_APPS_MAC_STR(address),
         vid, port_map.control, permanent);
 
-    return 0;
+    return SHELL_ERR_SUCCESS;
 
 err_usage:
-        print_fdb_update_usage(shell);
+    return SHELL_ERR_HELP;
 err:
-    return -1;
-}
-
-static void print_fdb_read_usage(void *shell)
-{
-    shell_printf(shell, "Usage: ");
-    shell_printf(shell, CMD_FDB_READ_HELP);
+    return SHELL_ERR_ERROR;
 }
 
 int cmd_fdb_read(void *shell, int32_t argc, char **argv)
@@ -368,18 +357,12 @@ int cmd_fdb_read(void *shell, int32_t argc, char **argv)
     fdb_print_description(shell);
     fdb_print_entry(shell, address, vid, dynamic, port_map, status);
 
-    return 0;
+    return SHELL_ERR_SUCCESS;
 
 err_usage:
-    print_fdb_read_usage(shell);
+    return SHELL_ERR_HELP;
 err:
-    return -1;
-}
-
-static void print_fdb_delete_usage(void *shell)
-{
-    shell_printf(shell, "Usage: ");
-    shell_printf(shell, CMD_FDB_DELETE_HELP);
+    return SHELL_ERR_ERROR;
 }
 
 int cmd_fdb_delete(void *shell, int32_t argc, char **argv)
@@ -431,18 +414,12 @@ int cmd_fdb_delete(void *shell, int32_t argc, char **argv)
         goto err;
     }
 
-    return 0;
+    return SHELL_ERR_SUCCESS;
 
 err_usage:
-    print_fdb_delete_usage(shell);
+    return SHELL_ERR_HELP;
 err:
-    return -1;
-}
-
-static void print_fdb_dump_usage(void *shell)
-{
-    shell_printf(shell, "Usage: ");
-    shell_printf(shell, CMD_FDB_DUMP_HELP);
+    return SHELL_ERR_ERROR;
 }
 
 int cmd_fdb_dump(void *shell, int32_t argc, char **argv)
@@ -480,11 +457,10 @@ int cmd_fdb_dump(void *shell, int32_t argc, char **argv)
             fdb_print_entry(shell, address, vid, dynamic, port_map, status);
     }
 
-    return 0;
+    return SHELL_ERR_SUCCESS;
 
 err_usage:
-    print_fdb_dump_usage(shell);
-    return -1;
+    return SHELL_ERR_HELP;
 }
 
 static int fdb_apply_permanent(void *shell)
