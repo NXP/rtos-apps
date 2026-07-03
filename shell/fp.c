@@ -27,9 +27,9 @@
 void cmd_fp_storage_help(void *shell)
 {
     shell_printf(shell, "fp config\n\n");
-    shell_printf(shell, "path: /fp\n");
+    shell_printf(shell, "path: " CONFIG_STORAGE_ROOT "/fp\n");
     shell_printf(shell, "   description: directory used by fp_set/fp_get commands\n");
-    shell_printf(shell, "path: /fp/portN (N: logical port index, 0 to %u)\n", CONFIG_APP_LOGICAL_PORTS - 1);
+    shell_printf(shell, "path: " CONFIG_STORAGE_ROOT "/fp/portN (N: logical port index, 0 to %u)\n", CONFIG_APP_LOGICAL_PORTS - 1);
     shell_printf(shell, "   commands (logical port N):\n");
 }
 

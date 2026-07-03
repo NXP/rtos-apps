@@ -109,9 +109,9 @@ static const struct genavb_st_gate_control_entry st_list_default = {
 void cmd_qbv_storage_help(void *shell)
 {
     shell_printf(shell, "qbv config\n\n");
-    shell_printf(shell, "path: /qbv\n");
+    shell_printf(shell, "path: " CONFIG_STORAGE_ROOT "/qbv\n");
     shell_printf(shell, "    description: directory used by qbv_set/qbv_get commands\n");
-    shell_printf(shell, "path: /qbv/portN (N: logical port index, 0 to %u)\n", CONFIG_APP_LOGICAL_PORTS - 1);
+    shell_printf(shell, "path: " CONFIG_STORAGE_ROOT "/qbv/portN (N: logical port index, 0 to %u)\n", CONFIG_APP_LOGICAL_PORTS - 1);
     shell_printf(shell, "parameters (logical port N):\n");
     shell_printf(shell, "    base_time:\n");
     shell_printf(shell, "        value: 0 to (2^64 - 1)\n");
@@ -130,7 +130,7 @@ void cmd_qbv_storage_help(void *shell)
     shell_printf(shell, "            interval: 32bit gate interval in nanoseconds\n");
     shell_printf(shell, "            <operation>: gate operation, 0: SetGateStates, 1: Set-And-Hold-MAC, 2: Set-And-Release-MAC, default: 0\n");
     shell_printf(shell, "\n");
-    shell_printf(shell, "path: /qbv/portN/max_sdu\n");
+    shell_printf(shell, "path: " CONFIG_STORAGE_ROOT "/qbv/portN/max_sdu\n");
     shell_printf(shell, "    description: directory used by qbv_set_max_sdu/qbv_get_max_sdu commands\n");
     shell_printf(shell, "parameters (logical port N):\n");
     shell_printf(shell, "    qM (M: traffic class number, 0 to %u):\n", QOS_TRAFFIC_CLASS_MAX - 1);

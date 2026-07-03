@@ -73,9 +73,9 @@ static const struct genavb_flow_meter_instance flow_meter_default = {
 void cmd_psfp_sg_storage_help(void *shell)
 {
     shell_printf(shell, "\nstream gate storage configuration\n\n");
-    shell_printf(shell, "path: /sg\n");
+    shell_printf(shell, "path: " CONFIG_STORAGE_ROOT "/sg\n");
     shell_printf(shell, "    description: directory used by sg_update/sg_read commands\n");
-    shell_printf(shell, "path: /sg/N (N: stream gate instance index, 0 to %u)\n", genavb_stream_gate_get_max_entries() - 1 );
+    shell_printf(shell, "path: " CONFIG_STORAGE_ROOT "/sg/N (N: stream gate instance index, 0 to %u)\n", genavb_stream_gate_get_max_entries() - 1 );
     shell_printf(shell, "parameters (instance index N):\n");
     shell_printf(shell, "    base_time:\n");
     shell_printf(shell, "        value: 0 to (2^64 - 1)\n");
@@ -114,7 +114,7 @@ void cmd_psfp_sg_storage_help(void *shell)
 void cmd_psfp_fm_storage_help(void *shell)
 {
     shell_printf(shell, "\nflow meter storage configuration\n\n");
-    shell_printf(shell, "path: /fm\n");
+    shell_printf(shell, "path: " CONFIG_STORAGE_ROOT "/fm\n");
     shell_printf(shell, "    description: directory used by fm_update/fm_read commands\n");
     shell_printf(shell, "path: /fm/N (N: flow meter instance index, 0 to %u)\n", genavb_flow_meter_get_max_entries() - 1 );
     shell_printf(shell, "parameters (instance index N):\n");
