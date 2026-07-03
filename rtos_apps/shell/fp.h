@@ -32,6 +32,7 @@
     "       -p: read configuration from permanent database"
 
 void cmd_fp_init(void *shell);
+void cmd_fp_storage_help(void *shell);
 
 int cmd_fp_set(void *shell, int32_t argc, char **argv);
 int cmd_fp_get(void *shell, int32_t argc, char **argv);

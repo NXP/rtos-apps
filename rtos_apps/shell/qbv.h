@@ -51,6 +51,7 @@
     "        -p: read from permanent database"
 
 void cmd_qbv_init(void *shell);
+void cmd_qbv_storage_help(void *shell);
 
 int cmd_qbv_set(void *shell, int32_t argc, char **argv);
 int cmd_qbv_get(void *shell, int32_t argc, char **argv);
