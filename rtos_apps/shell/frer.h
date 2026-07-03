@@ -88,6 +88,9 @@
     "        -p: read entry from permanent database"
 
 void cmd_frer_init(void *shell);
+void cmd_seqg_storage_help(void *shell);
+void cmd_seqi_storage_help(void *shell);
+void cmd_seqr_storage_help(void *shell);
 
 /* Sequence generation */
 int cmd_seqg_update(void *shell, int32_t argc, char **argv);

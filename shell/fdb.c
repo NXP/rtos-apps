@@ -22,6 +22,18 @@
 
 #include "shell_config.h"
 
+void cmd_fdb_storage_help(void *shell)
+{
+    shell_printf(shell, "fdb config\n\n");
+    shell_printf(shell, "path: " CONFIG_STORAGE_ROOT "/fdb\n");
+    shell_printf(shell, "   description: directory used by fdb_update/fdb_read/fdb_delete commands\n");
+    shell_printf(shell, "path: " CONFIG_STORAGE_ROOT "/fdb/xx:xx:xx:xx:xx:xx,vid\n");
+    shell_printf(shell, "   description: file named by MAC address and VLAN ID, containing port forwarding bitmask\n");
+    shell_printf(shell, "   commands (MAC address and VID):\n");
+    shell_printf(shell, "      port bitmask: hex value where bit N set means port N is in FORWARDING state\n");
+    shell_printf(shell, "      port range: 0 to %u\n", CONFIG_APP_BR_NUM_PORTS - 1);
+}
+
 static void fdb_print_description(void *shell)
 {
     shell_printf(shell, "\n");

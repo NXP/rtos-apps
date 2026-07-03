@@ -106,6 +106,7 @@
     "                -p: read entry from permanent database"
 
 void cmd_psfp_init(void *shell);
+void cmd_psfp_sf_storage_help(void *shell);
 void cmd_psfp_fm_storage_help(void* shell);
 void cmd_psfp_sg_storage_help(void *shell);
 

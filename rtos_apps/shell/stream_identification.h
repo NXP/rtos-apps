@@ -42,6 +42,7 @@
     "        -p: delete entry from permanent database"
 
 void cmd_stream_identification_init(void *shell);
+void cmd_si_storage_help(void *shell);
 
 int cmd_si_update(void *shell, int32_t argc, char **argv);
 int cmd_si_read(void *shell, int32_t argc, char **argv);

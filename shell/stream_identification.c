@@ -44,6 +44,26 @@ static const struct genavb_stream_identity si_default_entry = {
     .parameters.null.vlan = 0,
 };
 
+void cmd_si_storage_help(void *shell)
+{
+    shell_printf(shell, "si config\n\n");
+    shell_printf(shell, "path: " CONFIG_STORAGE_ROOT "/si\n");
+    shell_printf(shell, "   description: directory used by si_update/si_read/si_delete commands\n");
+    shell_printf(shell, "path: " CONFIG_STORAGE_ROOT "/si/N (N: stream identification entry index, 0 to 383)\n");
+    shell_printf(shell, "   commands (stream identification entry N):\n");
+    shell_printf(shell, "      handle   : stream handle identifier\n");
+    shell_printf(shell, "      port_list: list of logical ports (comma separated)\n");
+    shell_printf(shell, "      type     : identification type\n");
+    shell_printf(shell, "         0 = null stream identification\n");
+    shell_printf(shell, "         1 = source MAC and VLAN stream identification\n");
+    shell_printf(shell, "      mac      : MAC address (destination for null type, source for src MAC VLAN type)\n");
+    shell_printf(shell, "      tagged   : tag type used by the identification\n");
+    shell_printf(shell, "         0 = tagged\n");
+    shell_printf(shell, "         1 = priority\n");
+    shell_printf(shell, "         2 = all\n");
+    shell_printf(shell, "      vlan     : VID value (0 to 4095)\n");
+}
+
 /* converts "1,2,3" type string into entry->port array */
 static void si_parse_port_list(char *str, struct genavb_stream_identity *entry, unsigned int *n, unsigned int max)
 {

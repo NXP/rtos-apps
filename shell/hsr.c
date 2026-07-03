@@ -24,6 +24,14 @@
 
 #define BUF_MAX_SIZE 5
 
+void cmd_hsr_storage_help(void *shell)
+{
+    shell_printf(shell, "hsr config\n\n");
+    shell_printf(shell, "path: " CONFIG_STORAGE_ROOT "/hsr\n");
+    shell_printf(shell, "   description: directory used by hsr commands\n");
+    shell_printf(shell, "      mode: HSR operation mode, 0 to 3\n");
+}
+
 static int hsr_mode_update_permanent(unsigned long mode)
 {
     char buf[BUF_MAX_SIZE];

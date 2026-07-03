@@ -52,6 +52,7 @@
 	"        -p: read entry from permanent database"
 
 void cmd_vlan_init(void *shell);
+void cmd_vlan_storage_help(void *shell);
 
 int cmd_vlan_update(void *shell, int32_t argc, char **argv);
 int cmd_vlan_delete(void *shell, int32_t argc, char **argv);

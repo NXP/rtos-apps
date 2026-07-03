@@ -70,6 +70,33 @@ static const struct genavb_flow_meter_instance flow_meter_default = {
     .mark_all_frames_red_enable = FLOW_METER_DEFAULT_MREN,
 };
 
+void cmd_psfp_sf_storage_help(void *shell)
+{
+    shell_printf(shell, "\nstream filter storage configuration\n\n");
+    shell_printf(shell, "path: " CONFIG_STORAGE_ROOT "/sf\n");
+    shell_printf(shell, "    description: directory used by sf_update/sf_read commands\n");
+    shell_printf(shell, "path: " CONFIG_STORAGE_ROOT "/sf/N (N: stream filter instance index, 0 to %u)\n", genavb_stream_filter_get_max_entries() - 1);
+    shell_printf(shell, "parameters (instance index N):\n");
+    shell_printf(shell, "    stream_handle:\n");
+    shell_printf(shell, "        value: 0 to 4294967295\n");
+    shell_printf(shell, "        description: stream handle used to identify the stream\n");
+    shell_printf(shell, "    priority_spec:\n");
+    shell_printf(shell, "        value: 0 to 7 or 0xff\n");
+    shell_printf(shell, "        description: priority specification, 0xff: wildcard\n");
+    shell_printf(shell, "    flow_meter_ref:\n");
+    shell_printf(shell, "        value: 0 to %u or 0xffffffff\n", genavb_flow_meter_get_max_entries() - 1);
+    shell_printf(shell, "        description: flow meter instance identifier, 0xffffffff: no flow meter\n");
+    shell_printf(shell, "    flow_meter_enable:\n");
+    shell_printf(shell, "        value: 0 or 1\n");
+    shell_printf(shell, "        description: flow meter enable, 0: disabled, 1: enabled\n");
+    shell_printf(shell, "    stream_gate_ref:\n");
+    shell_printf(shell, "        value: 0 to %u or 0xffffffff\n", genavb_stream_gate_get_max_entries() - 1);
+    shell_printf(shell, "        description: stream gate instance identifier, 0xffffffff: no stream gate\n");
+    shell_printf(shell, "    max_sdu_size:\n");
+    shell_printf(shell, "        value: 0 to 4294967295\n");
+    shell_printf(shell, "        description: maximum service data unit size in bytes, 0: disabled\n");
+}
+
 void cmd_psfp_sg_storage_help(void *shell)
 {
     shell_printf(shell, "\nstream gate storage configuration\n\n");

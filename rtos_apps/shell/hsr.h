@@ -19,6 +19,7 @@
     "        -p: update mode in permanent database"
 
 void cmd_hsr_init(void *shell);
+void cmd_hsr_storage_help(void *shell);
 
 int cmd_hsr_mode_set(void *shell, int32_t argc, char **argv);
 

@@ -70,6 +70,45 @@ static const struct genavb_sequence_identification seqi_default = {
     .path_id_lan_id = 0,
 };
 
+void cmd_seqg_storage_help(void *shell)
+{
+    shell_printf(shell, "seqg config\n\n");
+    shell_printf(shell, "path: " CONFIG_STORAGE_ROOT "/seqg\n");
+    shell_printf(shell, "   description: directory used by seqg_update/seqg_read/seqg_delete commands\n");
+    shell_printf(shell, "path: " CONFIG_STORAGE_ROOT "/seqg/N (N: sequence generation entry index, 0 to 383)\n");
+    shell_printf(shell, "   commands (sequence generation entry N):\n");
+    shell_printf(shell, "      handle: list of stream handle identifiers (comma separated)\n");
+}
+
+void cmd_seqi_storage_help(void *shell)
+{
+    shell_printf(shell, "seqi config\n\n");
+    shell_printf(shell, "path: " CONFIG_STORAGE_ROOT "/seqi\n");
+    shell_printf(shell, "   description: directory used by seqi_update/seqi_read/seqi_delete commands\n");
+    shell_printf(shell, "path: " CONFIG_STORAGE_ROOT "/seqi/N (N: logical port index, 0 to 6)\n");
+    shell_printf(shell, "   commands (sequence identification entry for port N):\n");
+    shell_printf(shell, "      handle         : list of stream handle identifiers (comma separated)\n");
+    shell_printf(shell, "      active         : redundancy TAG control, 0 or 1\n");
+    shell_printf(shell, "      encapsulation  : redundancy encapsulation tag type, 1: R-TAG (default), 2: HSR\n");
+    shell_printf(shell, "      path_id_lan_id : path or LAN id selector, 0 or 1\n");
+}
+
+void cmd_seqr_storage_help(void *shell)
+{
+    shell_printf(shell, "seqr config\n\n");
+    shell_printf(shell, "path: " CONFIG_STORAGE_ROOT "/seqr\n");
+    shell_printf(shell, "   description: directory used by seqr_update/seqr_read/seqr_delete commands\n");
+    shell_printf(shell, "path: " CONFIG_STORAGE_ROOT "/seqr/N (N: sequence recovery entry index, 0 to 383)\n");
+    shell_printf(shell, "   commands (sequence recovery entry N):\n");
+    shell_printf(shell, "      handle             : list of stream handle identifiers (comma separated)\n");
+    shell_printf(shell, "      port               : list of logical ports (comma separated)\n");
+    shell_printf(shell, "      algorithm          : recovery algorithm, 0: Vector (default), 1: Match\n");
+    shell_printf(shell, "      history_length     : recovery vector algorithm length (0 < length < 128)\n");
+    shell_printf(shell, "      take_no_sequence   : untagged frame acceptance, 0: disable (default), 1: enable\n");
+    shell_printf(shell, "      individual_recovery: individual recovery mode, 0: disable (default), 1: enable\n");
+    shell_printf(shell, "      latent_error_detection: latent error detection, 0: disable (default), 1: enable\n");
+}
+
 static void list_u32_to_buf(uint32_t *array, unsigned int n, char *buf, unsigned int len)
 {
     unsigned int off = 0;

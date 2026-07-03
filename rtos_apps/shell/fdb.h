@@ -39,6 +39,7 @@
     "        -p: print permanent entries"
 
 void cmd_fdb_init(void *shell);
+void cmd_fdb_storage_help(void *shell);
 
 int cmd_fdb_update(void *shell, int32_t argc, char **argv);
 int cmd_fdb_delete(void *shell, int32_t argc, char **argv);

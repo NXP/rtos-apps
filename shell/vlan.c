@@ -33,6 +33,24 @@ enum {
     COLUMN_MAX,
 };
 
+void cmd_vlan_storage_help(void *shell)
+{
+    shell_printf(shell, "vlan config\n\n");
+    shell_printf(shell, "path: " CONFIG_STORAGE_ROOT "/vlan\n");
+    shell_printf(shell, "   description: directory used by vlan_update/vlan_read/vlan_delete commands\n");
+    shell_printf(shell, "path: " CONFIG_STORAGE_ROOT "/vlan/vid (vid: VLAN ID, 0 to %u)\n", VLAN_VID_MAX);
+    shell_printf(shell, "   description: file containing port forwarding and untagged bitmasks\n");
+    shell_printf(shell, "   commands (VLAN ID vid):\n");
+    shell_printf(shell, "      port bitmask        : hex value where bit N set means port N is in FIXED (forwarding) state\n");
+    shell_printf(shell, "      untagged port bitmask: hex value where bit N set means port N transmits untagged frames\n");
+    shell_printf(shell, "      format              : 0x########,0x########\n");
+    shell_printf(shell, "\n");
+    shell_printf(shell, "path: " CONFIG_STORAGE_ROOT "/portN/pvid (N: logical port index, 0 to %u)\n", CONFIG_APP_LOGICAL_PORTS - 1);
+    shell_printf(shell, "   description: file containing the port default VLAN ID (PVID)\n");
+    shell_printf(shell, "   commands (logical port N):\n");
+    shell_printf(shell, "      pvid: default VLAN ID for untagged frames (0 to %u)\n", VLAN_VID_MAX);
+}
+
 static void vlan_print_description(void *shell)
 {
     shell_printf(shell, "\n");
