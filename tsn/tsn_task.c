@@ -38,6 +38,23 @@ static inline void tsn_tx_time_stats_end(struct net_socket *sock,
     rtos_apps_stats_update(&task->stats.tx_time, latency_ns);
     rtos_apps_hist_update(&task->stats.tx_time_hist, latency_ns);
 }
+
+static inline void tsn_rx_time_stats_start(rtos_cycles_t *start)
+{
+    *start = rtos_cycles_get();
+}
+
+static inline void tsn_rx_time_stats_end(struct net_socket *sock,
+                                         rtos_cycles_t start)
+{
+    struct tsn_task *task = container_of(sock, struct tsn_task, sock_rx[sock->id]);
+    rtos_cycles_t end = rtos_cycles_get();
+    rtos_cycles_t delta_cycles = rtos_cycles_delta(start, end);
+    int32_t latency_ns = (int32_t)rtos_cycles_to_ns(delta_cycles);
+
+    rtos_apps_stats_update(&task->stats.rx_time, latency_ns);
+    rtos_apps_hist_update(&task->stats.rx_time_hist, latency_ns);
+}
 #else
 static inline void tsn_tx_time_stats_start(rtos_cycles_t *start)
 {
@@ -45,6 +62,18 @@ static inline void tsn_tx_time_stats_start(rtos_cycles_t *start)
 }
 
 static inline void tsn_tx_time_stats_end(struct net_socket *sock,
+                                         rtos_cycles_t start)
+{
+    (void)sock;
+    (void)start;
+}
+
+static inline void tsn_rx_time_stats_start(rtos_cycles_t *start)
+{
+    (void)start;
+}
+
+static inline void tsn_rx_time_stats_end(struct net_socket *sock,
                                          rtos_cycles_t start)
 {
     (void)sock;
@@ -66,6 +95,8 @@ void tsn_task_stats_init(struct tsn_task *task)
 #ifdef CONFIG_RTOS_APPS_TSN_API_TIMING_ENABLED
     rtos_apps_stats_init(&task->stats.tx_time, 31, "tx time", NULL);
     rtos_apps_hist_init(&task->stats.tx_time_hist, 100, 100);
+    rtos_apps_stats_init(&task->stats.rx_time, 31, "rx time", NULL);
+    rtos_apps_hist_init(&task->stats.rx_time_hist, 100, 100);
 #endif
 
     task->stats.sched_err_max = 0;
@@ -154,6 +185,10 @@ static void tsn_task_stats_print(void *data)
 
     rtos_apps_stats_print(&task->stats_snap.tx_time);
     rtos_apps_hist_print(&task->stats_snap.tx_time_hist);
+
+    rtos_apps_stats_compute(&task->stats_snap.rx_time);
+    rtos_apps_stats_print(&task->stats_snap.rx_time);
+    rtos_apps_hist_print(&task->stats_snap.rx_time_hist);
 #endif
 
     task->stats_snap.pending = false;
@@ -170,6 +205,7 @@ static void tsn_task_stats_dump(struct tsn_task *task)
     rtos_apps_stats_reset(&task->stats.total_time);
 #ifdef CONFIG_RTOS_APPS_TSN_API_TIMING_ENABLED
     rtos_apps_stats_reset(&task->stats.tx_time);
+    rtos_apps_stats_reset(&task->stats.rx_time);
 #endif
     task->stats_snap.pending = true;
 
@@ -246,6 +282,7 @@ int tsn_net_receive_sock(struct net_socket *sock)
 {
     struct tsn_task *task = container_of(sock, struct tsn_task, sock_rx[sock->id]);
     struct genavb_socket_rx_receive_params params[NET_RX_BATCH] = {[0 ... NET_RX_BATCH - 1] = { .flags = (genavb_socket_rx_receive_flags_t)0 }};
+    rtos_cycles_t start;
     int pkts;
     int status, i, n;
 
@@ -259,7 +296,12 @@ int tsn_net_receive_sock(struct net_socket *sock)
         }
     }
 
+    tsn_rx_time_stats_start(&start);
+
     pkts = genavb_socket_rx_receive_iov(sock->genavb_rx, sock->iovec, params, n);
+
+    tsn_rx_time_stats_end(sock, start);
+
     if (pkts == n) {
         status = NET_OK;
         sock->stats.frames += pkts;

@@ -38,6 +38,8 @@ struct tsn_task_stats {
 #ifdef CONFIG_RTOS_APPS_TSN_API_TIMING_ENABLED
     struct rtos_apps_stats tx_time;
     struct rtos_apps_hist tx_time_hist;
+    struct rtos_apps_stats rx_time;
+    struct rtos_apps_hist rx_time_hist;
 #endif
     unsigned int sched;
     unsigned int sched_early;
