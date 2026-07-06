@@ -8,11 +8,11 @@
 #define __RTOS_APPS_SHELL_SHELL_H__
 
 #define CMD_SHELL_LOG_HELP \
-	"\n<component_id> <level>\n" \
-	"    <component_id>\n" \
-	"        all, app, avtp, avdecc, srp, maap, common, os, fgptp, api or mgmt\n" \
-	"    <level>\n" \
-	"        crit, err, init, info or dbg"
+    "\n<component_id> <level>\n" \
+    "    <component_id>\n" \
+    "        all, app, avtp, avdecc, srp, maap, common, os, fgptp, api or mgmt\n" \
+    "    <level>\n" \
+    "        crit, err, init, info or dbg"
 
 typedef enum {
     SHELL_ERR_HELP    = -2,
