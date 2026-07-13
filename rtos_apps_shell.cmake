@@ -15,19 +15,7 @@ target_sources(${RTOS_APPS_TARGET} PRIVATE
     ${CMAKE_CURRENT_LIST_DIR}/shell/shell.c
 )
 
-if(CONFIG_APP_FP)
-    target_compile_definitions(${RTOS_APPS_TARGET} PRIVATE
-        CONFIG_RTOS_APPS_FP=1
-    )
-endif()
-
-if(CONFIG_APP_QBV)
-    target_compile_definitions(${RTOS_APPS_TARGET} PRIVATE
-        CONFIG_RTOS_APPS_QBV=1
-    )
-endif()
-
-if(CONFIG_APP_TSN_BRIDGE)
+if(CONFIG_RTOS_APPS_TSN_BRIDGE)
     target_sources(${RTOS_APPS_TARGET} PRIVATE
         ${CMAKE_CURRENT_LIST_DIR}/shell/fdb.c
         ${CMAKE_CURRENT_LIST_DIR}/shell/frer.c
