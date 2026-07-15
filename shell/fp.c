@@ -463,4 +463,5 @@ int cmd_fp_get(void *shell, int32_t argc, char **argv) {return -1;}
 int fp_write_802_1q_permanent(void *shell, unsigned int port_id, struct genavb_fp_config *config) {return -1;}
 int fp_write_802_3_permanent(void *shell, unsigned int port_id, struct genavb_fp_config *config) {return -1;}
 int fp_apply_permanent(void *shell, unsigned int port_id) {return -1;}
+int fp_apply(void *shell, unsigned int port_id, struct genavb_fp_config *config_fp_8021q, struct genavb_fp_config *config_fp_8023) {return -1;}
 #endif /* CONFIG_RTOS_APPS_FP */
