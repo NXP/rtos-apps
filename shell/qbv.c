@@ -108,6 +108,15 @@ static const struct genavb_st_gate_control_entry st_list_default = {
 
 void cmd_qbv_storage_help(void *shell)
 {
+    unsigned int max_entries = 0;
+    unsigned int port_id, tmp;
+
+    for (port_id = 0; port_id < CONFIG_APP_LOGICAL_PORTS; port_id++) {
+        tmp = genavb_st_get_max_entries(port_id);
+        if (tmp > max_entries)
+            max_entries = tmp;
+    }
+
     shell_printf(shell, "qbv config\n\n");
     shell_printf(shell, "path: " CONFIG_STORAGE_ROOT "/qbv\n");
     shell_printf(shell, "    description: directory used by qbv_set/qbv_get commands\n");
@@ -122,7 +131,7 @@ void cmd_qbv_storage_help(void *shell)
     shell_printf(shell, "    cycle_time_ext:\n");
     shell_printf(shell, "        value: 0 to 4294967295\n");
     shell_printf(shell, "        description: 32bit cycle time extension in nanoseconds\n");
-    shell_printf(shell, "    entryM: (M: entry id, 0 to %u)\n", QBV_LIST_MAX_ENTRIES - 1);
+    shell_printf(shell, "    entryM: (M: entry id, 0 to %u)\n", max_entries - 1);
     shell_printf(shell, "        format: mask,interval<,operation> (e.g f4,20000<,0>)\n");
     shell_printf(shell, "        value: 00 to ff, 0 to 4294967295<, 0 to 2>\n");
     shell_printf(shell, "        description: gate list entry\n");
