@@ -9,7 +9,6 @@
 
 #include "genavb/log.h"
 
-#include "rtos_apps/log.h"
 #include "rtos_apps/shell/shell.h"
 
 #include "shell_config.h"

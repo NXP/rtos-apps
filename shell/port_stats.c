@@ -11,7 +11,6 @@
 #include "genavb/stats.h"
 
 #include "rtos_apps/types.h"
-#include "rtos_apps/log.h"
 
 #include "shell_config.h"
 #include "rtos_apps/shell/port_stats.h"
@@ -24,12 +23,12 @@ static int __port_stats(void *shell, unsigned int port_id, int n)
     int i;
 
     if (genavb_port_stats_get_strings(port_id, names, n * sizeof(char *)) < 0) {
-        log_err("genavb_port_stats_get_strings() failed\n");
+        shell_printf(shell, "genavb_port_stats_get_strings() failed\n");
         goto err;
     }
 
     if (genavb_port_stats_get(port_id, values, n * sizeof(uint64_t)) < 0) {
-        log_err("genavb_port_stats_get() failed\n");
+        shell_printf(shell, "genavb_port_stats_get() failed\n");
         goto err;
     }
 
@@ -54,7 +53,7 @@ int cmd_port_stats(void *shell, int32_t argc, char **argv)
 
     n = genavb_port_stats_get_number(port_id);
     if (n < 0) {
-        log_err("genavb_port_stats_get_number() error %d\n", n);
+        shell_printf(shell, "genavb_port_stats_get_number() error %d\n", n);
         goto exit;
     }
 
