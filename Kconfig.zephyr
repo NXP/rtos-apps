@@ -50,6 +50,12 @@ config RTOS_APPS_AUDIO
 	  pipeline (SAI source/sink, routing, DTMF, sine generator) for
 	  AVB/non-AVB audio applications.
 
+config RTOS_APPS_AUDIO_CTRL
+	bool "Audio pipeline control headers"
+	default n
+	help
+	  Include audio pipeline control headers.
+
 menuconfig RTOS_APPS_SHELL
 	bool "Shell commands"
 	default n
