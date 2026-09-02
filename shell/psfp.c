@@ -143,7 +143,7 @@ void cmd_psfp_fm_storage_help(void *shell)
     shell_printf(shell, "\nflow meter storage configuration\n\n");
     shell_printf(shell, "path: " CONFIG_STORAGE_ROOT "/fm\n");
     shell_printf(shell, "    description: directory used by fm_update/fm_read commands\n");
-    shell_printf(shell, "path: /fm/N (N: flow meter instance index, 0 to %u)\n", genavb_flow_meter_get_max_entries() - 1 );
+    shell_printf(shell, "path: " CONFIG_STORAGE_ROOT "/fm/N (N: flow meter instance index, 0 to %u)\n", genavb_flow_meter_get_max_entries() - 1 );
     shell_printf(shell, "parameters (instance index N):\n");
     shell_printf(shell, "    committed_information_rate:\n");
     shell_printf(shell, "        value: 0 to (2^64 - 1)\n");

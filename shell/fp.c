@@ -28,9 +28,32 @@ void cmd_fp_storage_help(void *shell)
 {
     shell_printf(shell, "fp config\n\n");
     shell_printf(shell, "path: " CONFIG_STORAGE_ROOT "/fp\n");
-    shell_printf(shell, "   description: directory used by fp_set/fp_get commands\n");
+    shell_printf(shell, "    description: directory used by fp_set/fp_get commands\n");
     shell_printf(shell, "path: " CONFIG_STORAGE_ROOT "/fp/portN (N: logical port index, 0 to %u)\n", CONFIG_APP_LOGICAL_PORTS - 1);
-    shell_printf(shell, "   commands (logical port N):\n");
+    shell_printf(shell, "path: " CONFIG_STORAGE_ROOT "/fp/portN/802_1Q\n");
+    shell_printf(shell, "parameters (802.1Q frame preemption, logical port N):\n");
+    shell_printf(shell, "    admin_status:\n");
+    shell_printf(shell, "        format: 0xXX (8-bit hexadecimal bitmask)\n");
+    shell_printf(shell, "        value: 0x00 to 0xff\n");
+    shell_printf(shell, "        description: administrative value of the preemption status for the priority. (bit N = PRIO N)\n");
+    shell_printf(shell, "                     0: preemptable, 1: express\n");
+    shell_printf(shell, "path: " CONFIG_STORAGE_ROOT "/fp/portN/802_3\n");
+    shell_printf(shell, "parameters (802.3 MAC Merge sublayer, logical port N):\n");
+    shell_printf(shell, "    enable_tx:\n");
+    shell_printf(shell, "        value: 0 to 2\n");
+    shell_printf(shell, "        description: enable frame preemption in the transmit direction\n");
+    shell_printf(shell, "                     0: disabled, 1: enable 64B boundaries, 2: enable 4B boundaries\n");
+    shell_printf(shell, "    verify_disable_tx:\n");
+    shell_printf(shell, "        value: 0 or 1\n");
+    shell_printf(shell, "        description: disable the Verify state machine\n");
+    shell_printf(shell, "                     0: verify enabled (default), 1: verify disabled\n");
+    shell_printf(shell, "    verify_time:\n");
+    shell_printf(shell, "        value: 1 to 128\n");
+    shell_printf(shell, "        description: nominal wait time between verification attempts in milliseconds\n");
+    shell_printf(shell, "    add_frag_size:\n");
+    shell_printf(shell, "        value: 0 to 3\n");
+    shell_printf(shell, "        description: minimum non-final fragment size supported by the remote port\n");
+    shell_printf(shell, "                     actual size = (add_frag_size + 1) * 64 bytes\n");
 }
 
 static void read_fp_status_table(uint8_t status_fp, genavb_fp_admin_status_t *status_admin)
