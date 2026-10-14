@@ -1,0 +1,35 @@
+{
+  "SPDXID": "SPDXRef-DOCUMENT",
+  "spdxVersion": "SPDX-2.3",
+  "creationInfo": {
+    "created": "2026-10-14T09:07:50Z",
+    "creators": [
+      "Organization: NXP"
+    ],
+    "licenseListVersion": "3.28"
+  },
+  "name": "rtos-apps-rtos-apps--1_5",
+  "dataLicense": "CC0-1.0",
+  "documentNamespace": "https://nxp.com/spdx/6c2df58b-5793-48b2-8e26-3b535d999d8d",
+  "packages": [
+    {
+      "SPDXID": "SPDXRef-package-6c2df58b-5793-48b2-8e26-3b535d999d8d",
+      "name": "rtos-apps",
+      "versionInfo": "rtos-apps--1_5",
+      "licenseConcluded": "(BSD-3-Clause)",
+      "licenseDeclared": "(BSD-3-Clause)",
+      "downloadLocation": "https://github.com/NXP/rtos-apps",
+      "originator": "Organization: NXP",
+      "supplier": "NOASSERTION",
+      "externalRefs": [],
+      "filesAnalyzed": false
+    }
+  ],
+  "relationships": [
+    {
+      "spdxElementId": "SPDXRef-DOCUMENT",
+      "relationshipType": "DESCRIBES",
+      "relatedSpdxElement": "SPDXRef-package-6c2df58b-5793-48b2-8e26-3b535d999d8d"
+    }
+  ]
+}
