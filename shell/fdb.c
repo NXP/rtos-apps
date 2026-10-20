@@ -212,9 +212,9 @@ static int fdb_update_permanent(void *shell, uint8_t *address, uint16_t vid, str
     fdb_read_storage(address, vid, &port_mask);
 
     if (map->control == GENAVB_FDB_PORT_CONTROL_FORWARDING) {
-        port_mask |= (1 << map->port_id);
+        port_mask |= (1U << map->port_id);
     } else if (map->control == GENAVB_FDB_PORT_CONTROL_FILTERING) {
-        port_mask &= ~(1 << map->port_id);
+        port_mask &= ~(1U << map->port_id);
     } else {
         shell_printf(shell, "Unknown control type\n");
         return -1;

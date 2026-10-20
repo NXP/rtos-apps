@@ -70,7 +70,7 @@ static void vlan_print_port_list(void *shell, uint32_t port_mask)
 
     for (i = 0; i < CONFIG_APP_BR_NUM_PORTS; i++) {
         port_id = br_port_list[i];
-        if (port_mask & (1 << port_id)) {
+        if (port_mask & (1U << port_id)) {
             if (!count)
                 count += h_snprintf(buf + count, 15 - count, "%u", port_id);
             else
@@ -278,18 +278,18 @@ static int vlan_update_permanent(void *shell, uint16_t vid, struct genavb_vlan_p
     vlan_read_storage(vid, &port_mask, &untagged_port_mask);
 
     if (map->control == GENAVB_VLAN_ADMIN_CONTROL_FIXED) {
-        port_mask |= (1 << map->port_id);
+        port_mask |= (1U << map->port_id);
     } else if (map->control == GENAVB_VLAN_ADMIN_CONTROL_FORBIDDEN) {
-        port_mask &= ~(1 << map->port_id);
+        port_mask &= ~(1U << map->port_id);
     } else {
         shell_printf(shell, "Unknown control type\n");
         return -1;
     }
 
     if (map->untagged)
-        untagged_port_mask |= (1 << map->port_id);
+        untagged_port_mask |= (1U << map->port_id);
     else
-        untagged_port_mask &= ~(1 << map->port_id);
+        untagged_port_mask &= ~(1U << map->port_id);
 
     return vlan_write_storage(vid, port_mask, untagged_port_mask);
 }
