@@ -235,16 +235,16 @@ static int si_read_permanent(void *shell, uint32_t index, struct genavb_stream_i
     if (storage_read(dirname, "port_list", tmp_str, SHELL_STORAGE_MAX_FILESIZE) > 0)
         si_parse_port_list(tmp_str, entry, &entry->port_n, SI_DEFAULT_PORT_SIZE);
 
-    storage_read_u8(dirname, "type", &tmp);
-    entry->type = (genavb_si_t)tmp;
+    if (storage_read_u8(dirname, "type", &tmp) == 0)
+        entry->type = (genavb_si_t)tmp;
 
     switch (entry->type) {
     case GENAVB_SI_NULL:
         if (storage_read(dirname, "mac", tmp_str, SHELL_STORAGE_MAX_FILESIZE) > 0)
             str2mac(tmp_str, entry->parameters.null.destination_mac);
 
-        storage_read_u8(dirname, "tagged", &tmp);
-        entry->parameters.null.tagged = (genavb_si_vlan_tag_t)tmp;
+        if (storage_read_u8(dirname, "tagged", &tmp) == 0)
+            entry->parameters.null.tagged = (genavb_si_vlan_tag_t)tmp;
 
         storage_read_u16(dirname, "vlan", &entry->parameters.null.vlan);
 
@@ -254,8 +254,8 @@ static int si_read_permanent(void *shell, uint32_t index, struct genavb_stream_i
         if (storage_read(dirname, "mac", tmp_str, SHELL_STORAGE_MAX_FILESIZE) > 0)
             str2mac(tmp_str, entry->parameters.smac_vlan.source_mac);
 
-        storage_read_u8(dirname, "tagged", &tmp);
-        entry->parameters.smac_vlan.tagged = (genavb_si_vlan_tag_t)tmp;
+        if (storage_read_u8(dirname, "tagged", &tmp) == 0)
+            entry->parameters.smac_vlan.tagged = (genavb_si_vlan_tag_t)tmp;
 
         storage_read_u16(dirname, "vlan", &entry->parameters.smac_vlan.vlan);
 

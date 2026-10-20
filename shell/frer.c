@@ -480,8 +480,8 @@ static int seqr_read_permanent(uint32_t index, struct genavb_sequence_recovery *
 
     buf_to_list_uint(buf, entry->port, &entry->port_n, port_max);
 
-    storage_read_uint(path, "algorithm", &tmp);
-    entry->algorithm = (genavb_seqr_algorithm_t)tmp;
+    if (storage_read_uint(path, "algorithm", &tmp) == 0)
+        entry->algorithm = (genavb_seqr_algorithm_t)tmp;
 
     storage_read_u32(path, "history_length", &entry->history_length);
 
@@ -790,8 +790,8 @@ static int seqi_read_permanent(unsigned int port_id, struct genavb_sequence_iden
 
     storage_read_bool(path, "active", &entry->active);
 
-    storage_read_uint(path, "encapsulation", &tmp);
-    entry->encapsulation = (genavb_seqi_encapsulation_t)tmp;
+    if (storage_read_uint(path, "encapsulation", &tmp) == 0)
+        entry->encapsulation = (genavb_seqi_encapsulation_t)tmp;
 
     storage_read_s8(path, "path_id_lan_id", &entry->path_id_lan_id);
 
