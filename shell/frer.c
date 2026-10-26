@@ -215,9 +215,8 @@ static int seqg_read_permanent(uint32_t index, struct genavb_sequence_generation
     if (h_snprintf_strict(path, PATH_MAX_SIZE, CONFIG_STORAGE_ROOT "/seqg/%" PRIu32 "/handle", index) < 0)
         return -1;
 
-    storage_read(NULL, path, buf, BUF_MAX_SIZE);
-
-    buf_to_list_u32(buf, entry->stream, &entry->stream_n, stream_max);
+    if (storage_read(NULL, path, buf, BUF_MAX_SIZE) > 0)
+        buf_to_list_u32(buf, entry->stream, &entry->stream_n, stream_max);
 
     return 0;
 }
@@ -472,13 +471,11 @@ static int seqr_read_permanent(uint32_t index, struct genavb_sequence_recovery *
     if (h_snprintf_strict(path, PATH_MAX_SIZE, CONFIG_STORAGE_ROOT "/seqr/%" PRIu32, index) < 0)
         goto err;
 
-    storage_read(path, "handle", buf, BUF_MAX_SIZE);
+    if (storage_read(path, "handle", buf, BUF_MAX_SIZE) > 0)
+        buf_to_list_u32(buf, entry->stream, &entry->stream_n, stream_max);
 
-    buf_to_list_u32(buf, entry->stream, &entry->stream_n, stream_max);
-
-    storage_read(path, "port", buf, BUF_MAX_SIZE);
-
-    buf_to_list_uint(buf, entry->port, &entry->port_n, port_max);
+    if (storage_read(path, "port", buf, BUF_MAX_SIZE) > 0)
+        buf_to_list_uint(buf, entry->port, &entry->port_n, port_max);
 
     if (storage_read_uint(path, "algorithm", &tmp) == 0)
         entry->algorithm = (genavb_seqr_algorithm_t)tmp;
@@ -784,9 +781,8 @@ static int seqi_read_permanent(unsigned int port_id, struct genavb_sequence_iden
     if (h_snprintf_strict(path, PATH_MAX_SIZE, CONFIG_STORAGE_ROOT "/seqi/%u", port_id) < 0)
         goto err;
 
-    storage_read(path, "handle", buf, BUF_MAX_SIZE);
-
-    buf_to_list_u32(buf, entry->stream, &entry->stream_n, stream_max);
+    if (storage_read(path, "handle", buf, BUF_MAX_SIZE) > 0)
+        buf_to_list_u32(buf, entry->stream, &entry->stream_n, stream_max);
 
     storage_read_bool(path, "active", &entry->active);
 
