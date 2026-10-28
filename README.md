@@ -58,8 +58,10 @@ include(${RTOS_APPS_DIR}/rtos_apps_<component_b>.cmake)
 
 #### Zephyr
 
+A top-level cmake file `rtos_apps.cmake` is provided. It pulls in the components enabled through Kconfig, so applications only need to include this one file.
+
 Each of the components provides:
-- A cmake submodule file: rtos_apps_\<component\>.cmake
+- A cmake submodule file: rtos_apps_\<component\>.cmake (included by `rtos_apps.cmake` when the component is enabled)
 - One or more header file(s): rtos_apps/\<component\>.h or rtos_apps/\<component\>/\<file\>.h
 
 On the applications' CMake, add the following lines:
@@ -68,9 +70,23 @@ On the applications' CMake, add the following lines:
 set(RTOS_APPS_DIR /path/to/rtos-apps)
 set(RTOS_APPS_TARGET <application target name>)
 
-include(${RTOS_APPS_DIR}/rtos_apps_<component_a>.cmake)
+include(${RTOS_APPS_DIR}/rtos_apps.cmake)
+```
+
+Source the rtos-apps Kconfig from the application's Kconfig file (the path can be relative to `$(ZEPHYR_BASE)`):
+
+```kconfig
+rsource "$(ZEPHYR_BASE)/../rtos-apps/Kconfig.zephyr"
+```
+
+And enable the required Kconfig symbols, for instance on your `prj.conf` file:
+
+```conf
+CONFIG_RTOS_APPS=y
+CONFIG_RTOS_APPS_LOG=y
+CONFIG_RTOS_APPS_<component_a>=y
 ...
-include(${RTOS_APPS_DIR}/rtos_apps_<component_b>.cmake)
+CONFIG_RTOS_APPS_<component_b>=y
 ```
 
 Sources will be added to the specified target, as well as required include paths.
