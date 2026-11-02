@@ -76,7 +76,7 @@ include(${RTOS_APPS_DIR}/rtos_apps.cmake)
 Source the rtos-apps Kconfig from the application's Kconfig file (the path can be relative to `$(ZEPHYR_BASE)`):
 
 ```kconfig
-rsource "$(ZEPHYR_BASE)/../rtos-apps/Kconfig.zephyr"
+rsource "$(ZEPHYR_BASE)/../rtos-apps/Kconfig.z"
 ```
 
 And enable the required Kconfig symbols, for instance on your `prj.conf` file:
