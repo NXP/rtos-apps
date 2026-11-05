@@ -2,7 +2,7 @@ NXP Software Content Register
 
 Release Name:       rtos-apps
 Version:            1_5
-Date Created:       October-2026
+Date Created:       November-2026
 Outgoing License:   BSD-3 Clause
 License File:       LICENSE.txt
 Release Location:   https://github.com/NXP/rtos-apps
